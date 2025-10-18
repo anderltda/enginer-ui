@@ -13,18 +13,18 @@ import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionRedi
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionTriggerMethod;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIButton;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIButtonAction;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonAdd;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonBack;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonBefore;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonDelete;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonEdit;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonNew;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonNext;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonPaginatorAdd;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonPaginatorSave;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonSave;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonSearch;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonView;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterFormNew;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterSearch;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormBack;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormDelete;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormSave;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorAdd;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.row.UIButtonRowAdd;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.row.UIButtonRowSave;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.tab.UIButtonTabBefore;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.tab.UIButtonTabNext;
 import br.com.enginer.domain.ui.usercase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.ui.usercase.annotation.instance.paginator.UIPaginator;
 import br.com.enginer.domain.ui.usercase.enums.TypeButtonState;
@@ -37,14 +37,14 @@ import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
 @UITitle("Nono")
 @UIButtonAction(
 includes = { 
-	UIButtonNew.class, 
-	UIButtonBefore.class, 
-	UIButtonNext.class,
-	UIButtonBack.class, 
-	UIButtonDelete.class, 
-	UIButtonSearch.class, 
-	UIButtonAdd.class, 
-	UIButtonSave.class 
+	UIButtonFilterFormNew.class, 
+	UIButtonTabBefore.class, 
+	UIButtonTabNext.class,
+	UIButtonFormBack.class, 
+	UIButtonFormDelete.class, 
+	UIButtonFilterSearch.class, 
+	UIButtonRowAdd.class, 
+	UIButtonFormSave.class 
 }, 
 value = { 
 	@UIButton(
@@ -70,7 +70,7 @@ value = {
 })
 @UIPaginator(
 		config = @UIConfig(deletable = true, editable = true), 
-		actions = @UIButtonAction(includes = { UIButtonView.class, UIButtonEdit.class, UIButtonPaginatorAdd.class, UIButtonPaginatorSave.class }, 
+		actions = @UIButtonAction(includes = { UIButtonPaginatorView.class, UIButtonPaginatorEdit.class, UIButtonPaginatorAdd.class, UIButtonRowSave.class }, 
         value = {
     		@UIButton(
 			    label = "Limpar",
@@ -90,7 +90,7 @@ value = {
 )
 public class EntityNine extends DomainAbstract<EntityNineId> {
 
-	@UIJoin
+	@UIJoin(template = { TypeTemplate.MODAL, TypeTemplate.TAB, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.FILTER })
 	@UIRow(visible = true, fields = { "entitySeven", "entityEight" })
 	@UIColumn(label = "Id", fields = { "entitySeven", "entityEight" }, initial = false)
 	private EntityNineId id;

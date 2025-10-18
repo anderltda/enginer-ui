@@ -770,8 +770,7 @@ public final class FormTemplate {
 
 			Object provider = ReflectionUtils.newInstance(f.getType());
 
-			List<?> options = (List<?>) ReflectionUtils.executeMethod(userCase, TemplateUserCase.buscarFormTodos,
-					provider, filters);
+			List<?> options = (List<?>) ReflectionUtils.executeMethod(userCase, TemplateUserCase.buscarFormTodos, provider, filters);
 
 			filter.setOptions(options);
 
@@ -1198,8 +1197,12 @@ public final class FormTemplate {
 				            continue outer;
 						}
 					}
+					
+					if (uiButton.label().equals(Constants.LABEL_EDIT) && !disabled) {
+						continue;
+					}
 
-					if (!uiButton.label().equals(Constants.LABEL_BACK) && disabled) {
+					if (!(uiButton.label().equals(Constants.LABEL_BACK) || uiButton.label().equals(Constants.LABEL_EDIT)) && disabled) {
 						continue;
 					}
 

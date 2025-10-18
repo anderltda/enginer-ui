@@ -1,4 +1,4 @@
-package br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization;
+package br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,17 +19,20 @@ import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @UIButton(
-    label = Constants.LABEL_SAVE,
-    icon = "save",
-    state = TypeButtonState.BTN_STATE_PRIMARY,
-    template = { TypeTemplate.FORM, TypeTemplate.MODAL },
+    label = Constants.LABEL_DELETE,
+    icon = "close_ circle",
+    state = TypeButtonState.BTN_STATE_DANGER,
+    confirm = true,
+    needsValidation = false,
+    highlight = true,
+    dropdown = true,
+    template = TypeTemplate.PAGINATOR,
     action = @UIAction(
-        method = @UIActionMethod(serverMethod = "salvar"),
+		method = @UIActionMethod(serverMethod = "excluir"),
         response = @UIActionResponse(
-        	template = { TypeTemplate.FORM },
     		error = @UIActionResponseError(method = @UIActionMethod(clientMethod = "onAlertTestError")), 
-    		success = @UIActionResponseSuccess(redirect = @UIActionRedirect(Constants.PATH_FIND_BY_ID))
+    		success = @UIActionResponseSuccess(redirect = @UIActionRedirect(value = Constants.PATH, ui = "filter"))
         )
     )
 )
-public @interface UIButtonSave {}
+public @interface UIButtonPaginatorDelete {}

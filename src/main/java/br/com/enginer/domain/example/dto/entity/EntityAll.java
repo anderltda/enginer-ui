@@ -4,10 +4,10 @@ import br.com.enginer.domain.ui.usercase.annotation.field.UIFilter;
 import br.com.enginer.domain.ui.usercase.annotation.field.UIId;
 import br.com.enginer.domain.ui.usercase.annotation.field.UIJoin;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIButtonAction;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonDelete;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonNext;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonSave;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonSearch;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterSearch;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormDelete;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormSave;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.tab.UIButtonTabNext;
 import br.com.enginer.domain.ui.usercase.enums.TypeLayoutTarget;
 import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
@@ -16,10 +16,10 @@ import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
  * 
  */
 @UIButtonAction(includes = { 
-	UIButtonNext.class, 
-	UIButtonDelete.class, 
-	UIButtonSearch.class, 
-	UIButtonSave.class  
+	UIButtonTabNext.class, 
+	UIButtonFormDelete.class, 
+	UIButtonFilterSearch.class, 
+	UIButtonFormSave.class  
 }
 )
 public class EntityAll extends DomainAbstract<Long> {

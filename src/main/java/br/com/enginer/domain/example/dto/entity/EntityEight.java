@@ -15,17 +15,17 @@ import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionMeth
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionRedirect;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIButton;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIButtonAction;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonAdd;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonBack;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonBefore;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonDelete;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonEdit;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonNew;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonNext;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonPaginatorSave;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonSave;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonSearch;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonView;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterFormNew;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterSearch;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormBack;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormDelete;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormSave;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.row.UIButtonRowAdd;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.row.UIButtonRowSave;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.tab.UIButtonTabBefore;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.tab.UIButtonTabNext;
 import br.com.enginer.domain.ui.usercase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.ui.usercase.annotation.instance.paginator.UIPaginator;
 import br.com.enginer.domain.ui.usercase.enums.TypeButtonState;
@@ -34,14 +34,14 @@ import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
 
 @UITitle("Oitavo")
 @UIButtonAction(includes = { 
-		UIButtonBefore.class, 
-		UIButtonNext.class, 
-		UIButtonNew.class, 
-		UIButtonBack.class, 
-		UIButtonAdd.class, 
-		UIButtonDelete.class, 
-		UIButtonSearch.class, 
-		UIButtonSave.class 
+		UIButtonTabBefore.class, 
+		UIButtonTabNext.class, 
+		UIButtonFilterFormNew.class, 
+		UIButtonFormBack.class, 
+		UIButtonRowAdd.class, 
+		UIButtonFormDelete.class, 
+		UIButtonFilterSearch.class, 
+		UIButtonFormSave.class 
 },
 value = {
 	@UIButton(
@@ -67,7 +67,7 @@ value = {
 }
 )
 @UIPaginator(
-	config = @UIConfig(deletable = true), actions = @UIButtonAction(includes = { UIButtonView.class, UIButtonEdit.class, UIButtonPaginatorSave.class }, 
+	config = @UIConfig(deletable = true), actions = @UIButtonAction(includes = { UIButtonPaginatorView.class, UIButtonPaginatorEdit.class, UIButtonRowSave.class }, 
     value = { @UIButton(label = "Add EntitySeven", icon = "add_circle", needsValidation = false, dropdown = true, template = TypeTemplate.PAGINATOR, 
     action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH, ui = "row", domain = "entityEight", param = "{ disable=true, field=entitySeven.id, value=$object }"))) })
 )

@@ -1,4 +1,4 @@
-package br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization;
+package br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,12 +15,13 @@ import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @UIButton(
-    label = Constants.LABEL_NEXT,
-    icon = "chevron_right",
-    state = TypeButtonState.BTN_STATE_PRIMARY,
-    template = { TypeTemplate.TAB, TypeTemplate.MODAL },
+    label = Constants.LABEL_CLEAR,
+    icon = "bin_alt",
+    needsValidation = false,
+    template = { TypeTemplate.FILTER, TypeTemplate.MODAL },
+    state = TypeButtonState.BTN_STATE_DEFAULT,
     action = @UIAction(
-        method = @UIActionMethod(clientMethod = "onNext")
+        method = @UIActionMethod(clientMethod = Constants.METHOD_CLEAR_FORM)
     )
 )
-public @interface UIButtonNext {}
+public @interface UIButtonFilterClear {}

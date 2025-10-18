@@ -28,16 +28,21 @@ import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionRedi
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionTriggerMethod;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIButton;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIButtonAction;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonAdd;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonBack;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonClear;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonDelete;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonEdit;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonNew;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonNext;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonSave;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonSearch;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization.UIButtonView;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterClear;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterFormNew;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterSearch;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterTabNew;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormBack;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormClear;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormDelete;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormEdit;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormSave;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.row.UIButtonRowAdd;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.tab.UIButtonTabBack;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.tab.UIButtonTabNext;
 import br.com.enginer.domain.ui.usercase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.ui.usercase.annotation.instance.paginator.UIPaginator;
 import br.com.enginer.domain.ui.usercase.annotation.instance.validate.UIValidate;
@@ -61,40 +66,40 @@ import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
  */
 @UITitle("Primeiro")
 @UIButtonAction(includes = { 
-		UIButtonBack.class, 
-		UIButtonClear.class, 
-		UIButtonNext.class, 
-		UIButtonNew.class, 
-		UIButtonEdit.class, 
-		UIButtonDelete.class, 
-		UIButtonSearch.class, 
-		UIButtonAdd.class,
-		UIButtonSave.class 
+	// FILTER
+	UIButtonFilterClear.class,
+	UIButtonFilterTabNew.class, 
+	UIButtonFilterFormNew.class, 
+	UIButtonFilterSearch.class, 
+	// FORM
+	UIButtonFormBack.class, 
+	UIButtonFormClear.class, 
+	UIButtonFormDelete.class,
+	UIButtonFormEdit.class, 
+	UIButtonFormSave.class,
+	// ROW
+	UIButtonRowAdd.class,
+	// TAB
+	UIButtonTabBack.class, 
+	UIButtonTabNext.class, 
 }, 
 value = {	
 	@UIButton(
-		label = Constants.LABEL_NEW + " - Tab",	
-		template = { TypeTemplate.FILTER }, 
-		icon = "send", 
-		needsValidation = false, 
-		action = @UIAction(
-			redirect = @UIActionRedirect(value = Constants.PATH, ui = "tab", domain = "entityOne", param = "{ disabled=false }")
-		)
-	),
-	@UIButton(
 		label = "Custom", 
-		template = { TypeTemplate.DISABLED }, 
+		template = TypeTemplate.FORM,
 		icon = "google_plus", 
+		needsValidation = true,
 		confirm = false, 
-		needsValidation = false, 
-		action = @UIAction(
-			method = @UIActionMethod(clientMethod = "custom")
-		)
+		action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH, ui = "form", domain = "entityOne", param = "{ disable=false, field=entityTwo, value=$object }"))
 	),
 })
 @UIPaginator(
     config = @UIConfig(expandable = true, multiSelectable = false, deletable = true, editable = true),
-    actions = @UIButtonAction(includes = { UIButtonView.class, UIButtonEdit.class, UIButtonDelete.class  },
+    actions = @UIButtonAction(includes = { 
+		UIButtonPaginatorView.class, 
+		UIButtonPaginatorEdit.class, 
+		UIButtonPaginatorDelete.class  
+    },
     value = {
 		@UIButton(
 			label = "Abrir uma listagem Entity Two", 

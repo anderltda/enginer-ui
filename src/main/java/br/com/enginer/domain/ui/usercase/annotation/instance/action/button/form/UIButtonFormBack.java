@@ -1,4 +1,4 @@
-package br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization;
+package br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,13 +15,13 @@ import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @UIButton(
-    label = Constants.LABEL_BEFORE,
-    icon = "chevron_left",
-    state = TypeButtonState.BTN_STATE_PRIMARY,
+    label = Constants.LABEL_BACK,
+    icon = "undo",
     needsValidation = false,
-    template = { TypeTemplate.TAB, TypeTemplate.MODAL },
+    state = TypeButtonState.BTN_STATE_DEFAULT,
+    template = TypeTemplate.FORM,
     action = @UIAction(
-        method = @UIActionMethod(clientMethod = "onPrevious")
+        method = @UIActionMethod(clientMethod = "onBack")
     )
 )
-public @interface UIButtonBefore {}
+public @interface UIButtonFormBack {}

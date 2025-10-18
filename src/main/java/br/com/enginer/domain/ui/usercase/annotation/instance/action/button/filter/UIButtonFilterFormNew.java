@@ -1,4 +1,4 @@
-package br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization;
+package br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -14,10 +14,10 @@ import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @UIButton(
-		label = Constants.LABEL_ACTION_EDIT, 
-		template = TypeTemplate.PAGINATOR, 
-		highlight = false,
-		dropdown = true,
-		action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH_FIND_BY_ID, param = "{ disabled=false }"))
+    label = Constants.LABEL_NEW,
+    icon = "add_circle",
+    needsValidation = false,
+    template = { TypeTemplate.FILTER, TypeTemplate.MODAL },
+	action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH, param = "{ disabled=false }"))
 )
-public @interface UIButtonEdit {}
+public @interface UIButtonFilterFormNew {}

@@ -1,4 +1,4 @@
-package br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization;
+package br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -14,10 +14,10 @@ import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @UIButton(
-		label = Constants.LABEL_ACTION_VIEW, 
+		label = Constants.LABEL_ACTION_EDIT, 
 		template = TypeTemplate.PAGINATOR, 
 		highlight = false,
 		dropdown = true,
-		action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH_FIND_BY_ID, param = "{ disableAll=true }"))
+		action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH_FIND_BY_ID, param = "{ disabled=false }"))
 )
-public @interface UIButtonView {}
+public @interface UIButtonPaginatorEdit {}

@@ -1,4 +1,4 @@
-package br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization;
+package br.com.enginer.domain.ui.usercase.annotation.instance.action.button.tab;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,13 +15,12 @@ import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @UIButton(
-    label = Constants.LABEL_SEARCH,
-    icon = "search",
+    label = Constants.LABEL_NEXT,
+    icon = "chevron_right",
     state = TypeButtonState.BTN_STATE_PRIMARY,
-    template = TypeTemplate.FILTER,
-    needsValidation = true,
+    template = { TypeTemplate.TAB, TypeTemplate.MODAL },
     action = @UIAction(
-        method = @UIActionMethod(serverMethod = "search")
+        method = @UIActionMethod(clientMethod = "onNext")
     )
 )
-public @interface UIButtonSearch {}
+public @interface UIButtonTabNext {}

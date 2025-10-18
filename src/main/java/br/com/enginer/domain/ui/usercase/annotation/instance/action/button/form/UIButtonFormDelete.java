@@ -1,4 +1,4 @@
-package br.com.enginer.domain.ui.usercase.annotation.instance.action.specialization;
+package br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,7 +26,7 @@ import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
     needsValidation = false,
     highlight = true,
     dropdown = true,
-    template = { TypeTemplate.PAGINATOR, TypeTemplate.FORM },
+    template = { TypeTemplate.FORM },
     action = @UIAction(
     		method = @UIActionMethod(serverMethod = "excluir"),
             response = @UIActionResponse(
@@ -36,4 +36,4 @@ import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
             )
         )
 )
-public @interface UIButtonDelete {}
+public @interface UIButtonFormDelete {}
