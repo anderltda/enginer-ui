@@ -1,0 +1,7 @@
+server: 
+ port: 8081
+logging:
+ config: classpath:logback-spring.xml
+spring:
+ profiles:
+    default: local 
