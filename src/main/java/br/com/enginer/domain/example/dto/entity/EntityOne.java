@@ -159,7 +159,7 @@ value = {
 			label = Constants.LABEL_CLEAR, 
 			icon = "bin_alt", 
 			needsValidation = false,
-			state = TypeButtonState.BTN_STATE_PRIMARY, 
+			state = TypeButtonState.BTN_STATE_INFO, 
 			template = { TypeTemplate.PAGINATOR }, 
 			action = @UIAction( 
 				method = @UIActionMethod(clientMethod = "triggerMethod", 
@@ -169,7 +169,7 @@ value = {
 		@UIButton(
 		    label = Constants.LABEL_SEARCH,
 		    icon = "search",
-		    state = TypeButtonState.BTN_STATE_PRIMARY,
+		    state = TypeButtonState.BTN_STATE_INFO,
 		    template = TypeTemplate.PAGINATOR,
 			action = @UIAction( 
 				method = @UIActionMethod(clientMethod = "triggerMethod", 
@@ -249,8 +249,8 @@ public class EntityOne extends DomainAbstract<Long> {
 	@UINumber(label = "Age", min = 1, max = 60, template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
 	@UIColumn(label = "EntityOne Idade", initial = true, 
 	conditional = @UIConditional({
-		@UIConditionalOn(field = "age", operator = TypeOperator.GREATER_THAN, matchs = { "entityTwo.entityTree.entityFour.entityFive.factor" }, value = "badge badge-info"),
-		@UIConditionalOn(field = "age", operator = TypeOperator.LESS_THAN, matchs = { "entityTwo.entityTree.entityFour.entityFive.factor" }, value = "badge badge-important"),
+		@UIConditionalOn(field = "age", operator = TypeOperator.BETWEEN, matchs = { "11", "12" }, value = "badge badge-info"),
+		//@UIConditionalOn(field = "age", operator = TypeOperator.LESS_THAN, matchs = { "entityTwo.entityTree.entityFour.entityFive.factor" }, value = "badge badge-important"),
 		@UIConditionalOn(field = "age", operator = TypeOperator.EQUALS, matchs = { "entityTwo.entityTree.entityFour.entityFive.factor" }, value = "badge badge-warning"),
 
 	}))
@@ -267,14 +267,21 @@ public class EntityOne extends DomainAbstract<Long> {
 	@UIPosition(x = 3, y = 3)
 	@UIFieldValidation(required = true)
 	@UIDate(label = "Birth Date")
-	@UIColumn(label = "Aniversario", initial = true, style = "badge badge-success")
+	@UIColumn(label = "Aniversario", initial = true, style = "badge",
+	conditional = @UIConditional({
+		@UIConditionalOn(field = "prohibitedDateTime", operator = TypeOperator.DATE_AFTER, matchs = { "2025-10-18" }, value = "badge badge-info"),
+		@UIConditionalOn(field = "birthDate", operator = TypeOperator.DATE_BEFORE, matchs = { "prohibitedDateTime" }, value = "badge badge-warning"),
+	}))	
 	@UIRow(visible = false)
 	private LocalDate birthDate;
 
 	@UIPosition(x = 4, y = 3)
 	@UIFieldValidation(required = true)
 	@UIDate(label = "Prohibited Date Time", format = TypeDateFormat.DATE_TIME_FORMAT, showtime = true)
-	@UIColumn(label = "Data da Proibicao", initial = true)
+	@UIColumn(label = "Data da Proibicao", initial = true,	
+	conditional = @UIConditional({
+		@UIConditionalOn(field = "prohibitedDateTime", operator = TypeOperator.DATE_AFTER, matchs = { "birthDate" }, value = "badge badge-important"),
+	}))	
 	@UIRow(visible = true, order = 2)
 	private LocalDateTime prohibitedDateTime;
 
