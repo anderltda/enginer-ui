@@ -9,9 +9,10 @@ import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 @Target(ElementType.TYPE)
 @Repeatable(UIConditional.class)
 public @interface UIConditionalOn {
-	String label();
+	String label() default "";
 	String field();
 	TypeOperator operator();
-	String[] matchs();
-	TypeTemplate[] template() default { TypeTemplate.FORM, TypeTemplate.ROW, TypeTemplate.TAB };
+	String[] matchs() default{};
+	String value() default "";
+	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.FORM, TypeTemplate.ROW, TypeTemplate.TAB };
 }

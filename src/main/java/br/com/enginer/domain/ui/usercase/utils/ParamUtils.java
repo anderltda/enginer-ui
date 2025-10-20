@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
+import br.com.enginer.domain.ui.usercase.schema.validate.conditional.Conditional;
 
 /**
  * 
@@ -23,7 +24,9 @@ public class ParamUtils {
 	private List<Map.Entry<String, Integer>> rowsMap;
 	private Map<String, String> columnNames;
 	private Map<String, String> columnTypes;
+	private Map<String, String> columnStyles;
 	private Map<String, String> totalizers;
+	private Map<String, List<Conditional>> columnConditionals;
 
 	public TypeTemplate getTypeTemplate() {
 		return typeTemplate;
@@ -68,6 +71,19 @@ public class ParamUtils {
 		}
 
 		this.rowsMap.add(row);
+	}
+	
+	public Map<String, String> getColumnStyles() {
+		return columnStyles;
+	}
+
+	public void addColumnStyles(String name, String style) {
+		
+		if (this.columnStyles == null) {
+			this.columnStyles = new HashMap<String, String>();
+		}
+
+		this.columnStyles.put(name, style);
 	}
 
 	public Map<String, String> getColumnTypes() {
@@ -163,5 +179,16 @@ public class ParamUtils {
 	}
 	
 	
-	
+	public Map<String, List<Conditional>> getColumnConditionals() {
+		return columnConditionals;
+	}
+
+	public void addColumnConditionals(String name, List<Conditional> conditionals) {
+		
+		if (this.columnConditionals == null) {
+			this.columnConditionals = new HashMap<String, List<Conditional>>();
+		}
+		
+		this.columnConditionals.put(name, conditionals);
+	}
 }

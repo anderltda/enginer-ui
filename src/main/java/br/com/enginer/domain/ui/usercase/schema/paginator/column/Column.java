@@ -3,6 +3,8 @@ package br.com.enginer.domain.ui.usercase.schema.paginator.column;
 import java.util.List;
 import java.util.Map;
 
+import br.com.enginer.domain.ui.usercase.schema.validate.conditional.Conditional;
+
 /**
  * 
  */
@@ -10,6 +12,7 @@ public class Column {
 
 	private Map<String, String> name;
 	private Map<String, String> type;
+	private Map<String, String> style;
 	private Map<String, String> totalizer;
 	private List<String> initials;
 	private List<String> rows;
@@ -17,6 +20,7 @@ public class Column {
 	private List<String> editables;
 	private List<String> visibles;
 	private List<String> calculations;
+	private Map<String, List<Conditional>> conditional;
 
 	public Map<String, String> getName() {
 		return name;
@@ -32,6 +36,14 @@ public class Column {
 
 	public void setType(Map<String, String> type) {
 		this.type = type;
+	}
+
+	public Map<String, String> getStyle() {
+		return style;
+	}
+
+	public void setStyle(Map<String, String> style) {
+		this.style = style;
 	}
 
 	public Map<String, String> getTotalizer() {
@@ -89,4 +101,13 @@ public class Column {
 	public void setCalculations(List<String> calculations) {
 		this.calculations = calculations;
 	}
+
+	public Map<String, List<Conditional>> getConditional() {
+		return conditional;
+	}
+
+	public void setConditional(Map<String, List<Conditional>> conditional) {
+		this.conditional = conditional;
+	}
+
 }

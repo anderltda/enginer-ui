@@ -11,5 +11,5 @@ import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 @Target(ElementType.TYPE)
 public @interface UIConditional {
 	UIConditionalOn[] value() default {};
-	TypeTemplate[] template() default { TypeTemplate.FORM, TypeTemplate.ROW, TypeTemplate.TAB };
+	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.FORM, TypeTemplate.ROW, TypeTemplate.TAB };
 }

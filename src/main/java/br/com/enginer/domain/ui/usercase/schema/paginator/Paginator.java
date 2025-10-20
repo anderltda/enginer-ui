@@ -5,6 +5,7 @@ import java.util.List;
 import br.com.enginer.domain.ui.usercase.schema.field.Field;
 import br.com.enginer.domain.ui.usercase.schema.paginator.column.Column;
 import br.com.enginer.domain.ui.usercase.schema.paginator.config.Config;
+import br.com.enginer.domain.ui.usercase.schema.validate.conditional.Conditional;
 
 /**
  * 
@@ -14,6 +15,7 @@ public class Paginator {
 	private Column column;
 	private Config config;
 	private List<Field> actions;
+	private List<Conditional> conditional;
 
 	public Column getColumn() {
 		return column;
@@ -37,5 +39,13 @@ public class Paginator {
 
 	public void setActions(List<Field> actions) {
 		this.actions = actions;
+	}
+
+	public List<Conditional> getConditional() {
+		return conditional;
+	}
+
+	public void setConditional(List<Conditional> conditional) {
+		this.conditional = conditional;
 	}
 }

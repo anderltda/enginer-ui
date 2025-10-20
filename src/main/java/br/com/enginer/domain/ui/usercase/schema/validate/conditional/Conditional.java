@@ -10,6 +10,7 @@ public class Conditional {
 	private String label;
 	private String field;
 	private String operator;
+	private String value;
 	private String[] matchs;
 
 	public String getLabel() {
@@ -34,6 +35,14 @@ public class Conditional {
 
 	public void setOperator(TypeOperator operator) {
 		this.operator = operator.getValue();
+	}
+	
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 	public String[] getMatchs() {

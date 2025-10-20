@@ -90,7 +90,7 @@ value = {
 		icon = "google_plus", 
 		needsValidation = true,
 		confirm = false, 
-		action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH, ui = "form", domain = "entityOne", param = "{ disable=false, field=entityTwo, value=$object }"))
+		action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH, ui = "form", domain = "entityTwo", param = "{ disable=false, field=entityTwo, value=$object }"))
 	),
 })
 @UIPaginator(
@@ -247,7 +247,13 @@ public class EntityOne extends DomainAbstract<Long> {
 
 	@UIPosition(x = 1, y = 3)
 	@UINumber(label = "Age", min = 1, max = 60, template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
-	@UIColumn(label = "EntityOne Idade", initial = false)
+	@UIColumn(label = "EntityOne Idade", initial = true, 
+	conditional = @UIConditional({
+		@UIConditionalOn(field = "age", operator = TypeOperator.GREATER_THAN, matchs = { "entityTwo.entityTree.entityFour.entityFive.factor" }, value = "badge badge-info"),
+		@UIConditionalOn(field = "age", operator = TypeOperator.LESS_THAN, matchs = { "entityTwo.entityTree.entityFour.entityFive.factor" }, value = "badge badge-important"),
+		@UIConditionalOn(field = "age", operator = TypeOperator.EQUALS, matchs = { "entityTwo.entityTree.entityFour.entityFive.factor" }, value = "badge badge-warning"),
+
+	}))
 	@UIRow(visible = true, editable = true, totalizer = true, order = 3)
 	private Integer age;
 
@@ -261,7 +267,7 @@ public class EntityOne extends DomainAbstract<Long> {
 	@UIPosition(x = 3, y = 3)
 	@UIFieldValidation(required = true)
 	@UIDate(label = "Birth Date")
-	@UIColumn(label = "Aniversario", initial = true)
+	@UIColumn(label = "Aniversario", initial = true, style = "badge badge-success")
 	@UIRow(visible = false)
 	private LocalDate birthDate;
 
@@ -274,7 +280,7 @@ public class EntityOne extends DomainAbstract<Long> {
 
 	@UIJoin(layoutTarget = TypeLayoutTarget.tab, icon = "code", template = { TypeTemplate.TAB, TypeTemplate.FORM })
 	@UIFilter(label = "Entity Two", field = "color", template = { TypeTemplate.FILTER, TypeTemplate.ROW })
-	@UIColumn(label = "Entity Two", fields = { "color", "inclusionDate", "cost", "entityTree" }, initial = true)
+	@UIColumn(label = "Entity Two", fields = { "color", "inclusionDate", "hex", "entityTree" }, initial = true)
 	@UIRow(visible = true, fields = { "color" }, order = 1)
 	private EntityTwo entityTwo;
 	

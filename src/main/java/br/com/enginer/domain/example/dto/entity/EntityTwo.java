@@ -178,7 +178,13 @@ public class EntityTwo extends DomainAbstract<UUID> {
 
 	@UISelect(label = "Colors", multi = false, provider = ComboHelper.class, method = "colors")
 	@UIFieldValidation(required = true)
-	@UIColumn(label = "Cor", initial = true)
+	@UIColumn(label = "Cor", initial = true,
+	conditional = @UIConditional({
+		@UIConditionalOn(field = "entityTwo.hex", operator = TypeOperator.GREATER_THAN, matchs = { "entityTwo.entityTree.entityFour.attribute" }, value = "label label-important"),
+		@UIConditionalOn(field = "entityTwo.hex", operator = TypeOperator.LESS_THAN, matchs = { "entityTwo.entityTree.entityFour.attribute" }, value = "label label-warning"),
+		@UIConditionalOn(field = "entityTwo.hex", operator = TypeOperator.EQUALS, matchs = { "entityTwo.entityTree.entityFour.attribute" }, value = "label label-info"),
+
+	}))
 	@UIRow(visible = true)
 	private String color;
 
@@ -188,7 +194,7 @@ public class EntityTwo extends DomainAbstract<UUID> {
 	@UIRow(visible = true)
 	private LocalDate inclusionDate;
 
-	@UIColumn(label = "Hexagonal", initial = true)
+	@UIColumn(label = "Hexagonal", initial = true, style = "badge badge-inverse")
 	@UIRow(visible = true)
 	private Integer hex;
 	

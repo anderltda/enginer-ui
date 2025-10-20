@@ -24,10 +24,13 @@ import br.com.enginer.domain.ui.usercase.annotation.field.UIColumn;
 import br.com.enginer.domain.ui.usercase.annotation.field.UIFilter;
 import br.com.enginer.domain.ui.usercase.annotation.field.UIJoin;
 import br.com.enginer.domain.ui.usercase.annotation.field.UIRow;
+import br.com.enginer.domain.ui.usercase.annotation.instance.validate.conditional.UIConditional;
 import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.ui.usercase.schema.field.type.Id;
 import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
 import br.com.enginer.domain.ui.usercase.schema.instance.DomainId;
+import br.com.enginer.domain.ui.usercase.schema.validate.conditional.Conditional;
+import br.com.enginer.domain.ui.usercase.template.FormTemplate;
 
 public class ReflectionUtils {
 
@@ -125,7 +128,14 @@ public class ReflectionUtils {
 					
 					paramUtils.addColumnNames(name, uiColumn.label());
 					paramUtils.addColumnTypes(name, field.getType().getSimpleName());
+					paramUtils.addColumnStyles(name, uiColumn.style());
 					paramUtils.addVisibles(name);
+					
+					UIConditional uiConditional = uiColumn.conditional();
+					if (uiConditional.value().length > 0) {
+						List<Conditional> conditionals = FormTemplate.getConditionalColumn(uiConditional);
+						paramUtils.addColumnConditionals(name, conditionals);
+					}					
 				}
 			}
 			// UIRow

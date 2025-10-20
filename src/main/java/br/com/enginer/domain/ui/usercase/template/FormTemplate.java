@@ -641,7 +641,14 @@ public final class FormTemplate {
 					}
 					paramUtils.addColumnNames(field_.getName(), uiColumn.label());
 					paramUtils.addColumnTypes(field_.getName(), field_.getType().getSimpleName());
+					paramUtils.addColumnStyles(field_.getName(), uiColumn.style());
 					paramUtils.addVisibles(name);
+
+					UIConditional uiConditional = uiColumn.conditional();
+					if (uiConditional.value().length > 0) {
+						List<Conditional> conditionals = getConditionalColumn(uiConditional);
+						paramUtils.addColumnConditionals(field_.getName(), conditionals);
+					}
 				}
 			}
 			// UIRow
@@ -662,9 +669,12 @@ public final class FormTemplate {
 				}
 			}
 		}
+		
+		paginator.getColumn().setConditional(paramUtils.getColumnConditionals());
 
 		paginator.getColumn().setName(paramUtils.getColumnNames());
 		paginator.getColumn().setType(paramUtils.getColumnTypes());
+		paginator.getColumn().setStyle(paramUtils.getColumnStyles());
 
 		if (paramUtils.getTypeTemplate().equals(TypeTemplate.ROW)) {
 			paginator.getColumn().setRows(paramUtils.getRows());
@@ -1397,6 +1407,29 @@ public final class FormTemplate {
 		}
 		return validate;
 	}
+	
+	
+	public static List<Conditional> getConditionalColumn(UIConditional uiConditional) {
+		List<Conditional> conditionals = new ArrayList<>();
+		boolean containsTemplate = checkTemplate(uiConditional);
+		if(containsTemplate) {
+			UIConditionalOn[] uiConditionalOns = uiConditional.value();
+			Conditional conditional = null;
+			for (UIConditionalOn uiConditionalOn : uiConditionalOns) {
+				containsTemplate = checkTemplate(uiConditionalOn);
+				if (containsTemplate) {
+					conditional = new Conditional();
+					conditional.setLabel(uiConditionalOn.label());
+					conditional.setField(uiConditionalOn.field());
+					conditional.setOperator(uiConditionalOn.operator());
+					conditional.setMatchs(uiConditionalOn.matchs());
+					conditional.setValue(uiConditionalOn.value());
+					conditionals.add(conditional);
+				}
+			}
+		}
+		return conditionals;
+	}
 
 	/**
 	 * @param domain
@@ -1442,6 +1475,7 @@ public final class FormTemplate {
 					conditional.setField(uiConditionalOn.field());
 					conditional.setOperator(uiConditionalOn.operator());
 					conditional.setMatchs(uiConditionalOn.matchs());
+					conditional.setValue(uiConditionalOn.value());
 					conditionals.add(conditional);
 				}
 			}
