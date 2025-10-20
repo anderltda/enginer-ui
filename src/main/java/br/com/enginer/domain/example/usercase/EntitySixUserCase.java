@@ -21,5 +21,12 @@ public class EntitySixUserCase extends AbstractUserCase {
 		
 		return list;
 	}
+	
+	@Override
+	public void excluirLista(List<Domain<?>> entities) throws UncheckedException {
+		//throw new UncheckedException("Deu um erro no bagulho!!!!");
+		super.excluirLista(entities);
+	}
+	
 
 }

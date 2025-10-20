@@ -573,16 +573,12 @@ public final class FormTemplate {
 								continue;
 							}
 
-							if (method.getName().equalsIgnoreCase("label")
-									&& uiButton.label().equals(Constants.LABEL_DELETE)) {
-								ReflectionUtils.set(button, StringsUtils.setMethod(method.getName()),
-										new Class<?>[] { buttonObject.getClass() },
-										new Object[] { Constants.LABEL_ACTION_DELETE });
+							if (method.getName().equalsIgnoreCase("label") && uiButton.label().equals(Constants.LABEL_DELETE)) {
+								ReflectionUtils.set(button, StringsUtils.setMethod(method.getName()), new Class<?>[] { buttonObject.getClass() }, new Object[] { Constants.LABEL_ACTION_DELETE });
 								continue;
 							}
 
-							ReflectionUtils.set(button, StringsUtils.setMethod(method.getName()),
-									new Class<?>[] { buttonObject.getClass() }, new Object[] { buttonObject });
+							ReflectionUtils.set(button, StringsUtils.setMethod(method.getName()), new Class<?>[] { buttonObject.getClass() }, new Object[] { buttonObject });
 						}
 						buttons.add(button);
 					}

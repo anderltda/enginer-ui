@@ -314,8 +314,8 @@ public abstract class AbstractUserCase implements TemplateUserCase, ActionUserCa
 	 *
 	 */
 	@Override
-	public void excluir(Domain<?> domain, Object ids) throws UncheckedException {
-		repositoryOutboundPort.delete(domain, ids);
+	public void excluir(Domain<?> domain, Object id) throws UncheckedException {
+		repositoryOutboundPort.delete(domain, id);
 	}
 
 	/**
@@ -340,6 +340,16 @@ public abstract class AbstractUserCase implements TemplateUserCase, ActionUserCa
 			}
 		}
 	}
+	
+	/**
+	 *
+	 */
+	@Override
+	public void excluirLista(List<Domain<?>> entities) throws UncheckedException {
+		entities.forEach(domain -> {
+			repositoryOutboundPort.delete(domain, domain.getId());
+		});
+	}	
 
 	/**
 	 *

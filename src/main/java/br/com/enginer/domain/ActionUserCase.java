@@ -203,6 +203,13 @@ public interface ActionUserCase {
 	
 	/**
 	 * @param domain
+	 * @param ids
+	 * @throws UncheckedException
+	 */
+	void excluirLista(List<Domain<?>> entities) throws UncheckedException;	
+	
+	/**
+	 * @param domain
 	 * @return
 	 * @throws UncheckedException
 	 */
