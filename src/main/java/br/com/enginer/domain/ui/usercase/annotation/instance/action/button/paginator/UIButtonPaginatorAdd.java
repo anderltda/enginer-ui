@@ -22,7 +22,7 @@ import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 	  label = Constants.LABEL_ADD, 
 	  icon = "plus", 
 	  state = TypeButtonState.BTN_STATE_PRIMARY, 
-	  template = { TypeTemplate.ROW }, 
+	  template = { TypeTemplate.PAGINATOR, TypeTemplate.ROW },
 	  needsValidation = true, 
 	  action = @UIAction(
 			method = @UIActionMethod(

@@ -7,17 +7,21 @@ import java.lang.annotation.Target;
 
 import br.com.enginer.domain.Constants;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIAction;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionRedirect;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionMethod;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIButton;
+import br.com.enginer.domain.ui.usercase.enums.TypeButtonState;
 import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @UIButton(
-	label = Constants.LABEL_ACTION_EDIT, 
-	template = { TypeTemplate.PAGINATOR, TypeTemplate.ROW },
-	highlight = false,
-	dropdown = true,
-	action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH_FIND_BY_ID, param = "{ disabled=false }"))
+    label = Constants.LABEL_BACK,
+    icon = "undo",
+    needsValidation = false,
+    state = TypeButtonState.BTN_STATE_DEFAULT,
+    template = { TypeTemplate.PAGINATOR, TypeTemplate.ROW },
+    action = @UIAction(
+        method = @UIActionMethod(clientMethod = "onBack")
+    )
 )
-public @interface UIButtonPaginatorEdit {}
+public @interface UIButtonPaginatorBack {}

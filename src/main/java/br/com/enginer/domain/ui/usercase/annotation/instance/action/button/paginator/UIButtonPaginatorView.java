@@ -14,10 +14,10 @@ import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @UIButton(
-		label = Constants.LABEL_ACTION_VIEW, 
-		template = TypeTemplate.PAGINATOR, 
-		highlight = false,
-		dropdown = true,
-		action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH_FIND_BY_ID, param = "{ disableAll=true }"))
+	label = Constants.LABEL_ACTION_VIEW, 
+	template = { TypeTemplate.PAGINATOR, TypeTemplate.ROW },
+	highlight = false,
+	dropdown = true,
+	action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH_FIND_BY_ID, param = "{ disableAll=true }"))
 )
 public @interface UIButtonPaginatorView {}

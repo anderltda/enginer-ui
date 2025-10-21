@@ -3,7 +3,6 @@ package br.com.enginer.domain.example.dto.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import br.com.enginer.domain.ActionUserCase;
 import br.com.enginer.domain.Constants;
 import br.com.enginer.domain.ui.usercase.annotation.field.UIColumn;
 import br.com.enginer.domain.ui.usercase.annotation.field.UIHidden;
@@ -11,11 +10,10 @@ import br.com.enginer.domain.ui.usercase.annotation.field.UIRow;
 import br.com.enginer.domain.ui.usercase.annotation.instance.UITitle;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIAction;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionMethod;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionResponse;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionResponseSuccess;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionTriggerMethod;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIButton;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIButtonAction;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorAdd;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorBack;
 import br.com.enginer.domain.ui.usercase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.ui.usercase.annotation.instance.paginator.UIPaginator;
 import br.com.enginer.domain.ui.usercase.enums.TypeButtonState;
@@ -28,37 +26,11 @@ import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
 @UITitle("Entity Rows")
 @UIPaginator(config = @UIConfig(expandable = true, editableAll = true, multiSelectable = false, deletable = true), 
 actions = @UIButtonAction(
+	includes = {
+			UIButtonPaginatorBack.class,
+			UIButtonPaginatorAdd.class		
+	},
 	value = { 
-		@UIButton(
-			label = Constants.LABEL_BACK, 
-			icon = "undo",
-			needsValidation = false,
-			state = TypeButtonState.BTN_STATE_PRIMARY, 
-			template = TypeTemplate.ROW, 
-			action = @UIAction( 
-				method = @UIActionMethod(
-					clientMethod = "triggerMethod", 
-					trigger = @UIActionTriggerMethod(clientMethod = "onBack")
-				) 
-			)
-		),
-		@UIButton(	  
-			  label = Constants.LABEL_ADD, 
-			  icon = "plus", 
-			  state = TypeButtonState.BTN_STATE_PRIMARY, 
-			  template = { TypeTemplate.ROW }, 
-			  needsValidation = true, 
-			  action = @UIAction(
-					method = @UIActionMethod(
-						clientMethod = "triggerMethod", 
-						trigger = @UIActionTriggerMethod(serverMethod = ActionUserCase.plus)
-					),
-					response = @UIActionResponse(
-						template = { TypeTemplate.ROW }, 
-						success = @UIActionResponseSuccess(method = @UIActionMethod(clientMethod = "setDataSetField"))
-					)
-			  )
-		),
 		@UIButton(
 			label = Constants.LABEL_SAVE, 
 			icon = "save",
