@@ -619,13 +619,13 @@ public final class FormTemplate {
 			// UIFilter
 			UIFilter uiFilter = field_.getAnnotation(UIFilter.class);
 			if (uiFilter != null) {
-				ReflectionUtils.extractFieldPaginator(paramUtils, null, field_);
+				extractFieldPaginator(paramUtils, null, field_);
 				continue;
 			}
 			// UIJoin
 			UIJoin uiJoin = field_.getAnnotation(UIJoin.class);
 			if (uiJoin != null) {
-				ReflectionUtils.extractFieldPaginator(paramUtils, null, field_);
+				extractFieldPaginator(paramUtils, null, field_);
 				continue;
 			}
 			// UIColumn
@@ -685,6 +685,91 @@ public final class FormTemplate {
 			paginator.getColumn().setVisibles(paramUtils.getVisibles());
 		}
 	}
+	
+	/**
+	 * @param paramUtils
+	 * @param simpleName
+	 * @param fieldClass
+	 * @throws Exception
+	 */
+	private static void extractFieldPaginator(ParamUtils paramUtils, String simpleName, java.lang.reflect.Field fieldClass) throws Exception {
+
+		java.lang.reflect.Field[] declaredFields = new java.lang.reflect.Field[] {};
+
+		Boolean initial = false;
+		
+		Boolean visible = false;
+
+		String attribute = (ReflectionUtils.classIsIdType(fieldClass.getType()) && simpleName != null ? "id" : StringsUtils.firstLower(fieldClass.getType().getSimpleName()));
+
+		simpleName = ((simpleName != null) ? simpleName.concat(".").concat(attribute) : attribute);
+
+		if (paramUtils.getTypeTemplate().equals(TypeTemplate.ROW)) {
+
+			UIRow uiRowFieldClass = fieldClass.getAnnotation(UIRow.class);
+			if (uiRowFieldClass == null) return;
+			visible = uiRowFieldClass.visible();
+			declaredFields = ReflectionUtils.getFieldsByName(fieldClass.getType(), uiRowFieldClass.fields());
+
+		} else {
+
+			UIColumn uiColumnFieldClass = fieldClass.getAnnotation(UIColumn.class);
+			if (uiColumnFieldClass == null) return;
+			initial = uiColumnFieldClass.initial();
+			declaredFields = ReflectionUtils.getFieldsByName(fieldClass.getType(), uiColumnFieldClass.fields());
+		}
+
+		for (java.lang.reflect.Field field : declaredFields) {
+			String name = simpleName.concat(".").concat(field.getName());
+			// UIFilter
+			UIFilter uiFilter = field.getAnnotation(UIFilter.class);
+			if (uiFilter != null) {
+				extractFieldPaginator(paramUtils, simpleName, field);
+				continue;
+			}
+			// UIJoin
+			UIJoin uiJoin = field.getAnnotation(UIJoin.class);
+			if (uiJoin != null) {
+				extractFieldPaginator(paramUtils, simpleName, field);
+				continue;
+			}
+			// UIColumn
+			UIColumn uiColumn = field.getAnnotation(UIColumn.class);
+			if (uiColumn != null) {
+				if (!uiColumn.hidden()) {
+
+					if (initial && uiColumn.initial()) {
+						paramUtils.addInitials(name);
+					}
+					
+					paramUtils.addColumnNames(name, uiColumn.label());
+					paramUtils.addColumnTypes(name, field.getType().getSimpleName());
+					paramUtils.addColumnStyles(name, uiColumn.style());
+					paramUtils.addVisibles(name);
+					
+					UIConditional uiConditional = uiColumn.conditional();
+					if (uiConditional.value().length > 0) {
+						List<Conditional> conditionals = getConditionalColumn(uiConditional);
+						paramUtils.addColumnConditionals(name, conditionals);
+					}					
+				}
+			}
+			// UIRow
+			UIRow uiRow = field.getAnnotation(UIRow.class);
+			if (uiRow != null) {
+				paramUtils.addRowsMap(new AbstractMap.SimpleEntry<>(name, uiRow.order()));
+				if (uiRow.editable()) {
+					paramUtils.addEditables(name);
+				}
+				if (!visible || !uiRow.visible()) {
+					paramUtils.addHiddens(name);
+				}
+				if (!uiRow.calculation().isEmpty()) {
+					paramUtils.addCalculations(name.concat(" = ").concat(uiRow.calculation()));
+				}
+			}
+		}
+	}	
 
 	/**
 	 * @param domain
@@ -1292,11 +1377,12 @@ public final class FormTemplate {
 		if (uiAction.method() instanceof UIActionMethod uiActionMethod) {
 			containsTemplate = checkTemplate(uiActionMethod);
 			if (containsTemplate) {
-				action.setClientMethod(uiActionMethod.clientMethod());
-				action.setServerMethod(uiActionMethod.serverMethod());
-				action.setNeedsValidation(uiButton.needsValidation());
-				actionTrigger.setClientMethod(uiActionMethod.trigger().clientMethod());
-				actionTrigger.setServerMethod(uiActionMethod.trigger().serverMethod());
+				action.setClientMethod(ReflectionUtils.nullIfEmpty(uiActionMethod.clientMethod()));
+				action.setServerMethod(ReflectionUtils.nullIfEmpty(uiActionMethod.serverMethod()));
+				action.setNeedsValidation(ReflectionUtils.nullIfEmpty(uiButton.needsValidation()));
+				actionTrigger.setClientMethod(ReflectionUtils.nullIfEmpty(uiActionMethod.trigger().clientMethod()));
+				actionTrigger.setServerMethod(ReflectionUtils.nullIfEmpty(uiActionMethod.trigger().serverMethod()));
+				actionTrigger = ReflectionUtils.hasNonNullField(actionTrigger) ? actionTrigger : null;
 				action.setTriggerMethod(actionTrigger);
 			}
 		}
@@ -1304,11 +1390,11 @@ public final class FormTemplate {
 		if (uiAction.redirect() instanceof UIActionRedirect uiActionRedirect) {
 			containsTemplate = checkTemplate(uiActionRedirect);
 			if (containsTemplate) {
-				action.setUi(uiActionRedirect.ui());
-				action.setDomain(uiActionRedirect.domain());
-				action.setParam(uiActionRedirect.param());
-				action.setRedirect(uiActionRedirect.value());
-				action.setNeedsValidation(uiButton.needsValidation());
+				action.setUi(ReflectionUtils.nullIfEmpty(uiActionRedirect.ui()));
+				action.setDomain(ReflectionUtils.nullIfEmpty(uiActionRedirect.domain()));
+				action.setParam(ReflectionUtils.nullIfEmpty(uiActionRedirect.param()));
+				action.setRedirect(ReflectionUtils.nullIfEmpty(uiActionRedirect.value()));
+				action.setNeedsValidation(ReflectionUtils.nullIfEmpty(uiButton.needsValidation()));
 			}
 		}
 
@@ -1316,11 +1402,10 @@ public final class FormTemplate {
 			containsTemplate = checkTemplate(uiActionDomain);
 			if (containsTemplate) {
 				ActionObject actionObject = new ActionObject();
-				actionObject.setObject(uiActionDomain.object());
-				actionObject.setParam(uiActionDomain.param());
-				if (!actionObject.getObject().isEmpty() && !actionObject.getParam().isEmpty()) {
-					action.setActionObject(actionObject);
-				}
+				actionObject.setObject(ReflectionUtils.nullIfEmpty(uiActionDomain.object()));
+				actionObject.setParam(ReflectionUtils.nullIfEmpty(uiActionDomain.param()));
+				actionObject = ReflectionUtils.hasNonNullField(actionObject) ? actionObject : null;
+				action.setActionObject(actionObject);
 			}
 		}
 
@@ -1337,40 +1422,46 @@ public final class FormTemplate {
 				if (uiActionResponseSuccess.method() instanceof UIActionMethod uiActionMethod) {
 					containsTemplate = checkTemplate(uiActionResponseSuccess);
 					if (containsTemplate) {
-						success.setClientMethod(uiActionMethod.clientMethod());
-						success.setServerMethod(uiActionMethod.serverMethod());
+						success.setClientMethod(ReflectionUtils.nullIfEmpty(uiActionMethod.clientMethod()));
+						success.setServerMethod(ReflectionUtils.nullIfEmpty(uiActionMethod.serverMethod()));
 					}
 				}
 
 				if (uiActionResponseSuccess.redirect() instanceof UIActionRedirect uiActionRedirect) {
 					containsTemplate = checkTemplate(uiActionResponseSuccess);
 					if (containsTemplate) {
-						success.setUi(uiActionResponseSuccess.redirect().ui());
-						success.setDomain(uiActionResponseSuccess.redirect().domain());
-						success.setParam(uiActionResponseSuccess.redirect().param());
-						success.setRedirect(uiActionRedirect.value());
+						success.setUi(ReflectionUtils.nullIfEmpty(uiActionResponseSuccess.redirect().ui()));
+						success.setDomain(ReflectionUtils.nullIfEmpty(uiActionResponseSuccess.redirect().domain()));
+						success.setParam(ReflectionUtils.nullIfEmpty(uiActionResponseSuccess.redirect().param()));
+						success.setRedirect(ReflectionUtils.nullIfEmpty(uiActionRedirect.value()));
 					}
 				}
 
+				
 				if (uiActionResponseError.method() instanceof UIActionMethod uiActionMethod) {
 					containsTemplate = checkTemplate(uiActionResponseError);
 					if (containsTemplate) {
-						error.setClientMethod(uiActionMethod.clientMethod());
-						error.setServerMethod(uiActionMethod.serverMethod());
+						error.setClientMethod(ReflectionUtils.nullIfEmpty(uiActionMethod.clientMethod()));
+						error.setServerMethod(ReflectionUtils.nullIfEmpty(uiActionMethod.serverMethod()));
 					}
 				}
 
 				if (uiActionResponseError.redirect() instanceof UIActionRedirect uiActionRedirect) {
 					containsTemplate = checkTemplate(uiActionResponseError);
 					if (containsTemplate) {
-						error.setRedirect(uiActionRedirect.value());
-						error.setUi(uiActionResponseError.redirect().ui());
-						error.setParam(uiActionResponseError.redirect().param());
+						error.setRedirect(ReflectionUtils.nullIfEmpty(uiActionRedirect.value()));
+						error.setUi(ReflectionUtils.nullIfEmpty(uiActionResponseError.redirect().ui()));
+						error.setParam(ReflectionUtils.nullIfEmpty(uiActionResponseError.redirect().param()));
 					}
 				}
+				
+				success = ReflectionUtils.hasNonNullField(success, "ui") ? success : null;
+				error = ReflectionUtils.hasNonNullField(error, "ui") ? error : null;
 
 				response.setSuccess(success);
 				response.setError(error);
+				
+				response = ReflectionUtils.hasNonNullField(response) ? response : null;
 
 				action.setResponse(response);
 
@@ -1404,8 +1495,11 @@ public final class FormTemplate {
 		return validate;
 	}
 	
-	
-	public static List<Conditional> getConditionalColumn(UIConditional uiConditional) {
+	/**
+	 * @param uiConditional
+	 * @return
+	 */
+	private static List<Conditional> getConditionalColumn(UIConditional uiConditional) {
 		List<Conditional> conditionals = new ArrayList<>();
 		boolean containsTemplate = checkTemplate(uiConditional);
 		if(containsTemplate) {

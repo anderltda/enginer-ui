@@ -42,8 +42,8 @@ import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
 		UIButtonFilterFormNew.class, 
 		UIButtonFilterSearch.class, 
 		// FORM
-		UIButtonFormBack.class, 
 		UIButtonFormClear.class, 
+		UIButtonFormBack.class, 
 		UIButtonFormDelete.class,
 		UIButtonFormEdit.class, 
 		// ROW

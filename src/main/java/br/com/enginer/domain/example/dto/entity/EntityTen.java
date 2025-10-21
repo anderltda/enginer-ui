@@ -109,7 +109,7 @@ public class EntityTen extends DomainAbstract<Long> {
 	private Long id;
 
 	@UIPosition(x = 1, y = 1)
-	@UIFieldValidation(required = true, template = { TypeTemplate.FORM })
+	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
 	@UIText(label = "Descricao", min = 2, max = 100)
 	@UIColumn(label = "Nome", initial = true)
 	@UIRow(visible = true)

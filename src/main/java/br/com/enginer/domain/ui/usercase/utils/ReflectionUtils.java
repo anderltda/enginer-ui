@@ -2,14 +2,16 @@ package br.com.enginer.domain.ui.usercase.utils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -20,17 +22,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import br.com.enginer.domain.OutboundPort;
-import br.com.enginer.domain.ui.usercase.annotation.field.UIColumn;
-import br.com.enginer.domain.ui.usercase.annotation.field.UIFilter;
-import br.com.enginer.domain.ui.usercase.annotation.field.UIJoin;
-import br.com.enginer.domain.ui.usercase.annotation.field.UIRow;
-import br.com.enginer.domain.ui.usercase.annotation.instance.validate.conditional.UIConditional;
-import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.ui.usercase.schema.field.type.Id;
 import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
 import br.com.enginer.domain.ui.usercase.schema.instance.DomainId;
-import br.com.enginer.domain.ui.usercase.schema.validate.conditional.Conditional;
-import br.com.enginer.domain.ui.usercase.template.FormTemplate;
 
 public class ReflectionUtils {
 
@@ -69,93 +63,147 @@ public class ReflectionUtils {
 		}
 		return fields.toArray(new Field[0]);
 	}
+	
+	/**
+	 * Verifica se um objeto não é nulo e não está "vazio".
+	 * <p>
+	 * Este método é genérico e realiza verificações específicas conforme o tipo do
+	 * objeto:
+	 * <ul>
+	 * <li><b>String:</b> Retorna {@code false} se for nula, vazia ou contiver
+	 * apenas espaços em branco.</li>
+	 * <li><b>Collection:</b> Retorna {@code false} se a coleção estiver vazia.</li>
+	 * <li><b>Map:</b> Retorna {@code false} se o mapa estiver vazio.</li>
+	 * <li><b>Array:</b> Retorna {@code false} se o array não tiver elementos.</li>
+	 * <li><b>Outros tipos:</b> Retorna {@code true} se não for nulo (não há
+	 * verificação de conteúdo).</li>
+	 * </ul>
+	 *
+	 * @param value objeto a ser verificado
+	 * @return {@code true} se o valor não for nulo nem vazio conforme as regras
+	 *         acima; caso contrário, {@code false}
+	 */
+	public static boolean isNotEmpty(Object value) {
+		if (value == null)
+			return false;
+		if (value instanceof String)
+			return !((String) value).trim().isEmpty();
+		if (value instanceof Collection<?>)
+			return !((Collection<?>) value).isEmpty();
+		if (value instanceof Map<?, ?>)
+			return !((Map<?, ?>) value).isEmpty();
+		if (value.getClass().isArray())
+			return java.lang.reflect.Array.getLength(value) > 0;
+		return true; // qualquer outro objeto não-nulo é considerado "não vazio"
+	}
+	
+	/**
+	 * Retorna o próprio valor se não for nulo nem vazio; caso contrário, retorna {@code null}.
+	 * <p>
+	 * Este método realiza verificações específicas conforme o tipo do objeto:
+	 * <ul>
+	 *     <li><b>String:</b> Retorna {@code null} se for nula, vazia ou contiver apenas espaços em branco.</li>
+	 *     <li><b>Collection:</b> Retorna {@code null} se estiver vazia.</li>
+	 *     <li><b>Map:</b> Retorna {@code null} se estiver vazio.</li>
+	 *     <li><b>Array:</b> Retorna {@code null} se não tiver elementos.</li>
+	 *     <li><b>Outros tipos:</b> Retorna o próprio valor se não for {@code null}.</li>
+	 * </ul>
+	 *
+	 * @param value objeto a ser avaliado
+	 * @param <T> tipo genérico do objeto de entrada
+	 * @return o próprio valor se não for nulo/vazio; caso contrário, {@code null}
+	 */
+	public static <T> T nullIfEmpty(T value) {
+	    if (value == null) return null;
+	    if (value instanceof String && ((String) value).trim().isEmpty()) return null;
+	    if (value instanceof Collection<?> && ((Collection<?>) value).isEmpty()) return null;
+	    if (value instanceof Map<?, ?> && ((Map<?, ?>) value).isEmpty()) return null;
+	    if (value.getClass().isArray() && java.lang.reflect.Array.getLength(value) == 0) return null;
+	    return value;
+	}	
+
+	
+	/**
+	 * Verifica se o objeto informado possui pelo menos um campo não nulo.
+	 * <p>
+	 * O método utiliza reflexão para inspecionar todos os campos declarados (inclusive privados)
+	 * da classe do objeto. Campos estáticos ou transientes são ignorados.
+	 * 
+	 * @param obj objeto a ser verificado
+	 * @return {@code true} se existir ao menos um campo não nulo, {@code false} caso contrário
+	 */
+	public static boolean hasNonNullField(Object obj) {
+	    if (obj == null) return false;
+
+	    for (Class<?> c = obj.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+	        for (Field f : c.getDeclaredFields()) {
+	            // Ignora estáticos e transientes (apenas dados de instância)
+	            if (Modifier.isStatic(f.getModifiers()) || Modifier.isTransient(f.getModifiers())) {
+	                continue;
+	            }
+	            try {
+	                if (!f.canAccess(obj)) {
+	                    f.setAccessible(true);
+	                }
+	                if (f.get(obj) != null) {
+	                    return true;
+	                }
+	            } catch (InaccessibleObjectException e) {
+	                // Java 16+ (módulos): não foi possível abrir o pacote/classe; ignora e segue
+	                continue;
+	            } catch (IllegalAccessException e) {
+	                // Campo privado sem acesso; ignora e segue
+	                continue;
+	            }
+	        }
+	    }
+	    return false;
+	}
+	
+
 
 	/**
-	 * @param paramUtils
-	 * @param simpleName
-	 * @param fieldClass
-	 * @throws Exception
+	 * Verifica se o objeto informado possui algum campo {@code null}, vazio ou em branco,
+	 * ignorando os campos cujo nome foi informado no parâmetro {@code ignoredFields}.
+	 * <p>
+	 * O método usa reflexão para inspecionar os campos (inclusive privados) da classe
+	 * e de suas superclasses. Ignora campos estáticos e transientes.
+	 *
+	 * @param obj objeto a ser verificado
+	 * @param ignoredFields nomes dos campos a serem ignorados durante a checagem
+	 * @return {@code true} se existir pelo menos um campo nulo ou vazio (exceto os ignorados),
+	 *         caso contrário {@code false}
 	 */
-	public static void extractFieldPaginator(ParamUtils paramUtils, String simpleName, Field fieldClass) throws Exception {
+	public static boolean hasNonNullField(Object obj, String... ignoredFields) {
 
-		Field[] declaredFields = new Field[] {};
+		Set<String> ignored = new HashSet<>(Arrays.asList(ignoredFields));
 
-		Boolean initial = false;
-		
-		Boolean visible = false;
+	    if (obj == null) return false;
 
-		String attribute = (classIsIdType(fieldClass.getType()) && simpleName != null ? "id" : StringsUtils.firstLower(fieldClass.getType().getSimpleName()));
-
-		simpleName = ((simpleName != null) ? simpleName.concat(".").concat(attribute) : attribute);
-
-		if (paramUtils.getTypeTemplate().equals(TypeTemplate.ROW)) {
-
-			UIRow uiRowFieldClass = fieldClass.getAnnotation(UIRow.class);
-			if (uiRowFieldClass == null) return;
-			visible = uiRowFieldClass.visible();
-			declaredFields = getFieldsByName(fieldClass.getType(), uiRowFieldClass.fields());
-
-		} else {
-
-			UIColumn uiColumnFieldClass = fieldClass.getAnnotation(UIColumn.class);
-			if (uiColumnFieldClass == null) return;
-			initial = uiColumnFieldClass.initial();
-			declaredFields = getFieldsByName(fieldClass.getType(), uiColumnFieldClass.fields());
-		}
-
-		for (Field field : declaredFields) {
-			String name = simpleName.concat(".").concat(field.getName());
-			// UIFilter
-			UIFilter uiFilter = field.getAnnotation(UIFilter.class);
-			if (uiFilter != null) {
-				extractFieldPaginator(paramUtils, simpleName, field);
-				continue;
-			}
-			// UIJoin
-			UIJoin uiJoin = field.getAnnotation(UIJoin.class);
-			if (uiJoin != null) {
-				extractFieldPaginator(paramUtils, simpleName, field);
-				continue;
-			}
-			// UIColumn
-			UIColumn uiColumn = field.getAnnotation(UIColumn.class);
-			if (uiColumn != null) {
-				if (!uiColumn.hidden()) {
-
-					if (initial && uiColumn.initial()) {
-						paramUtils.addInitials(name);
-					}
-					
-					paramUtils.addColumnNames(name, uiColumn.label());
-					paramUtils.addColumnTypes(name, field.getType().getSimpleName());
-					paramUtils.addColumnStyles(name, uiColumn.style());
-					paramUtils.addVisibles(name);
-					
-					UIConditional uiConditional = uiColumn.conditional();
-					if (uiConditional.value().length > 0) {
-						List<Conditional> conditionals = FormTemplate.getConditionalColumn(uiConditional);
-						paramUtils.addColumnConditionals(name, conditionals);
-					}					
-				}
-			}
-			// UIRow
-			UIRow uiRow = field.getAnnotation(UIRow.class);
-			if (uiRow != null) {
-				paramUtils.addRowsMap(new AbstractMap.SimpleEntry<>(name, uiRow.order()));
-				if (uiRow.editable()) {
-					paramUtils.addEditables(name);
-				}
-				if (!visible || !uiRow.visible()) {
-					paramUtils.addHiddens(name);
-				}
-				if (!uiRow.calculation().isEmpty()) {
-					paramUtils.addCalculations(name.concat(" = ").concat(uiRow.calculation()));
-				}
-			}
-		}
-
-	}
-
+	    for (Class<?> c = obj.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+	        for (Field f : c.getDeclaredFields()) {
+	        	 if (ignored.contains(f.getName())) continue;
+	        	 
+	            // Ignora estáticos e transientes (apenas dados de instância)
+	            if (Modifier.isStatic(f.getModifiers()) || Modifier.isTransient(f.getModifiers())) continue;
+	            
+	            try {
+	            	if (!f.canAccess(obj)) {
+	                    f.setAccessible(true);
+	                }
+	                if (f.get(obj) != null) {
+	                    return true;
+	                }
+	            } catch (InaccessibleObjectException e) {
+	                continue;
+	            } catch (IllegalAccessException e) {
+	                continue;
+	            }
+	        }
+	    }
+	    return false;
+	}	
+	
 	/**
 	 * @param clazz
 	 * @param classLimit
