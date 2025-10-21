@@ -15,7 +15,7 @@ import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 @Target(ElementType.TYPE)
 @UIButton(
 	label = Constants.LABEL_ACTION_VIEW, 
-	template = { TypeTemplate.PAGINATOR, TypeTemplate.ROW },
+	template = { TypeTemplate.PAGINATOR },
 	highlight = false,
 	dropdown = true,
 	action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH_FIND_BY_ID, param = "{ disableAll=true }"))

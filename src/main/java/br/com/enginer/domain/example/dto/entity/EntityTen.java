@@ -28,6 +28,7 @@ import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormClear;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormDelete;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormEdit;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.row.UIButtonRowAdd;
@@ -35,7 +36,10 @@ import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.tab.U
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.tab.UIButtonTabFinish;
 import br.com.enginer.domain.ui.usercase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.ui.usercase.annotation.instance.paginator.UIPaginator;
+import br.com.enginer.domain.ui.usercase.annotation.instance.validate.conditional.UIConditional;
+import br.com.enginer.domain.ui.usercase.annotation.instance.validate.conditional.UIConditionalOn;
 import br.com.enginer.domain.ui.usercase.enums.TypeButtonState;
+import br.com.enginer.domain.ui.usercase.enums.TypeOperator;
 import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
 
@@ -53,7 +57,7 @@ import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
 	UIButtonFormBack.class, 
 	UIButtonFormClear.class, 
 	UIButtonFormDelete.class,
-	UIButtonFormEdit.class, 
+	UIButtonFormEdit.class,
 	// ROW
 	UIButtonRowAdd.class,
 	// TAB
@@ -79,7 +83,12 @@ value = {
 )
 @UIPaginator(
 		config = @UIConfig(expandable = false, multiSelectable = false), 
-		actions = @UIButtonAction(includes = { UIButtonPaginatorView.class, UIButtonPaginatorEdit.class, UIButtonFormDelete.class },
+		actions = @UIButtonAction(
+		includes = { 
+			UIButtonPaginatorView.class, 
+			UIButtonPaginatorEdit.class, 
+			UIButtonPaginatorDelete.class  
+		},
 		value = {
 			@UIButton(
 				label = "Add 10 --> 11", 
@@ -111,7 +120,13 @@ public class EntityTen extends DomainAbstract<Long> {
 	@UIPosition(x = 1, y = 1)
 	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
 	@UIText(label = "Descricao", min = 2, max = 100)
-	@UIColumn(label = "Nome", initial = true)
+	@UIColumn(label = "Nome", initial = true, style = "label label-success",
+	conditional = @UIConditional({
+		@UIConditionalOn(field = "entityTen.name", operator = TypeOperator.CONTAINS, matchs = { "Two" }, value = "label label-success"),
+		@UIConditionalOn(field = "entityTen.name", operator = TypeOperator.EQUALS, matchs = { "Agrupamento One" }, value = "badge badge-important"),
+		@UIConditionalOn(field = "name", operator = TypeOperator.CONTAINS, matchs = { "Two" }, value = "label label-info"),
+		@UIConditionalOn(field = "name", operator = TypeOperator.EQUALS, matchs = { "Agrupamento One" }, value = "label label-important"),
+	}))		
 	@UIRow(visible = true)
 	private String name;
 

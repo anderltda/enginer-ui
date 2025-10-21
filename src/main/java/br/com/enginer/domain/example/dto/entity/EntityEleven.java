@@ -19,7 +19,11 @@ import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormClear;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormDelete;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormEdit;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormSave;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorSave;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.row.UIButtonRowAdd;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.row.UIButtonRowBack;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.row.UIButtonRowClear;
@@ -46,6 +50,7 @@ import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
 		UIButtonFormBack.class, 
 		UIButtonFormDelete.class,
 		UIButtonFormEdit.class, 
+		UIButtonFormSave.class,
 		// ROW
 		UIButtonRowClear.class, 
 		UIButtonRowBack.class,
@@ -59,6 +64,9 @@ import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
 config = @UIConfig(expandable = false, editable = true, deletable = true, multiSelectable = false), 
 actions = @UIButtonAction(
 	includes = { 
+		UIButtonPaginatorView.class, 
+		UIButtonPaginatorEdit.class, 
+		UIButtonPaginatorDelete.class,
 		UIButtonPaginatorSave.class 
 	})
 )

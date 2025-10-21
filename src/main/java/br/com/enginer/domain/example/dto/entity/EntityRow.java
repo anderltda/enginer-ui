@@ -4,19 +4,45 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import br.com.enginer.domain.Constants;
+import br.com.enginer.domain.ui.usercase.annotation.field.UICheckbox;
 import br.com.enginer.domain.ui.usercase.annotation.field.UIColumn;
+import br.com.enginer.domain.ui.usercase.annotation.field.UIDate;
+import br.com.enginer.domain.ui.usercase.annotation.field.UIFilter;
 import br.com.enginer.domain.ui.usercase.annotation.field.UIHidden;
+import br.com.enginer.domain.ui.usercase.annotation.field.UINumber;
 import br.com.enginer.domain.ui.usercase.annotation.field.UIRow;
+import br.com.enginer.domain.ui.usercase.annotation.field.UIText;
 import br.com.enginer.domain.ui.usercase.annotation.instance.UITitle;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIAction;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionMethod;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIButton;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIButtonAction;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterClear;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterFormNew;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterSearch;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterTabNew;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormBack;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormClear;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormDelete;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormEdit;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormSave;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorAdd;
 import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorBack;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.row.UIButtonRowAdd;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.row.UIButtonRowBack;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.row.UIButtonRowClear;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.tab.UIButtonTabBack;
+import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.tab.UIButtonTabFinish;
 import br.com.enginer.domain.ui.usercase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.ui.usercase.annotation.instance.paginator.UIPaginator;
+import br.com.enginer.domain.ui.usercase.annotation.instance.validate.conditional.UIConditional;
+import br.com.enginer.domain.ui.usercase.annotation.instance.validate.conditional.UIConditionalOn;
 import br.com.enginer.domain.ui.usercase.enums.TypeButtonState;
+import br.com.enginer.domain.ui.usercase.enums.TypeDateFormat;
+import br.com.enginer.domain.ui.usercase.enums.TypeOperator;
 import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
 
@@ -24,11 +50,36 @@ import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
  * 
  */
 @UITitle("Entity Rows")
+@UIButtonAction(
+	includes = {
+		// FILTER
+		UIButtonFilterClear.class,
+		UIButtonFilterTabNew.class, 
+		UIButtonFilterFormNew.class, 
+		UIButtonFilterSearch.class, 
+		// FORM
+		UIButtonFormClear.class, 
+		UIButtonFormBack.class, 
+		UIButtonFormDelete.class,
+		UIButtonFormEdit.class,
+		UIButtonFormSave.class,
+		// ROW
+		UIButtonRowClear.class, 
+		UIButtonRowBack.class,
+		UIButtonRowAdd.class,
+		// TAB
+		UIButtonTabBack.class, 
+		UIButtonTabFinish.class
+	}
+)
 @UIPaginator(config = @UIConfig(expandable = true, editableAll = true, multiSelectable = false, deletable = true), 
 actions = @UIButtonAction(
 	includes = {
-			UIButtonPaginatorBack.class,
-			UIButtonPaginatorAdd.class		
+		UIButtonPaginatorView.class, 
+		UIButtonPaginatorEdit.class, 
+		UIButtonPaginatorDelete.class,			
+		UIButtonPaginatorBack.class,
+		UIButtonPaginatorAdd.class		
 	},
 	value = { 
 		@UIButton(
@@ -48,42 +99,54 @@ public class EntityRow extends DomainAbstract<Long> {
 	@UIHidden()
 	private Long id;
 
-	@UIHidden()
+	@UIHidden(template = { TypeTemplate.ROW })
+	@UIFilter(label = "Ten", field = "name", readonly = false)
+	@UIColumn(label = "Ten", template = { TypeTemplate.FILTER }, fields = { "name", "dateCreate", "dateUpdate" }, initial = true)
 	@UIRow(visible = false, fields = { "name" })
 	private EntityTen entityTen;
 
-	@UIHidden()
-	@UIColumn(label = "String", initial = true)
+	@UIHidden(template = { TypeTemplate.ROW })
+	@UIText(label = "String", template = { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.FORM, TypeTemplate.MODAL })
+	@UIColumn(label = "String", initial = false)
 	@UIRow(visible = true, editable = true, order = 1)
 	private String lineString;
 
-	@UIHidden()
-	@UIColumn(label = "Integer", initial = true)
+	@UIHidden(template = { TypeTemplate.ROW })
+	@UINumber(label = "Integer", min = 1, max = 60, template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
+	@UIColumn(label = "Integer", initial = true,
+	conditional = @UIConditional({
+		@UIConditionalOn(field = "lineDouble", operator = TypeOperator.BETWEEN, matchs = { "1","500" }, value = "badge badge-info"),
+		@UIConditionalOn(field = "lineDate", operator = TypeOperator.DATE_BEFORE, matchs = { "lineDateTime" }, value = "badge badge-warning"),
+	}))		
 	@UIRow(visible = true, editable = true, order = 2)
 	private Integer lineInteger;
 
-	@UIHidden()
+	@UIHidden(template = { TypeTemplate.ROW })
 	@UIColumn(label = "Double", initial = true)
+	@UIText(label = "Double", mask = "0000.00", template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
 	@UIRow(visible = true, editable = true, order = 3)
 	private Double lineDouble;
 
-	@UIHidden()
+	@UIHidden(template = { TypeTemplate.ROW })
 	@UIColumn(label = "Long", initial = true)
 	@UIRow(visible = true, editable = true, order = 4)
 	private Long lineLong;
 
-	@UIHidden()
-	@UIColumn(label = "Boolean", initial = true)
+	@UIHidden(template = { TypeTemplate.ROW })
+	@UICheckbox(label = "<b>Boolean</b>", enableSwitch = false, template = { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.FORM, TypeTemplate.MODAL })
+	@UIColumn(label = "Boolean", initial = false)
 	@UIRow(visible = true, editable = true, order = 5)
 	private Boolean lineBoolean;
 
-	@UIHidden()
-	@UIColumn(label = "Date", initial = true)
+	@UIHidden(template = { TypeTemplate.ROW })
+	@UIDate(label = "Date")
+	@UIColumn(label = "Date", initial = false)
 	@UIRow(visible = true, editable = true, order = 6)
 	private LocalDate lineDate;
 
-	@UIHidden()
-	@UIColumn(label = "Date Time", initial = true)
+	@UIHidden(template = { TypeTemplate.ROW })
+	@UIDate(label = "Date Time", format = TypeDateFormat.DATE_TIME_FORMAT, showtime = true)
+	@UIColumn(label = "Date Time", initial = false)
 	@UIRow(visible = true, editable = true, order = 7)
 	private LocalDateTime lineDateTime;
 
