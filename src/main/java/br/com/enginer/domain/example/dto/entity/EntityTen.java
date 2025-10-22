@@ -46,6 +46,7 @@ import br.com.enginer.domain.ui.usercase.enums.TypeFileUpload;
 import br.com.enginer.domain.ui.usercase.enums.TypeOperator;
 import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.upload.dto.entity.UploadFile;
 
 /**
  * 
@@ -158,22 +159,22 @@ public class EntityTen extends DomainAbstract<Long> {
 	@UIPosition(x = 1, y = 3)
 	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
 	@UIFile(mode = TypeFileUpload.LIST)
-	private List<File> imageLists;
+	private List<UploadFile> imageLists;
 	
 	@UIPosition(x = 2, y = 3)
 	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
 	@UIFile(mode = TypeFileUpload.SIMPLE)
-	private List<File> simpleLists;
+	private List<UploadFile> simpleLists;
 
 	@UIPosition(x = 1, y = 4)
 	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
-	@UIFile(mode = TypeFileUpload.WALL_PICKER, limit = 10)
-	private List<File> wallPickers;
+	@UIFile(mode = TypeFileUpload.WALL_PICKER, limit = 1)
+	private List<UploadFile> wallPickers;
 	
 	@UIPosition(x = 1, y = 5)
 	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
 	@UIFile(mode = TypeFileUpload.DRAG_DROP)
-	private List<File> imageDragDrops;
+	private List<UploadFile> imageDragDrops;
 
 	@UIHidden
 	@UIColumn(label = "Data de Criacao", initial = false)
@@ -238,35 +239,35 @@ public class EntityTen extends DomainAbstract<Long> {
 		this.description = description;
 	}
 	
-	public List<File> getWallPickers() {
+	public List<UploadFile> getWallPickers() {
 		return wallPickers;
 	}
 
-	public void setWallPickers(List<File> wallPickers) {
+	public void setWallPickers(List<UploadFile> wallPickers) {
 		this.wallPickers = wallPickers;
 	}
 
-	public List<File> getImageLists() {
+	public List<UploadFile> getImageLists() {
 		return imageLists;
 	}
 
-	public void setImageLists(List<File> imageLists) {
+	public void setImageLists(List<UploadFile> imageLists) {
 		this.imageLists = imageLists;
 	}
 
-	public List<File> getSimpleLists() {
+	public List<UploadFile> getSimpleLists() {
 		return simpleLists;
 	}
 
-	public void setSimpleLists(List<File> simpleLists) {
+	public void setSimpleLists(List<UploadFile> simpleLists) {
 		this.simpleLists = simpleLists;
 	}
 
-	public List<File> getImageDragDrops() {
+	public List<UploadFile> getImageDragDrops() {
 		return imageDragDrops;
 	}
 
-	public void setImageDragDrops(List<File> imageDragDrops) {
+	public void setImageDragDrops(List<UploadFile> imageDragDrops) {
 		this.imageDragDrops = imageDragDrops;
 	}
 

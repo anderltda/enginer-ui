@@ -7,17 +7,18 @@ import java.util.Map;
 import br.com.enginer.domain.AbstractUserCase;
 import br.com.enginer.domain.example.dto.entity.EntityStatus;
 import br.com.enginer.domain.example.dto.entity.EntityTen;
-import br.com.enginer.domain.example.dto.entity.File;
 import br.com.enginer.domain.ui.dto.PageResult;
 import br.com.enginer.domain.ui.usercase.annotation.AutoDependencyInjector;
 import br.com.enginer.domain.ui.usercase.exception.CheckedException;
 import br.com.enginer.domain.ui.usercase.exception.UncheckedException;
 import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
+import br.com.enginer.domain.upload.dto.entity.UploadFile;
+import br.com.enginer.domain.upload.usercase.UploadFileUserCase;
 
 public class EntityTenUserCase extends AbstractUserCase {
 	
 	@AutoDependencyInjector
-	private FileUserCase fileUserCase;
+	private UploadFileUserCase uploadFileUserCase;
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -48,7 +49,7 @@ public class EntityTenUserCase extends AbstractUserCase {
 		EntityTen entityTenNew = (EntityTen) super.salvar(entityTen);
 		
 		entityTen.getWallPickers().forEach(file -> {
-			fileUserCase.salvarEntityId(file, entityTenNew.getId());
+			uploadFileUserCase.salvarEntityId(file, entityTenNew.getId());
 		});
 		
 		return entityTenNew;
@@ -59,7 +60,7 @@ public class EntityTenUserCase extends AbstractUserCase {
 		
 		EntityTen entityTen = (EntityTen) super.buscarPorId(domain);
 		
-		List<File> wallPickers = (List<File>) fileUserCase.buscarPorEntityIdAndDomain(
+		List<UploadFile> wallPickers = (List<UploadFile>) uploadFileUserCase.buscarPorEntityIdAndDomain(
 			entityTen.getId(), 
 			EntityTen.class.getSimpleName()
 		);

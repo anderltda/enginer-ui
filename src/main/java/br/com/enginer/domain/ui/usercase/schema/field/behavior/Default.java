@@ -5,7 +5,6 @@ import java.util.List;
 import br.com.enginer.domain.ui.usercase.enums.TypeDateFormat;
 import br.com.enginer.domain.ui.usercase.enums.TypeFileUpload;
 import br.com.enginer.domain.ui.usercase.enums.TypeLayoutTarget;
-import br.com.enginer.domain.ui.usercase.schema.field.behavior.upload.UploadFile;
 import br.com.enginer.domain.ui.usercase.schema.field.type.Area;
 import br.com.enginer.domain.ui.usercase.schema.field.type.Checkbox;
 import br.com.enginer.domain.ui.usercase.schema.field.type.Date;
@@ -24,6 +23,7 @@ import br.com.enginer.domain.ui.usercase.schema.field.type.Text;
 import br.com.enginer.domain.ui.usercase.schema.field.type.Time;
 import br.com.enginer.domain.ui.usercase.utils.ReflectionUtils;
 import br.com.enginer.domain.ui.usercase.utils.StringsUtils;
+import br.com.enginer.domain.upload.dto.entity.UploadFile;
 
 /**
  * 

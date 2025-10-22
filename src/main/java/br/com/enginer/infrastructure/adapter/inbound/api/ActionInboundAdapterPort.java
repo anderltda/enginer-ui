@@ -25,15 +25,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
-import br.com.enginer.domain.example.dto.entity.File;
 import br.com.enginer.domain.ui.dto.PageResult;
 import br.com.enginer.domain.ui.dto.logger.ActionLogger;
 import br.com.enginer.domain.ui.port.inbound.ActionInboundPort;
 import br.com.enginer.domain.ui.port.outbound.LoggerOutboundPort;
 import br.com.enginer.domain.ui.usercase.annotation.instance.UIDomain;
 import br.com.enginer.domain.ui.usercase.exception.CheckedException;
-import br.com.enginer.domain.ui.usercase.schema.field.behavior.upload.UploadFile;
 import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
+import br.com.enginer.domain.upload.dto.entity.UploadFile;
 import br.com.enginer.infrastructure.utils.NormalizeUtils;
 
 /**
@@ -88,30 +87,25 @@ public class ActionInboundAdapterPort {
 
 	        ActionLogger actionLogger = objectMapper.readValue(actionLoggerJson, ActionLogger.class);
 	        
-	        
 	        // Cria o objeto File (entidade da tabela files)
 	        UploadFile uploadFile = new UploadFile();
 	        uploadFile.setName(filename);
-	        uploadFile.setStatus(file.getContentType());
+	        uploadFile.setType(file.getContentType());
+	        uploadFile.setSize(file.getSize());
+	        uploadFile.setPath(destination.toString());
+	        uploadFile.setStorageType("LOCAL");
+	        uploadFile.setChecksumSha256(DigestUtils.sha256Hex(file.getBytes()));
+	        uploadFile.setDomain(domain.getClass().getSimpleName());
+	        uploadFile.setEntityId(null);            // Ainda não existe no momento do upload
+	        uploadFile.setIsPublic(false);
+	        uploadFile.setCreatedAt(LocalDateTime.now());
+	        uploadFile.setActionLogger(actionLogger);
 
-	        File domainFile = new File();
-	        domainFile.setFileName(filename);
-	        domainFile.setFileType(file.getContentType());
-	        domainFile.setFileSize(file.getSize());
-	        domainFile.setFilePath(destination.toString());
-	        domainFile.setStorageType("LOCAL");
-	        domainFile.setChecksumSha256(DigestUtils.sha256Hex(file.getBytes()));
-	        domainFile.setDomain(domain.getClass().getSimpleName());
-	        domainFile.setEntityId(null);            // Ainda não existe no momento do upload
-	        domainFile.setIsPublic(false);
-	        domainFile.setCreatedAt(LocalDateTime.now());
-	        domainFile.setActionLogger(actionLogger);
-
-	        domainFile = (File) actionInboundPort.methodName(domainFile);
+	        uploadFile = (UploadFile) actionInboundPort.methodName(uploadFile);
 			
 	        // Retorna metadados úteis
 	        Map<String, Object> response = Map.of(
-	        	"id", domainFile.getId(),
+	        	"id", uploadFile.getId(),
 	        	"filename", filename
 	        );
 

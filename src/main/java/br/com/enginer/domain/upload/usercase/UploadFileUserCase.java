@@ -1,30 +1,30 @@
-package br.com.enginer.domain.example.usercase;
+package br.com.enginer.domain.upload.usercase;
 
 import java.util.List;
 import java.util.Map;
 
 import br.com.enginer.domain.AbstractUserCase;
-import br.com.enginer.domain.example.dto.entity.File;
 import br.com.enginer.domain.ui.usercase.exception.UncheckedException;
 import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
+import br.com.enginer.domain.upload.dto.entity.UploadFile;
 
-public class FileUserCase extends AbstractUserCase {
+public class UploadFileUserCase extends AbstractUserCase {
 	
 	public Domain<?> salvarEntityId(Domain<?> domain, Object id) throws UncheckedException {
-		File file = (File) domain;
-		File existingFile = (File) buscarPorId(file);
+		UploadFile file = (UploadFile) domain;
+		UploadFile existingFile = (UploadFile) buscarPorId(file);
 		existingFile.setEntityId(id.toString());
 		return super.salvar(existingFile);
 	}
 	
-	public List<File> buscarPorEntityIdAndDomain(Object entityId, String domain) throws UncheckedException {
+	public List<UploadFile> buscarPorEntityIdAndDomain(Object entityId, String domain) throws UncheckedException {
 		
 		Map<String, Object> filter = Map.of(
 			"entityId", entityId.toString(),
 			"domain", domain
 		);
 		
-		List<File> files = super.buscarTodos(new File(), filter);
+		List<UploadFile> files = super.buscarTodos(new UploadFile(), filter);
 		
 		return files;
 	}

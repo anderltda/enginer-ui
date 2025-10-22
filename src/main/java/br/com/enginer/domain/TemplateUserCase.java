@@ -17,6 +17,7 @@ public interface TemplateUserCase {
 	
 	public static final String buscarFormPorId = "buscarFormPorId";
 	public static final String buscarFormTodos = "buscarFormTodos";
+	public static final String buscarTodos = "buscarTodos";
 	
 	/**
 	 * @param repositoryOutboundPort

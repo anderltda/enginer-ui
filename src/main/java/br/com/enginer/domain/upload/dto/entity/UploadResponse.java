@@ -1,4 +1,4 @@
-package br.com.enginer.domain.ui.usercase.schema.field.behavior.upload;
+package br.com.enginer.domain.upload.dto.entity;
 
 /**
  * 
