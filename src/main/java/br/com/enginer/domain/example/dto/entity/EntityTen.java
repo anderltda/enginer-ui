@@ -151,23 +151,28 @@ public class EntityTen extends DomainAbstract<Long> {
 	private EntityStatus entityStatus;
 	
 	@UIPosition(x = 1, y = 2)
+	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
 	@UITextArea(label = "Descrição", editor = false)
 	private String description;
 	
 	@UIPosition(x = 1, y = 3)
-	@UIFile(label = "Arquivo", mode = TypeFileUpload.LIST)
+	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
+	@UIFile(mode = TypeFileUpload.LIST)
 	private List<File> imageLists;
 	
 	@UIPosition(x = 2, y = 3)
-	@UIFile(label = "Simple List", mode = TypeFileUpload.SIMPLE)
+	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
+	@UIFile(mode = TypeFileUpload.SIMPLE)
 	private List<File> simpleLists;
 
 	@UIPosition(x = 1, y = 4)
-	@UIFile(label = "Wall Picker", mode = TypeFileUpload.WALL_PICKER, limit = 10)
+	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
+	@UIFile(mode = TypeFileUpload.WALL_PICKER, limit = 10)
 	private List<File> wallPickers;
 	
 	@UIPosition(x = 1, y = 5)
-	@UIFile(label = "Image Drag Drop", mode = TypeFileUpload.DRAG_DROP)
+	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
+	@UIFile(mode = TypeFileUpload.DRAG_DROP)
 	private List<File> imageDragDrops;
 
 	@UIHidden
