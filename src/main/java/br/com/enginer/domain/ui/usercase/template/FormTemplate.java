@@ -898,7 +898,7 @@ public final class FormTemplate {
 
 		if (domain.getId() != null) {
 			
-			Map<String, Object> filter = Map.of("entityId", domain.getId().toString(), "domain", domain.getClass().getSimpleName());
+			Map<String, Object> filter = Map.of("domain", domain.getClass().getSimpleName(), "domainId", domain.getId().toString());
 		
 			files = (List<UploadFile>) ReflectionUtils.executeMethod(userCase, TemplateUserCase.buscarTodos, new UploadFile(), filter);
 		}

@@ -26,7 +26,7 @@ public class UploadFile extends DomainAbstract<Long> {
 
 	private String domain;
 
-	private String entityId;
+	private String domainId;
 
 	private Boolean isPublic;
 
@@ -99,12 +99,12 @@ public class UploadFile extends DomainAbstract<Long> {
 		this.domain = domain;
 	}
 
-	public String getEntityId() {
-		return this.entityId;
+	public String getDomainId() {
+		return this.domainId;
 	}
 
-	public void setEntityId(String entityId) {
-		this.entityId = entityId;
+	public void setDomainId(String domainId) {
+		this.domainId = domainId;
 	}
 
 	public Boolean getIsPublic() {

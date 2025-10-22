@@ -96,7 +96,7 @@ public class ActionInboundAdapterPort {
 	        uploadFile.setStorageType("LOCAL");
 	        uploadFile.setChecksumSha256(DigestUtils.sha256Hex(file.getBytes()));
 	        uploadFile.setDomain(domain.getClass().getSimpleName());
-	        uploadFile.setEntityId(null);            // Ainda não existe no momento do upload
+	        uploadFile.setDomainId(null); // Ainda não existe no momento do upload
 	        uploadFile.setIsPublic(false);
 	        uploadFile.setCreatedAt(LocalDateTime.now());
 	        uploadFile.setActionLogger(actionLogger);

@@ -13,16 +13,13 @@ public class UploadFileUserCase extends AbstractUserCase {
 	public Domain<?> salvarEntityId(Domain<?> domain, Object id) throws UncheckedException {
 		UploadFile file = (UploadFile) domain;
 		UploadFile existingFile = (UploadFile) buscarPorId(file);
-		existingFile.setEntityId(id.toString());
+		existingFile.setDomainId(id.toString());
 		return super.salvar(existingFile);
 	}
 	
 	public List<UploadFile> buscarPorEntityIdAndDomain(Object entityId, String domain) throws UncheckedException {
 		
-		Map<String, Object> filter = Map.of(
-			"entityId", entityId.toString(),
-			"domain", domain
-		);
+		Map<String, Object> filter = Map.of("domain", domain, "domainId", entityId.toString());
 		
 		List<UploadFile> files = super.buscarTodos(new UploadFile(), filter);
 		
