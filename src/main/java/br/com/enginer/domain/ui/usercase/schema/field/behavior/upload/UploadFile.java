@@ -1,15 +1,24 @@
-package br.com.enginer.domain.ui.usercase.schema.field.behavior;
+package br.com.enginer.domain.ui.usercase.schema.field.behavior.upload;
 
 /**
  * 
  */
 public class UploadFile {
 
+	private String id;
 	private String uid;
 	private String name;
 	private String status;
 	private String url;
 	private UploadResponse response;
+	
+	public String getId() {
+		return id;
+	}
+	
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public String getUid() {
 		return uid;

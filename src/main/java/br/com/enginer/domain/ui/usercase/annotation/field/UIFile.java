@@ -13,7 +13,7 @@ import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 public @interface UIFile {
 	String label() default "";
 	String title() default "";
-	String action() default "http://localhost:8081/v1/enginer/action/upload";
+	String action() default "http://localhost:8081/v1/enginer-ui/action/upload";
 	TypeFileUpload mode();
 	int limit() default 3;
 	boolean disabled() default false;

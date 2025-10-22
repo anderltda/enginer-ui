@@ -232,9 +232,9 @@ public class RepositoryOutboundAdapterPort implements RepositoryOutboundPort {
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Domain<?>> findAll(Domain<?> domain, Map<String, Object> filter, String... method) throws UncheckedException {
+	public <T extends Domain<?>> List<T> findAll(Domain<?> domain, Map<String, Object> filter, String... method) throws UncheckedException {
 
-		List<Domain<?>> list = new ArrayList<>();
+	    List<T> list = new ArrayList<>();
 
 		try {
 
@@ -253,7 +253,7 @@ public class RepositoryOutboundAdapterPort implements RepositoryOutboundPort {
 
 			while (iterator.hasNext()) {
 				for (Object object : iterator.next()) {
-					list.add((Domain<?>) object);
+					list.add((T) object);
 				}
 			}
 
@@ -268,7 +268,7 @@ public class RepositoryOutboundAdapterPort implements RepositoryOutboundPort {
 			throw new UncheckedException("[Erro inesperado]", ex);
 		}
 
-		return (List<Domain<?>>) list;
+		return list;
 	}
 	
 	/**

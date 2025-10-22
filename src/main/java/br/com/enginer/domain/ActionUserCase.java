@@ -83,7 +83,7 @@ public interface ActionUserCase {
 	 * @return
 	 * @throws UncheckedException
 	 */
-	List<Domain<?>> buscarTodos(Domain<?> domain, Map<String, Object> filter) throws UncheckedException;
+	<T extends Domain<?>> List<T> buscarTodos(Domain<?> domain, Map<String, Object> filter) throws UncheckedException;
 	
 	/**
 	 * @param domain

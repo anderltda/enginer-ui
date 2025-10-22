@@ -1,14 +1,17 @@
 package br.com.enginer.domain.example.dto.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import br.com.enginer.domain.Constants;
 import br.com.enginer.domain.ui.usercase.annotation.field.UIColumn;
+import br.com.enginer.domain.ui.usercase.annotation.field.UIFile;
 import br.com.enginer.domain.ui.usercase.annotation.field.UIFilter;
 import br.com.enginer.domain.ui.usercase.annotation.field.UIHidden;
 import br.com.enginer.domain.ui.usercase.annotation.field.UIId;
 import br.com.enginer.domain.ui.usercase.annotation.field.UIRow;
 import br.com.enginer.domain.ui.usercase.annotation.field.UIText;
+import br.com.enginer.domain.ui.usercase.annotation.field.UITextArea;
 import br.com.enginer.domain.ui.usercase.annotation.field.behavior.UIPosition;
 import br.com.enginer.domain.ui.usercase.annotation.field.behavior.validation.UIFieldValidation;
 import br.com.enginer.domain.ui.usercase.annotation.instance.UITitle;
@@ -39,6 +42,7 @@ import br.com.enginer.domain.ui.usercase.annotation.instance.paginator.UIPaginat
 import br.com.enginer.domain.ui.usercase.annotation.instance.validate.conditional.UIConditional;
 import br.com.enginer.domain.ui.usercase.annotation.instance.validate.conditional.UIConditionalOn;
 import br.com.enginer.domain.ui.usercase.enums.TypeButtonState;
+import br.com.enginer.domain.ui.usercase.enums.TypeFileUpload;
 import br.com.enginer.domain.ui.usercase.enums.TypeOperator;
 import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
@@ -119,7 +123,7 @@ public class EntityTen extends DomainAbstract<Long> {
 
 	@UIPosition(x = 1, y = 1)
 	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
-	@UIText(label = "Descricao", min = 2, max = 100)
+	@UIText(label = "Nome", min = 2, max = 100)
 	@UIColumn(label = "Nome", initial = true, style = "label label-success",
 	conditional = @UIConditional({
 		@UIConditionalOn(field = "entityTen.name", operator = TypeOperator.CONTAINS, matchs = { "Two" }, value = "label label-success"),
@@ -140,11 +144,31 @@ public class EntityTen extends DomainAbstract<Long> {
 	@UIRow(visible = true)
 	private Double totalValue;
 
-	@UIPosition(x = 1, y = 3)
+	@UIPosition(x = 2, y = 1)
 	@UIFilter(label = "Status", field = "name", select = true, filter = { "status=0", "status_op=ge" }, template = { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.FORM, TypeTemplate.ROW, TypeTemplate.MODAL })
 	@UIRow(visible = true, fields = { "name", "status", "ativo" })
 	@UIColumn(label = "", fields = { "name", "status", "startDateTime" }, initial = false)
 	private EntityStatus entityStatus;
+	
+	@UIPosition(x = 1, y = 2)
+	@UITextArea(label = "Descrição", editor = false)
+	private String description;
+	
+	@UIPosition(x = 1, y = 3)
+	@UIFile(label = "Arquivo", mode = TypeFileUpload.LIST)
+	private List<File> imageLists;
+	
+	@UIPosition(x = 2, y = 3)
+	@UIFile(label = "Simple List", mode = TypeFileUpload.SIMPLE)
+	private List<File> simpleLists;
+
+	@UIPosition(x = 1, y = 4)
+	@UIFile(label = "Wall Picker", mode = TypeFileUpload.WALL_PICKER, limit = 10)
+	private List<File> wallPickers;
+	
+	@UIPosition(x = 1, y = 5)
+	@UIFile(label = "Image Drag Drop", mode = TypeFileUpload.DRAG_DROP)
+	private List<File> imageDragDrops;
 
 	@UIHidden
 	@UIColumn(label = "Data de Criacao", initial = false)
@@ -199,6 +223,46 @@ public class EntityTen extends DomainAbstract<Long> {
 
 	public void setEntityStatus(EntityStatus entityStatus) {
 		this.entityStatus = entityStatus;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	public List<File> getWallPickers() {
+		return wallPickers;
+	}
+
+	public void setWallPickers(List<File> wallPickers) {
+		this.wallPickers = wallPickers;
+	}
+
+	public List<File> getImageLists() {
+		return imageLists;
+	}
+
+	public void setImageLists(List<File> imageLists) {
+		this.imageLists = imageLists;
+	}
+
+	public List<File> getSimpleLists() {
+		return simpleLists;
+	}
+
+	public void setSimpleLists(List<File> simpleLists) {
+		this.simpleLists = simpleLists;
+	}
+
+	public List<File> getImageDragDrops() {
+		return imageDragDrops;
+	}
+
+	public void setImageDragDrops(List<File> imageDragDrops) {
+		this.imageDragDrops = imageDragDrops;
 	}
 
 	public LocalDateTime getDateCreate() {

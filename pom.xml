@@ -92,6 +92,12 @@
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<!-- upload de arquivos -->
+		<dependency>
+		  <groupId>commons-codec</groupId>
+		  <artifactId>commons-codec</artifactId>
+		</dependency>
+		<!-- upload de arquivos -->		
 		<!-- javapoet -->
 		<dependency>
 			<groupId>com.squareup</groupId>

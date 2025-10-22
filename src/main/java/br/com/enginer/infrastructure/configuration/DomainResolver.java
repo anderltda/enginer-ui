@@ -63,7 +63,7 @@ public class DomainResolver implements HandlerMethodArgumentResolver {
 		if (domainName != null) {
 			
 			Boolean isModal = modal != null && !modal.isEmpty() ? Boolean.valueOf(modal) : Boolean.FALSE;
-			Boolean isDisabled = disabled.equals(Constants.HASH1) ? disabled.equals(Constants.HASH1) : !disabled.equals(Constants.HASH2);
+			Boolean isDisabled = disabled != null && disabled.equals(Constants.HASH1) ? disabled.equals(Constants.HASH1) : disabled != null ? !disabled.equals(Constants.HASH2) : false;
 			
 			Object object = PackageScannerUtils.findClassBySimpleName(Constants.PACKAGE_NAME_DOMAIN, StringsUtils.firstUpper(domainName));
 

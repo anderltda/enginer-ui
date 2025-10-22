@@ -10,6 +10,7 @@ import br.com.enginer.domain.ui.port.outbound.RepositoryOutboundPort;
 import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.ui.usercase.exception.CheckedException;
 import br.com.enginer.domain.ui.usercase.exception.UncheckedException;
+import br.com.enginer.domain.ui.usercase.injector.DependencyInjector;
 import br.com.enginer.domain.ui.usercase.schema.Form;
 import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
 import br.com.enginer.domain.ui.usercase.schema.instance.DomainId;
@@ -24,13 +25,14 @@ public abstract class AbstractUserCase implements TemplateUserCase, ActionUserCa
 
 	protected RepositoryOutboundPort repositoryOutboundPort;
 	protected PublisherOutboundPort publisherOutboundPort;
-
+	
 	/**
 	 *
 	 */
 	@Override
 	public void setRepositoryOutboundPort(RepositoryOutboundPort repositoryOutboundPort) {
 		this.repositoryOutboundPort = repositoryOutboundPort;
+		DependencyInjector.processDependencies(this); 
 	}
 	
 	/**
@@ -47,6 +49,7 @@ public abstract class AbstractUserCase implements TemplateUserCase, ActionUserCa
 	@Override
 	public void setPublisherOutboundPort(PublisherOutboundPort publisherOutboundPort) {
 		this.publisherOutboundPort = publisherOutboundPort;
+		DependencyInjector.processDependencies(this);
 	}
 	
 	/**
@@ -197,7 +200,7 @@ public abstract class AbstractUserCase implements TemplateUserCase, ActionUserCa
 	 *
 	 */
 	@Override
-	public List<Domain<?>> buscarTodos(Domain<?> domain, Map<String, Object> filter) throws UncheckedException {
+	public <T extends Domain<?>> List<T> buscarTodos(Domain<?> domain, Map<String, Object> filter) throws UncheckedException {
 		return repositoryOutboundPort.findAll(domain, filter);
 	}
 

@@ -3,11 +3,13 @@ package br.com.enginer.infrastructure.adapter.inbound.api;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,12 +25,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
+import br.com.enginer.domain.example.dto.entity.File;
 import br.com.enginer.domain.ui.dto.PageResult;
 import br.com.enginer.domain.ui.dto.logger.ActionLogger;
 import br.com.enginer.domain.ui.port.inbound.ActionInboundPort;
 import br.com.enginer.domain.ui.port.outbound.LoggerOutboundPort;
 import br.com.enginer.domain.ui.usercase.annotation.instance.UIDomain;
 import br.com.enginer.domain.ui.usercase.exception.CheckedException;
+import br.com.enginer.domain.ui.usercase.schema.field.behavior.upload.UploadFile;
 import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
 import br.com.enginer.infrastructure.utils.NormalizeUtils;
 
@@ -56,27 +60,62 @@ public class ActionInboundAdapterPort {
 	}
 
 	/**
+	 * @param domain
 	 * @param file
+	 * @param actionLoggerJson
 	 * @return
 	 * @throws Exception
 	 */
 	@PostMapping("/upload")
-	public ResponseEntity<Map<String, Object>> upload(@RequestParam MultipartFile file) throws Exception {
+	public ResponseEntity<Map<String, Object>> upload(@UIDomain Domain<?> domain, @RequestParam MultipartFile file, @RequestParam("actionLogger") String actionLoggerJson) throws Exception {
 
 		try {
 
-			if (file.isEmpty()) {
-				return ResponseEntity.badRequest().body(Map.of("error", "Arquivo está vazio."));
-			}
+	        if (file.isEmpty()) {
+	            return ResponseEntity.badRequest().body(Map.of("error", "Arquivo está vazio."));
+	        }
 
-			Path uploadPath = Path.of("/Users/anderson/Downloads/uploads/");
-			Files.createDirectories(uploadPath);
+	        // Diretório base do upload
+	        Path uploadPath = Path.of("/Users/anderson/Downloads/uploads/");
+	        Files.createDirectories(uploadPath);
 
-			String filename = StringUtils.cleanPath(file.getOriginalFilename());
-			Path destination = uploadPath.resolve(filename);
-			Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+	        // Normaliza o nome do arquivo e define o destino
+	        String filename = StringUtils.cleanPath(file.getOriginalFilename());
+	        Path destination = uploadPath.resolve(filename);
 
-			return ResponseEntity.ok(Map.of("message", "Arquivo enviado com sucesso!", "filename", filename));
+	        // Salva o arquivo fisicamente
+	        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+
+	        ActionLogger actionLogger = objectMapper.readValue(actionLoggerJson, ActionLogger.class);
+	        
+	        
+	        // Cria o objeto File (entidade da tabela files)
+	        UploadFile uploadFile = new UploadFile();
+	        uploadFile.setName(filename);
+	        uploadFile.setStatus(file.getContentType());
+
+	        File domainFile = new File();
+	        domainFile.setFileName(filename);
+	        domainFile.setFileType(file.getContentType());
+	        domainFile.setFileSize(file.getSize());
+	        domainFile.setFilePath(destination.toString());
+	        domainFile.setStorageType("LOCAL");
+	        domainFile.setChecksumSha256(DigestUtils.sha256Hex(file.getBytes()));
+	        domainFile.setDomain(domain.getClass().getSimpleName());
+	        domainFile.setEntityId(null);            // Ainda não existe no momento do upload
+	        domainFile.setIsPublic(false);
+	        domainFile.setCreatedAt(LocalDateTime.now());
+	        domainFile.setActionLogger(actionLogger);
+
+	        domainFile = (File) actionInboundPort.methodName(domainFile);
+			
+	        // Retorna metadados úteis
+	        Map<String, Object> response = Map.of(
+	        	"id", domainFile.getId(),
+	        	"filename", filename
+	        );
+
+	        return ResponseEntity.ok(response);
 
 		} catch (Exception ex) {
 			logger.error(ActionInboundAdapterPort.class, ex);
@@ -91,8 +130,7 @@ public class ActionInboundAdapterPort {
 	 * @throws CheckedException
 	 */
 	@PostMapping("/validate/{method}/async")
-	public ResponseEntity<Map<String, Boolean>> validate(@UIDomain Domain<?> domain, @PathVariable String method,
-			@RequestBody String value) throws CheckedException {
+	public ResponseEntity<Map<String, Boolean>> validate(@UIDomain Domain<?> domain, @PathVariable String method, @RequestBody String value) throws CheckedException {
 
 		try {
 
@@ -149,8 +187,7 @@ public class ActionInboundAdapterPort {
 	 * @throws CheckedException
 	 */
 	@GetMapping({ "/search" })
-	public ResponseEntity<PageResult<?>> search(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter)
-			throws CheckedException {
+	public ResponseEntity<PageResult<?>> search(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws CheckedException {
 
 		try {
 

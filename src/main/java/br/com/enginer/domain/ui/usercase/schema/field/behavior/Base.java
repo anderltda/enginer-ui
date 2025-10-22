@@ -6,6 +6,7 @@ import br.com.enginer.domain.ui.usercase.enums.TypeDateFormat;
 import br.com.enginer.domain.ui.usercase.enums.TypeFileUpload;
 import br.com.enginer.domain.ui.usercase.enums.TypeLayoutTarget;
 import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
+import br.com.enginer.domain.ui.usercase.schema.field.behavior.upload.UploadFile;
 import br.com.enginer.domain.ui.usercase.schema.field.behavior.validation.Validation;
 
 /**

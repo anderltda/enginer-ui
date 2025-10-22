@@ -78,7 +78,7 @@ import br.com.enginer.domain.ui.usercase.schema.field.behavior.Base;
 import br.com.enginer.domain.ui.usercase.schema.field.behavior.Default;
 import br.com.enginer.domain.ui.usercase.schema.field.behavior.Pattern;
 import br.com.enginer.domain.ui.usercase.schema.field.behavior.Position;
-import br.com.enginer.domain.ui.usercase.schema.field.behavior.UploadFile;
+import br.com.enginer.domain.ui.usercase.schema.field.behavior.upload.UploadFile;
 import br.com.enginer.domain.ui.usercase.schema.field.behavior.validation.Async;
 import br.com.enginer.domain.ui.usercase.schema.field.behavior.validation.Sync;
 import br.com.enginer.domain.ui.usercase.schema.field.behavior.validation.Validation;
@@ -901,7 +901,7 @@ public final class FormTemplate {
 		uploadFile.setUrl(
 				"https://cdn.awsli.com.br/2500x2500/1063/1063988/produto/240150477/bp3121s---002-2370yhtkq3.jpg");
 
-		files.add(uploadFile);
+		//files.add(uploadFile);
 
 		uploadFile = new UploadFile();
 		uploadFile.setUid("110e8400-e29b-41d4-a716-44ar5wq00");
@@ -910,7 +910,7 @@ public final class FormTemplate {
 		uploadFile.setUrl(
 				"https://beefpoint.com.br/wp-content/uploads/2022/02/Foto-1440px-x-960px-2022-02-03T104828.205-1200x675.png");
 
-		files.add(uploadFile);
+		//files.add(uploadFile);
 
 		File file = default_.getFile(files);
 		addBehaviorAnnotation(file, f, annotations);

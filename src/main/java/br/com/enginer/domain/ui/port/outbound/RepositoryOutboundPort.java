@@ -24,7 +24,7 @@ public interface RepositoryOutboundPort extends OutboundPort {
 	
 	public Domain<?> findBySingle(Domain<?> domain, Map<String, Object> filter, TypeRepository typeRepository, String queryName) throws UncheckedException;
 	
-	public List<Domain<?>> findAll(Domain<?> domain, Map<String, Object> filter, String... method) throws UncheckedException;
+	public <T extends Domain<?>> List<T> findAll(Domain<?> domain, Map<String, Object> filter, String... method) throws UncheckedException;
 	
 	public List<Domain<?>> findAll(Domain<?> domain, Map<String, Object> filter, TypeRepository typeRepository, String queryName) throws UncheckedException;
 	
