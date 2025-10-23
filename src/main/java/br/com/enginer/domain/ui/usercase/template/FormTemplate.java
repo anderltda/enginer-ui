@@ -131,7 +131,7 @@ public final class FormTemplate {
 	private static Boolean modal = Boolean.FALSE;
 	private static Boolean disabled = Boolean.FALSE;
 	private static Map<TypeTemplate, Object> mapTypeTemplates;
-	private static TemplateUserCase userCase;
+	private static TemplateUserCase<?> userCase;
 	private static String mainDomain;
 
 	private FormTemplate() {}
@@ -172,7 +172,7 @@ public final class FormTemplate {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Form create(Domain<?> domain, TemplateUserCase templateUserCase, Map<TypeTemplate, Object> maps) throws Exception {
+	public static Form create(Domain<?> domain, TemplateUserCase<?> templateUserCase, Map<TypeTemplate, Object> maps) throws Exception {
 
 		List<Field> fields = new ArrayList<>();
 		Field field = null;
@@ -182,7 +182,7 @@ public final class FormTemplate {
 			
 			mapTypeTemplates = maps;
 			userCase = templateUserCase;
-			typeTemplate = mapTypeTemplates.entrySet().iterator().next().getKey();
+			typeTemplate = (TypeTemplate) mapTypeTemplates.get(TypeTemplate.TYPE_TEMPLATE);
 			modal = (Boolean) mapTypeTemplates.get(TypeTemplate.MODAL);
 			disabled = (Boolean) mapTypeTemplates.get(TypeTemplate.DISABLED);
 			mainDomain = (String) mapTypeTemplates.get(TypeTemplate.MAIN_DOMAIN);
@@ -792,7 +792,7 @@ public final class FormTemplate {
 
 		Domain<?> value = null;
 
-		TemplateUserCase templateUserCase = null;
+		TemplateUserCase<?> templateUserCase = null;
 
 		if (domain instanceof DomainId) {
 			/** Essa condicao is true quando o domain é um id de uma entidade */
@@ -802,10 +802,8 @@ public final class FormTemplate {
 				Domain<?> compositeKey = ReflectionUtils.setCompositeKeyByDomainId(typeClass, ((DomainId) domain));
 
 				if (compositeKey != null) {
-					templateUserCase = (TemplateUserCase) ReflectionUtils.executeInjectedDependencyUserCase(
-							compositeKey.getClass(), userCase.getRepositoryOutboundPort());
-					value = (Domain<?>) ReflectionUtils.executeMethod(templateUserCase,
-							TemplateUserCase.buscarFormPorId, compositeKey);
+					templateUserCase = (TemplateUserCase<?>) ReflectionUtils.executeInjectedDependencyUserCaseCached(compositeKey.getClass(), userCase.getRepositoryOutboundPort());
+					value = (Domain<?>) ReflectionUtils.executeMethod(templateUserCase, TemplateUserCase.buscarFormPorId, compositeKey);
 				}
 
 			} else {
@@ -816,8 +814,7 @@ public final class FormTemplate {
 						StringsUtils.getMethod("id" + typeClass.getSimpleName()));
 
 				if (keyValue != null) {
-					value = (Domain<?>) ReflectionUtils.executeMethod(userCase.getRepositoryOutboundPort(),
-							RepositoryOutboundPort.findById, key, keyValue);
+					value = (Domain<?>) ReflectionUtils.executeMethod(userCase.getRepositoryOutboundPort(), RepositoryOutboundPort.FIND_BY_ID, key, keyValue);
 				}
 			}
 
@@ -832,8 +829,7 @@ public final class FormTemplate {
 						StringsUtils.getMethod(typeClass.getSimpleName()));
 
 				if (compositeKey != null) {
-					templateUserCase = (TemplateUserCase) ReflectionUtils.executeInjectedDependencyUserCase(
-							compositeKey.getClass(), userCase.getRepositoryOutboundPort());
+					templateUserCase = (TemplateUserCase<?>) ReflectionUtils.executeInjectedDependencyUserCaseCached(compositeKey.getClass(), userCase.getRepositoryOutboundPort());
 					value = (Domain<?>) ReflectionUtils.executeMethod(templateUserCase,
 							TemplateUserCase.buscarFormPorId, compositeKey);
 				}
@@ -844,8 +840,7 @@ public final class FormTemplate {
 						StringsUtils.getMethod(typeClass.getSimpleName()));
 
 				if (key != null) {
-					templateUserCase = (TemplateUserCase) ReflectionUtils
-							.executeInjectedDependencyUserCase(key.getClass(), userCase.getRepositoryOutboundPort());
+					templateUserCase = (TemplateUserCase<?>) ReflectionUtils.executeInjectedDependencyUserCaseCached(key.getClass(), userCase.getRepositoryOutboundPort());
 					value = (Domain<?>) ReflectionUtils.executeMethod(templateUserCase,
 							TemplateUserCase.buscarFormPorId, key);
 				}
@@ -1170,8 +1165,7 @@ public final class FormTemplate {
 
 						Object object = ReflectionUtils.get(method.getName(), annotation);
 
-						ReflectionUtils.set(base, StringsUtils.setMethod(method.getName()),
-								new Class<?>[] { object.getClass() }, new Object[] { object });
+						ReflectionUtils.set(base, StringsUtils.setMethod(method.getName()), new Class<?>[] { object.getClass() }, new Object[] { object });
 					}
 
 				}

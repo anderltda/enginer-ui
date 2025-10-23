@@ -15,7 +15,7 @@ public @interface UIDate {
 	String icon() default "calendar";
 	String placeholder() default "";
 	boolean showtime() default false;
-	boolean disabled() default false;
+	boolean disable() default false;
 	TypeDateFormat format() default TypeDateFormat.DATE_FORMAT;
 	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.FORM, TypeTemplate.ROW, TypeTemplate.TAB, TypeTemplate.MODAL };
 }

@@ -16,6 +16,6 @@ public @interface UIEmail {
 	String placeholder() default "";
 	int min() default 5;
 	int max() default 50;
-	boolean disabled() default false;
+	boolean disable() default false;
 	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.MODAL };
 }

@@ -31,10 +31,10 @@ import br.com.enginer.domain.ui.usercase.ActionInboundUserCase;
 import br.com.enginer.domain.ui.usercase.SubscriberInboundUserCase;
 import br.com.enginer.domain.ui.usercase.UIInboundUserCase;
 import br.com.enginer.domain.ui.usercase.schema.field.type.Id;
+import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalDateDeserializer;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalDateTimeDeserializer;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalTimeDeserializer;
-import br.com.enginer.infrastructure.tracking.TrackingProvider;
 
 @Configuration
 public class BeanConfiguration {
@@ -87,14 +87,6 @@ public class BeanConfiguration {
 	}
 
 	/**
-	 * @return
-	 */
-	@Bean
-	TrackingProvider trackingProvider() {
-		return TrackingProvider.getInstance();
-	}
-
-	/**
 	 * @param builder
 	 * @return
 	 */
@@ -112,8 +104,8 @@ public class BeanConfiguration {
 	 * @return
 	 */
 	@Bean
-	UIInboundPort uIInboundPort(LoggerOutboundPort logger, RepositoryOutboundPort repositoryOutboundPort) {
-		return new UIInboundUserCase(logger, repositoryOutboundPort);
+	UIInboundPort<Domain<?>> uIInboundPort(LoggerOutboundPort logger, RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, PublisherOutboundPort<Domain<?>> publisherOutboundPort) {
+		return new UIInboundUserCase<Domain<?>>(logger, repositoryOutboundPort, publisherOutboundPort);
 	}
 	
 	/**
@@ -123,8 +115,8 @@ public class BeanConfiguration {
 	 * @return
 	 */
 	@Bean
-	ActionInboundPort actionInboundPort(LoggerOutboundPort logger, RepositoryOutboundPort repositoryOutboundPort, PublisherOutboundPort publisherOutboundPort) {
-		return new ActionInboundUserCase(logger, repositoryOutboundPort, publisherOutboundPort);
+	ActionInboundPort<Domain<?>> actionInboundPort(LoggerOutboundPort logger, RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, PublisherOutboundPort<Domain<?>> publisherOutboundPort) {
+		return new ActionInboundUserCase<Domain<?>>(logger, repositoryOutboundPort, publisherOutboundPort);
 	}
 	
 	/**
@@ -134,7 +126,7 @@ public class BeanConfiguration {
 	 * @return
 	 */
 	@Bean
-	SubscriberInboundPort subscriberInboundPort(LoggerOutboundPort logger, RepositoryOutboundPort repositoryOutboundPort, PublisherOutboundPort publisherOutboundPort) {
-		return new SubscriberInboundUserCase(logger, repositoryOutboundPort, publisherOutboundPort);
+	SubscriberInboundPort<Domain<?>> subscriberInboundPort(LoggerOutboundPort logger, RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, PublisherOutboundPort<Domain<?>> publisherOutboundPort) {
+		return new SubscriberInboundUserCase<Domain<?>>(logger, repositoryOutboundPort, publisherOutboundPort);
 	}
 }

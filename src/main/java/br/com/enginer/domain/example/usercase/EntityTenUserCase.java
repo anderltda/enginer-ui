@@ -11,24 +11,25 @@ import br.com.enginer.domain.ui.dto.PageResult;
 import br.com.enginer.domain.ui.usercase.annotation.AutoDependencyInjector;
 import br.com.enginer.domain.ui.usercase.exception.CheckedException;
 import br.com.enginer.domain.ui.usercase.exception.UncheckedException;
-import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
 import br.com.enginer.domain.upload.dto.entity.UploadFile;
 import br.com.enginer.domain.upload.usercase.UploadFileUserCase;
 
-public class EntityTenUserCase extends AbstractUserCase {
+public class EntityTenUserCase extends AbstractUserCase<EntityTen> {
 	
 	@AutoDependencyInjector
 	private UploadFileUserCase uploadFileUserCase;
 	
-	@SuppressWarnings("unchecked")
+	@AutoDependencyInjector
+	private EntityStatusUserCase entityStatusUserCase;
+	
 	@Override
-	public PageResult<?> buscarTodosPaginado(Domain<?> domain, Map<String, Object> filter) throws UncheckedException {
+	public PageResult<EntityTen> buscarTodosPaginado(EntityTen domain, Map<String, Object> filter) throws UncheckedException {
 		
 		PageResult<EntityTen> result = (PageResult<EntityTen>) super.buscarTodosPaginado(domain, filter);
 		
 		if(result != null) {
 			result.getContent().forEach(entityTen -> {
-				entityTen.setEntityStatus((EntityStatus) buscarPorId(entityTen.getEntityStatus()));
+				entityTen.setEntityStatus((EntityStatus) entityStatusUserCase.buscarPorId(entityTen.getEntityStatus()));
 			});
 		}
 		
@@ -36,7 +37,7 @@ public class EntityTenUserCase extends AbstractUserCase {
 	}
 	
 	@Override
-	public Domain<?> salvar(Domain<?> domain) throws UncheckedException {
+	public EntityTen salvar(EntityTen domain) throws UncheckedException {
 
 		EntityTen entityTen = (EntityTen) domain;
 		
@@ -56,7 +57,7 @@ public class EntityTenUserCase extends AbstractUserCase {
 	}
 	
 	@Override
-	public Domain<?> buscarPorId(Domain<?> domain) throws CheckedException {
+	public EntityTen buscarPorId(EntityTen domain) throws CheckedException {
 		
 		EntityTen entityTen = (EntityTen) super.buscarPorId(domain);
 		

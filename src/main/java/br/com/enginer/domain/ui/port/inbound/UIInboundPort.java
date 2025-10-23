@@ -8,7 +8,7 @@ import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
 /**
  * 
  */
-public interface UIInboundPort extends InboundPort {
+public interface UIInboundPort<T extends Domain<?>> extends InboundPort {
 
 	/**
 	 * @param domain

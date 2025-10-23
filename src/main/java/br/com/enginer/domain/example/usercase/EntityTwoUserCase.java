@@ -9,34 +9,45 @@ import br.com.enginer.domain.example.dto.entity.EntityStatus;
 import br.com.enginer.domain.example.dto.entity.EntityTree;
 import br.com.enginer.domain.example.dto.entity.EntityTwo;
 import br.com.enginer.domain.ui.dto.PageResult;
+import br.com.enginer.domain.ui.usercase.annotation.AutoDependencyInjector;
 import br.com.enginer.domain.ui.usercase.exception.UncheckedException;
-import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
 
-public class EntityTwoUserCase extends AbstractUserCase {
+public class EntityTwoUserCase extends AbstractUserCase<EntityTwo> {
+	
+	@AutoDependencyInjector
+	private EntityStatusUserCase entityStatusUserCase;
+	
+	@AutoDependencyInjector
+	private EntityTreeUserCase entityTreeUserCase;
+	
+	@AutoDependencyInjector
+	private EntityFourUserCase entityFourUserCase;
+	
+	@AutoDependencyInjector
+	private EntityFiveUserCase entityFiveUserCase;
 	
 	@Override
-	@SuppressWarnings("unchecked")
-	public PageResult<EntityTwo> buscarTodosPaginado(Domain<?> domain, Map<String, Object> filter) throws UncheckedException {
+	public PageResult<EntityTwo> buscarTodosPaginado(EntityTwo domain, Map<String, Object> filter) throws UncheckedException {
 		
 		PageResult<EntityTwo> result = (PageResult<EntityTwo>) super.buscarTodosPaginado(domain, filter);
 		
 		if(result != null) {
 			result.getContent().forEach(entityTwo -> {
 				
-				EntityTree entityTree = (EntityTree) buscarPorId(entityTwo.getEntityTree());
-				EntityFour entityFour = (EntityFour) buscarPorId(entityTree.getEntityFour());
-				EntityFive entityFive = (EntityFive) buscarPorId(entityFour.getEntityFive());
+				EntityTree entityTree = (EntityTree) entityTreeUserCase.buscarPorId(entityTwo.getEntityTree());
+				EntityFour entityFour = (EntityFour) entityFourUserCase.buscarPorId(entityTree.getEntityFour());
+				EntityFive entityFive = (EntityFive) entityFiveUserCase.buscarPorId(entityFour.getEntityFive());
 				
-				EntityStatus entityStatus = (EntityStatus) buscarPorId(entityTwo.getEntityStatus());
+				EntityStatus entityStatus = (EntityStatus) entityStatusUserCase.buscarPorId(entityTwo.getEntityStatus());
 				entityTwo.setEntityStatus(entityStatus);
 				
-				entityStatus = (EntityStatus) buscarPorId(entityTree.getEntityStatus());
+				entityStatus = (EntityStatus) entityStatusUserCase.buscarPorId(entityTree.getEntityStatus());
 				entityTree.setEntityStatus(entityStatus);
 				
-				entityStatus = (EntityStatus) buscarPorId(entityFour.getEntityStatus());
+				entityStatus = (EntityStatus) entityStatusUserCase.buscarPorId(entityFour.getEntityStatus());
 				entityFour.setEntityStatus(entityStatus);
 				
-				entityStatus = (EntityStatus) buscarPorId(entityFive.getEntityStatus());
+				entityStatus = (EntityStatus) entityStatusUserCase.buscarPorId(entityFive.getEntityStatus());
 				entityFive.setEntityStatus(entityStatus);
 				
 				entityTwo.setEntityTree(entityTree);

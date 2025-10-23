@@ -13,6 +13,6 @@ public @interface UIDecimal {
 	String label();
 	String icon() default "";
 	String placeholder() default "";
-	boolean disabled() default false;
+	boolean disable() default false;
 	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.ROW, TypeTemplate.FORM };
 }

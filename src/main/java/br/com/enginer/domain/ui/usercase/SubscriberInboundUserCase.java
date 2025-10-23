@@ -12,18 +12,18 @@ import br.com.enginer.domain.ui.usercase.utils.ReflectionUtils;
 /**
  * 
  */
-public class SubscriberInboundUserCase implements SubscriberInboundPort {
+public class SubscriberInboundUserCase<T extends Domain<?>> implements SubscriberInboundPort<T> {
 
 	private final LoggerOutboundPort logger;
-	private final RepositoryOutboundPort repositoryOutboundPort;
-	private final PublisherOutboundPort publisherOutboundPort;
+    private final RepositoryOutboundPort<Domain<?>> repositoryOutboundPort;
+    private final PublisherOutboundPort<Domain<?>> publisherOutboundPort;
 
 	/**
 	 * @param logger
 	 * @param repositoryOutboundPort
 	 * @param publisherOutboundPort
 	 */
-	public SubscriberInboundUserCase(LoggerOutboundPort logger, RepositoryOutboundPort repositoryOutboundPort, PublisherOutboundPort publisherOutboundPort) {
+	public SubscriberInboundUserCase(LoggerOutboundPort logger, RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, PublisherOutboundPort<Domain<?>> publisherOutboundPort) {
 		this.logger = logger;
 		this.repositoryOutboundPort = repositoryOutboundPort;
 		this.publisherOutboundPort = publisherOutboundPort;
@@ -36,7 +36,7 @@ public class SubscriberInboundUserCase implements SubscriberInboundPort {
 	 */
 	private Object injectedDependency(Domain<?> domain) throws Exception {
 		logger.info(SubscriberInboundUserCase.class, "Injected Dependency");
-		return ReflectionUtils.executeInjectedDependencyUserCase(domain.getClass(), repositoryOutboundPort, publisherOutboundPort);
+		return ReflectionUtils.executeInjectedDependencyUserCaseCached(domain.getClass(), repositoryOutboundPort, publisherOutboundPort);
 	}
 
 	/**

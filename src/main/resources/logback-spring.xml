@@ -1,14 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-		<layout class="ch.qos.logback.classic.PatternLayout">
-			<Pattern>
-				%d{dd/MM/yyyy HH:mm:ss.SSS} [%blue(%t)] %highlight(%-5level) %c{1}:%L [innerId=%X{innerId}, cid=%X{cid}] - %m%n
-			</Pattern>
-		</layout>
-	</appender>
+<configuration scan="true">
 
-	<root level="INFO">
-		<appender-ref ref="CONSOLE" />
-	</root>
+    <!-- ========================= -->
+    <!-- VARIÁVEIS DE CONFIGURAÇÃO -->
+    <!-- ========================= -->
+    <property name="LOG_HOME" value="./logs" />
+    <property name="APP_NAME" value="enginer" />
+    <property name="PATTERN_CONSOLE" value="%highlight(%d{HH:mm:ss.SSS}) [%thread] %cyan(%-5level) [%X{traceId}] [%magenta(%X{user})] %green(%logger{36}) - %msg%n" />
+    <property name="PATTERN_FILE" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId}] [%X{user}] %logger{36} - %msg%n" />
+
+    <!-- ========================= -->
+    <!-- APPENDER: CONSOLE COLORIDO -->
+    <!-- ========================= -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${PATTERN_CONSOLE}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- ========================= -->
+    <!-- APPENDER: ARQUIVO GERAL -->
+    <!-- ========================= -->
+    <appender name="FILE_APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${APP_NAME}-app.log</file>
+        <encoder>
+            <pattern>${PATTERN_FILE}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+
+        <!-- Rotação diária + compressão -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/archive/${APP_NAME}-app-%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>500MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- ========================= -->
+    <!-- APPENDER: ARQUIVO DE ERROS -->
+    <!-- ========================= -->
+    <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${APP_NAME}-error.log</file>
+        <encoder>
+            <pattern>${PATTERN_FILE}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+
+        <!-- Apenas logs ERROR -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+
+        <!-- Rotação diária + compressão -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/archive/${APP_NAME}-error-%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>500MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- ========================= -->
+    <!-- LOGGER ESPECÍFICOS -->
+    <!-- ========================= -->
+
+    <!-- Suprime logs de bibliotecas externas -->
+    <logger name="org.springframework" level="WARN" />
+    <logger name="org.hibernate" level="WARN" />
+    <logger name="com.zaxxer.hikari" level="INFO" />
+
+    <!-- Logger da sua aplicação -->
+    <logger name="br.com.enginer" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE_APP" />
+        <appender-ref ref="FILE_ERROR" />
+    </logger>
+
+    <!-- ========================= -->
+    <!-- ROOT LOGGER (fallback) -->
+    <!-- ========================= -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+   <!-- <appender-ref ref="FILE_APP" /> -->
+        <appender-ref ref="FILE_ERROR" />
+    </root>
+
 </configuration>

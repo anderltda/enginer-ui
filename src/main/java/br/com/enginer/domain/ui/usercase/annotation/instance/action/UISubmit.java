@@ -17,7 +17,7 @@ public @interface UISubmit {
 	String icon() default "";
 	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.MODAL };
 	TypeButtonState state() default TypeButtonState.BTN_STATE_PRIMARY; 
-	boolean disabled() default false;
+	boolean disable() default false;
 	boolean highlight() default false;
 	boolean confirm() default false;
 	boolean needsValidation() default true;

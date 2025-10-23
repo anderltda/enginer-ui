@@ -7,12 +7,12 @@ import br.com.enginer.domain.example.dto.entity.EntitySix;
 import br.com.enginer.domain.ui.usercase.exception.UncheckedException;
 import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
 
-public class EntitySixUserCase extends AbstractUserCase {
+public class EntitySixUserCase extends AbstractUserCase<EntitySix> {
 	
 	@Override
-	public List<Domain<?>> salvarLista(List<Domain<?>> entities) throws UncheckedException {
+	public List<EntitySix> salvarLista(List<EntitySix> entities) throws UncheckedException {
 
-		List<Domain<?>> list = super.salvarLista(entities);
+		List<EntitySix> list = super.salvarLista(entities);
 		
 		for (Domain<?> domain : list) {
 			EntitySix entitySix = (EntitySix) domain;
@@ -23,7 +23,7 @@ public class EntitySixUserCase extends AbstractUserCase {
 	}
 	
 	@Override
-	public void excluirLista(List<Domain<?>> entities) throws UncheckedException {
+	public void excluirLista(List<EntitySix> entities) throws UncheckedException {
 		//throw new UncheckedException("Deu um erro no bagulho!!!!");
 		super.excluirLista(entities);
 	}

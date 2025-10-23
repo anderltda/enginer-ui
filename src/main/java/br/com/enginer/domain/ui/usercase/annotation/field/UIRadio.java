@@ -13,6 +13,6 @@ public @interface UIRadio {
 	String label();
 	Class<?> provider();
 	String method();
-	boolean disabled() default false;
+	boolean disable() default false;
 	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.MODAL } ;
 }

@@ -8,8 +8,17 @@ import br.com.enginer.domain.ui.usercase.exception.UncheckedException;
 import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
 import br.com.enginer.domain.upload.dto.entity.UploadFile;
 
+/**
+ * 
+ */
 public class UploadFileUserCase extends AbstractUserCase {
 	
+	/**
+	 * @param domain
+	 * @param id
+	 * @return
+	 * @throws UncheckedException
+	 */
 	public Domain<?> salvarEntityId(Domain<?> domain, Object id) throws UncheckedException {
 		UploadFile file = (UploadFile) domain;
 		UploadFile existingFile = (UploadFile) buscarPorId(file);
@@ -17,6 +26,12 @@ public class UploadFileUserCase extends AbstractUserCase {
 		return super.salvar(existingFile);
 	}
 	
+	/**
+	 * @param entityId
+	 * @param domain
+	 * @return
+	 * @throws UncheckedException
+	 */
 	public List<UploadFile> buscarPorEntityIdAndDomain(Object entityId, String domain) throws UncheckedException {
 		
 		Map<String, Object> filter = Map.of("domain", domain, "domainId", entityId.toString());

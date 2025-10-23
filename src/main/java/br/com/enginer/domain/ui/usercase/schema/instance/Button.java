@@ -12,7 +12,7 @@ public class Button {
 	private String type;
 	private String label;
 	private String icon;
-	private Boolean disabled;
+	private Boolean disable;
 	private Boolean highlight;
 	private Boolean dropdown;
 	private Boolean confirm;
@@ -55,12 +55,12 @@ public class Button {
 		this.icon = icon;
 	}
 
-	public Boolean getDisabled() {
-		return disabled;
+	public Boolean getDisable() {
+		return disable;
 	}
-
-	public void setDisabled(Boolean disabled) {
-		this.disabled = disabled;
+	
+	public void setDisable(Boolean disable) {
+		this.disable = disable;
 	}
 
 	public Boolean getHighlight() {

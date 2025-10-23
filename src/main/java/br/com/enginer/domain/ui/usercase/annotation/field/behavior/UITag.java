@@ -13,6 +13,6 @@ public @interface UITag {
 	String label();
 	int order() default -1;
 	int group() default -1;
-	boolean disabled();
+	boolean disable();
 	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.FORM, TypeTemplate.MODAL };
 }

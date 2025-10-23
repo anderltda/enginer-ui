@@ -16,6 +16,6 @@ public @interface UIFile {
 	String action() default "http://localhost:8081/v1/enginer-ui/action/upload";
 	TypeFileUpload mode();
 	int limit() default 3;
-	boolean disabled() default false;
+	boolean disable() default false;
 	TypeTemplate[] template() default { TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.ROW, TypeTemplate.MODAL };
 }

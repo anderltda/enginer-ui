@@ -13,8 +13,6 @@ import br.com.enginer.domain.ui.port.outbound.LoggerOutboundPort;
 import br.com.enginer.domain.ui.usercase.annotation.instance.UIDomain;
 import br.com.enginer.domain.ui.usercase.schema.Form;
 import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
-import br.com.enginer.domain.ui.usercase.utils.UUIDGenerator;
-import br.com.enginer.infrastructure.tracking.TrackingProvider;
 
 /**
  * 
@@ -24,9 +22,8 @@ import br.com.enginer.infrastructure.tracking.TrackingProvider;
 public class UIInboundAdapterPort {
 
 	private final ObjectMapper objectMapper;
-	private final UIInboundPort uIInboundPort;
+	private final UIInboundPort<Domain<?>> uIInboundPort;
 	private final LoggerOutboundPort logger;
-	private final TrackingProvider trackingProvider;
 
 	/**
 	 * @param objectMapper
@@ -34,11 +31,10 @@ public class UIInboundAdapterPort {
 	 * @param logger
 	 * @param trackingProvider
 	 */
-	public UIInboundAdapterPort(ObjectMapper objectMapper, UIInboundPort uIInboundPort, LoggerOutboundPort logger, TrackingProvider trackingProvider) {
+	public UIInboundAdapterPort(ObjectMapper objectMapper, UIInboundPort<Domain<?>> uIInboundPort, LoggerOutboundPort logger) {
 		this.objectMapper = objectMapper;
 		this.uIInboundPort = uIInboundPort;
 		this.logger = logger;
-		this.trackingProvider = trackingProvider;
 	}
 
 	/**
@@ -48,9 +44,8 @@ public class UIInboundAdapterPort {
 	@GetMapping({ "/tab", "/tab/{id}" })
 	public ResponseEntity<Form> tab(@UIDomain Domain<?> domain) throws Exception {
 		try {
-			trackingProvider.setInnerId(UUIDGenerator.generate());
 			Form form = uIInboundPort.tab(domain);
-			logger.info(UIInboundAdapterPort.class, "Payload gerado: \r " + objectMapper.writeValueAsString(form));
+			//logger.info(UIInboundAdapterPort.class, "Payload gerado: \r " + objectMapper.writeValueAsString(form));
 			return ResponseEntity.ok(form);
 		} catch (Exception ex) {
 			logger.error(UIInboundAdapterPort.class, "Erro ao criar entidade", ex);
@@ -66,9 +61,8 @@ public class UIInboundAdapterPort {
 	@GetMapping({ "/row", "/row/{id}" })
 	public ResponseEntity<Form> row(@UIDomain Domain<?> domain) throws Exception {
 		try {
-			trackingProvider.setInnerId(UUIDGenerator.generate());
 			Form form = uIInboundPort.row(domain);
-			logger.info(UIInboundAdapterPort.class, "Payload gerado: \r " + objectMapper.writeValueAsString(form));
+			//logger.info(UIInboundAdapterPort.class, "Payload gerado: \r " + objectMapper.writeValueAsString(form));
 			return ResponseEntity.ok(form);
 		} catch (Exception ex) {
 			logger.error(UIInboundAdapterPort.class, "Erro ao criar entidade", ex);
@@ -84,9 +78,8 @@ public class UIInboundAdapterPort {
 	@GetMapping({ "/form", "/form/{id}" })
 	public ResponseEntity<Form> form(@UIDomain Domain<?> domain) throws Exception {
 		try {
-			trackingProvider.setInnerId(UUIDGenerator.generate());
 			Form form = uIInboundPort.form(domain);
-			logger.info(UIInboundAdapterPort.class, "Payload gerado: \r " + objectMapper.writeValueAsString(form));
+			//logger.info(UIInboundAdapterPort.class, "Payload gerado: \r " + objectMapper.writeValueAsString(form));
 			return ResponseEntity.ok(form);
 		} catch (Exception ex) {
 			logger.error(UIInboundAdapterPort.class, "Erro ao criar entidade", ex);
@@ -101,9 +94,8 @@ public class UIInboundAdapterPort {
 	@GetMapping({ "/filter", "/filter/{id}" })
 	public ResponseEntity<Form> filter(@UIDomain Domain<?> domain) throws Exception {
 		try {
-			trackingProvider.setInnerId(UUIDGenerator.generate());
 			Form form = uIInboundPort.filter(domain);
-			logger.info(UIInboundAdapterPort.class, "Payload gerado: \r " + objectMapper.writeValueAsString(form));
+			//logger.info(UIInboundAdapterPort.class, "Payload gerado: \r " + objectMapper.writeValueAsString(form));
 			return ResponseEntity.ok(form);
 		} catch (Exception ex) {
 			logger.error(UIInboundAdapterPort.class, "Erro ao criar entidade", ex);

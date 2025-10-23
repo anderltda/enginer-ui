@@ -16,17 +16,270 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import br.com.enginer.domain.OutboundPort;
+import br.com.enginer.domain.ui.usercase.exception.CheckedException;
 import br.com.enginer.domain.ui.usercase.schema.field.type.Id;
 import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
 import br.com.enginer.domain.ui.usercase.schema.instance.DomainId;
 
+/**
+ * Classe utilitária de reflexão central do projeto.
+ * Contém suporte completo a introspecção, injeção dinâmica e manipulação de objetos Domain/UserCase.
+ */
 public class ReflectionUtils {
+
+    /**
+     * Cache global de instâncias de UserCases, por classe de domínio.
+     * Evita recriação e reinjeção desnecessária, melhorando performance e consistência.
+     */
+    private static final Map<Class<?>, Object> USERCASE_CACHE = new ConcurrentHashMap<>();
+
+    /**
+     * Controla se os logs detalhados de injeção/reflexão estão habilitados.
+     * Pode ser ligado/desligado manualmente ou ativado automaticamente conforme o ambiente.
+     */
+    private static boolean INJECTION_LOG_ENABLED = detectDefaultLogMode();
+
+    /**
+     * Detecta o modo padrão de log com base no ambiente de execução.
+     * Ativa logs em "dev" ou "test", desativa em "prod".
+     *
+     * Regras:
+     * - Se existir variável de sistema ou ambiente `spring.profiles.active`, `ENV_MODE` ou `APP_ENV`, usa ela.
+     * - Se o valor contiver "dev" ou "test", o log será ativado automaticamente.
+     * - Caso contrário, o log fica desativado por padrão.
+     */
+    private static boolean detectDefaultLogMode() {
+        try {
+            String env = System.getProperty("spring.profiles.active");
+            if (env == null || env.isBlank()) {
+                env = System.getenv("ENV_MODE");
+            }
+            if (env == null || env.isBlank()) {
+                env = System.getenv("APP_ENV");
+            }
+
+            if (env != null) {
+                env = env.toLowerCase(Locale.ROOT);
+                if (env.contains("dev") || env.contains("test") || env.contains("local")) {
+                    System.out.println("[ReflectionUtils] Ambiente detectado: " + env + " → Log de injeção ativado");
+                    return true;
+                }
+                System.out.println("[ReflectionUtils] Ambiente detectado: " + env + " → Log de injeção desativado");
+            } else {
+                System.out.println("[ReflectionUtils]️ Nenhuma variável de ambiente detectada → Log desativado por padrão");
+            }
+        } catch (Exception e) {
+            System.out.println("[ReflectionUtils] Falha ao detectar ambiente. Log desativado por segurança.");
+        }
+        return false;
+    }
+
+    /**
+     * Habilita ou desabilita logs detalhados de injeção/reflexão manualmente.
+     * 
+     * @param enabled true para ativar, false para desativar
+     */
+    public static void setInjectionLogEnabled(boolean enabled) {
+        INJECTION_LOG_ENABLED = enabled;
+        System.out.println("[ReflectionUtils] Log de injeção manualmente " + (enabled ? "ativado" : "desativado"));
+    }
+
+    /**
+     * Retorna se o log de injeção está ativo.
+     */
+    public static boolean isInjectionLogEnabled() {
+        return INJECTION_LOG_ENABLED;
+    }
+
+    /**
+     * Limpa o cache de UserCases — útil em ambiente de testes ou recarga de contexto.
+     */
+    public static void clearUserCaseCache() {
+        USERCASE_CACHE.clear();
+        if (INJECTION_LOG_ENABLED) {
+            System.out.println("[ReflectionUtils] Cache de UserCases limpo manualmente.");
+        }
+    }
+
+    /**
+     * Cria ou recupera do cache uma instância de {@code UserCase} associada a um domínio,
+     * injetando dinamicamente todas as dependências fornecidas via reflexão.
+     * <p>
+     * Se o domínio for uma implementação de {@code DomainId}, identifica automaticamente
+     * o domínio pai (ex: {@code EntityNineId} → {@code EntityNine}) e carrega o
+     * {@code UserCase} correspondente ao domínio pai.
+     * </p>
+     *
+     * @param domainClass classe do domínio cujo {@code UserCase} será instanciado/injetado
+     * @param outboundPorts lista variável de dependências (ex: RepositoryOutboundPort, PublisherOutboundPort)
+     * @return instância do {@code UserCase} com dependências injetadas
+     * @throws Exception caso ocorra falha de reflexão, injeção ou criação de instância
+     */
+    public static Object executeInjectedDependencyUserCaseCached(Class<?> domainClass, OutboundPort... outboundPorts) throws Exception {
+
+        long start = System.currentTimeMillis();
+
+        // 0) Se for um DomainId, busca o domínio pai (ex: EntityNineId → EntityNine)
+        if (DomainId.class.isAssignableFrom(domainClass)) {
+            String className = domainClass.getSimpleName();
+            if (className.endsWith("Id")) {
+                String parentName = className.substring(0, className.length() - 2); // remove "Id"
+                String packageName = domainClass.getPackageName();
+                // substitui ".dto.entity" → ".dto.entity" mesmo pacote
+                String parentQualifiedName = packageName + "." + parentName;
+                if (INJECTION_LOG_ENABLED) {
+                    System.out.println("[ReflectionUtils] DomainId detectado: " + className +
+                            " → procurando UserCase do domínio pai: " + parentName);
+                }
+                try {
+                    domainClass = Class.forName(parentQualifiedName);
+                } catch (ClassNotFoundException e) {
+                    throw new CheckedException("Domínio pai não encontrado para: " + className, e);
+                }
+            }
+        }
+
+        // 1) Recupera (ou cria) a instância do UserCase a partir do cache
+        Object userCaseInstance = USERCASE_CACHE.get(domainClass);
+        final boolean fromCache = (userCaseInstance != null);
+
+        if (!fromCache) {
+            String userCaseName = findUserCaseQualifiedName(domainClass, domainClass.getSimpleName());
+            userCaseInstance = createInstance(userCaseName);
+            USERCASE_CACHE.put(domainClass, userCaseInstance);
+
+            if (INJECTION_LOG_ENABLED) {
+                logInjection("NEW", domainClass, userCaseInstance.getClass(), System.currentTimeMillis() - start);
+            }
+        } else {
+            if (INJECTION_LOG_ENABLED) {
+                logInjection("CACHE", domainClass, userCaseInstance.getClass(), System.currentTimeMillis() - start);
+            }
+        }
+
+        // 2) Injeta todas as dependências (repo, publisher, etc.)
+        if (outboundPorts != null) {
+            for (OutboundPort port : outboundPorts) {
+                if (port == null) continue;
+
+                boolean injectedAtLeastOnce = false;
+
+                // Tenta pelas interfaces implementadas
+                Class<?>[] ifaces = port.getClass().getInterfaces();
+                for (Class<?> iface : ifaces) {
+                    String setter = StringsUtils.setMethod(iface.getSimpleName()); // ex.: setRepositoryOutboundPort
+                    try {
+                        Method m = userCaseInstance.getClass().getMethod(setter, iface);
+                        m.setAccessible(true);
+                        m.invoke(userCaseInstance, port);
+                        injectedAtLeastOnce = true;
+                        break;
+                    } catch (NoSuchMethodException e) {
+                        // ignora — pode não existir exatamente esse método
+                    } catch (Exception e) {
+                        if (INJECTION_LOG_ENABLED) {
+                            System.out.println("[ReflectionUtils] Falha ao injetar via interface "
+                                    + iface.getSimpleName() + " no método " + setter + ": " + e.getMessage());
+                        }
+                    }
+                }
+
+                // Fallback genérico
+                if (!injectedAtLeastOnce) {
+                    injectDependency(userCaseInstance, "setRepositoryOutboundPort", port);
+                    injectDependency(userCaseInstance, "setPublisherOutboundPort", port);
+                }
+            }
+        }
+
+        return userCaseInstance;
+    }    
+
+    /**
+     * Exibe o log de injeção/reflexão formatado.
+     */
+    private static void logInjection(String type, Class<?> domainClass, Class<?> userCaseClass, long durationMs) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n[ReflectionUtils] Injeção ").append(type.equals("CACHE") ? "reutilizada" : "nova");
+        sb.append("\n  → Domain: ").append(domainClass.getSimpleName());
+        sb.append("\n  → UserCase: ").append(userCaseClass.getSimpleName());
+        sb.append("\n  → Tempo: ").append(durationMs).append(" ms");
+        sb.append("\n  → Fonte: ").append(type.equals("CACHE") ? "CACHE LOCAL" : "REFLEXÃO NOVA");
+        sb.append("\n--------------------------------------------------");
+        System.out.println(sb.toString());
+    }
+
+    /**
+     * Descobre o nome totalmente qualificado do UserCase baseado no domínio.
+     * Exemplo: br.com.enginer.domain.example.dto.entity.EntityEight -> br.com.enginer.domain.example.usercase.EntityEightUserCase
+     */
+    private static String findUserCaseQualifiedName(Class<?> domainClass, String domainName) {
+        String packageName = domainClass.getPackageName();
+        if (packageName.contains(".dto.entity")) {
+            packageName = packageName.replace(".dto.entity", ".usercase");
+        }
+        return packageName + "." + domainName + "UserCase";
+    }
+
+    /**
+     * Cria uma instância de uma classe pelo nome completo.
+     */
+    private static Object createInstance(String className) throws Exception {
+        try {
+            Class<?> clazz = Class.forName(className);
+            Constructor<?> ctor = clazz.getDeclaredConstructor();
+            ctor.setAccessible(true);
+            return ctor.newInstance();
+        } catch (ClassNotFoundException ex) {
+            throw new CheckedException("Classe UserCase não encontrada: " + className, ex);
+        }
+    }
+
+    /**
+     * Injeta uma dependência no UserCase (método setXXX via reflexão).
+     * Faz fallback para tipo genérico em caso de assinatura diferente.
+     */
+    private static void injectDependency(Object target, String methodName, Object dependency) {
+        if (target == null || dependency == null) return;
+
+        Class<?> depClass = dependency.getClass();
+        List<Class<?>> candidateTypes = new ArrayList<>();
+
+        // Tenta interfaces e superclasses
+        candidateTypes.addAll(Arrays.asList(depClass.getInterfaces()));
+        if (depClass.getSuperclass() != null) {
+            candidateTypes.add(depClass.getSuperclass());
+        }
+
+        // Tenta encontrar o método compatível
+        boolean injected = false;
+        for (Class<?> type : candidateTypes) {
+            try {
+                Method method = target.getClass().getMethod(methodName, type);
+                method.setAccessible(true);
+                method.invoke(target, dependency);
+                injected = true;
+                break;
+            } catch (Exception ignored) {}
+        }
+
+        // Último fallback genérico
+        if (!injected) {
+            try {
+                Method method = target.getClass().getMethod(methodName, Object.class);
+                method.setAccessible(true);
+                method.invoke(target, dependency);
+            } catch (Exception ignored) {}
+        }
+    }
 
 	/**
 	 * @param object
@@ -502,8 +755,7 @@ public class ReflectionUtils {
 	 * @return - Retorna a classe instaciada do UserCase
 	 * @throws Exception
 	 */
-	public static Object executeInjectedDependencyUserCase(Class<?> clazz, OutboundPort... outboundPorts)
-			throws Exception {
+	public static Object executeInjectedDependencyUserCase_(Class<?> clazz, OutboundPort... outboundPorts) throws Exception {
 
 		Object newInstanceUserCase = createUserCase(clazz);
 

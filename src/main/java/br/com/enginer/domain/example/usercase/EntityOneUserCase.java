@@ -16,30 +16,57 @@ import br.com.enginer.domain.example.dto.entity.EntityStatus;
 import br.com.enginer.domain.example.dto.entity.EntityTree;
 import br.com.enginer.domain.example.dto.entity.EntityTwo;
 import br.com.enginer.domain.ui.dto.PageResult;
+import br.com.enginer.domain.ui.usercase.annotation.AutoDependencyInjector;
 import br.com.enginer.domain.ui.usercase.exception.UncheckedException;
-import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
 
-public class EntityOneUserCase extends AbstractUserCase {
+public class EntityOneUserCase extends AbstractUserCase<EntityOne> {
+	
+	@AutoDependencyInjector
+	private EntityStatusUserCase entityStatusUserCase;
+	
+	@AutoDependencyInjector
+	private EntityTwoUserCase entityTwoUserCase;
+	
+	@AutoDependencyInjector
+	private EntityTreeUserCase entityTreeUserCase;
+	
+	@AutoDependencyInjector
+	private EntityFourUserCase entityFourUserCase;
+	
+	@AutoDependencyInjector
+	private EntityFiveUserCase entityFiveUserCase;
+	
+	@AutoDependencyInjector
+	private EntityNineUserCase entityNineUserCase;
+	
+	@AutoDependencyInjector
+	private EntityEightUserCase entityEightUserCase;
+	
+	@AutoDependencyInjector
+	private EntitySevenUserCase entitySevenUserCase;
+	
+	@AutoDependencyInjector
+	private EntitySixUserCase entitySixUserCase;
+	
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public PageResult<EntityOne> buscarTodosPaginado(Domain<?> domain, Map<String, Object> filter) throws UncheckedException {
+	public PageResult<EntityOne> buscarTodosPaginado(EntityOne domain, Map<String, Object> filter) throws UncheckedException {
 		
 		PageResult<EntityOne> result = (PageResult<EntityOne>) super.buscarTodosPaginado(domain, filter);
 		
 		if(result != null) {
 			result.getContent().forEach(entityOne -> {
 				
-				EntityTwo   entityTwo = (EntityTwo)  buscarPorId(entityOne.getEntityTwo());
-				EntityTree entityTree = (EntityTree) buscarPorId(entityTwo.getEntityTree());
-				EntityFour entityFour = (EntityFour) buscarPorId(entityTree.getEntityFour());
-				EntityFive entityFive = (EntityFive) buscarPorId(entityFour.getEntityFive());
+				EntityTwo   entityTwo = (EntityTwo)  entityTwoUserCase.buscarPorId(entityOne.getEntityTwo());
+				EntityTree entityTree = (EntityTree) entityTreeUserCase.buscarPorId(entityTwo.getEntityTree());
+				EntityFour entityFour = (EntityFour) entityFourUserCase.buscarPorId(entityTree.getEntityFour());
+				EntityFive entityFive = (EntityFive) entityFiveUserCase.buscarPorId(entityFour.getEntityFive());
 				
-				EntityNine entityNine = (EntityNine) buscarPorId(entityOne.getEntityNine());
-				EntityEight entityEight = (EntityEight) buscarPorId(new EntityEight(entityNine.getId().getIdEntityEight()));
+				EntityNine entityNine = (EntityNine) entityNineUserCase.buscarPorId(entityOne.getEntityNine());
+				EntityEight entityEight = (EntityEight) entityEightUserCase.buscarPorId(new EntityEight(entityNine.getId().getIdEntityEight()));
 				
-				EntitySeven entitySeven = (EntitySeven) buscarPorId(new EntitySeven(new EntitySevenId(entityNine.getId().getIdEntitySeven(), entityNine.getId().getIdEntitySix())));
-				EntitySix entitySix = (EntitySix) buscarPorId(new EntitySix(entityNine.getId().getIdEntitySix()));
+				EntitySeven entitySeven = (EntitySeven) entitySevenUserCase.buscarPorId(new EntitySeven(new EntitySevenId(entityNine.getId().getIdEntitySeven(), entityNine.getId().getIdEntitySix())));
+				EntitySix entitySix = (EntitySix) entitySixUserCase.buscarPorId(new EntitySix(entityNine.getId().getIdEntitySix()));
 				entitySeven.getId().setEntitySix(entitySix);
 				
 				entityNine.getId().setEntityEight(entityEight);
@@ -47,19 +74,19 @@ public class EntityOneUserCase extends AbstractUserCase {
 				
 				entityOne.setEntityNine(entityNine);
 
-				EntityStatus entityStatus = (EntityStatus) buscarPorId(entityOne.getEntityStatus());
+				EntityStatus entityStatus = (EntityStatus) entityStatusUserCase.buscarPorId(entityOne.getEntityStatus());
 				entityOne.setEntityStatus(entityStatus);
 				
-				entityStatus = (EntityStatus) buscarPorId(entityTwo.getEntityStatus());
+				entityStatus = (EntityStatus) entityStatusUserCase.buscarPorId(entityTwo.getEntityStatus());
 				entityTwo.setEntityStatus(entityStatus);
 				
-				entityStatus = (EntityStatus) buscarPorId(entityTree.getEntityStatus());
+				entityStatus = (EntityStatus) entityStatusUserCase.buscarPorId(entityTree.getEntityStatus());
 				entityTree.setEntityStatus(entityStatus);
 				
-				entityStatus = (EntityStatus) buscarPorId(entityFour.getEntityStatus());
+				entityStatus = (EntityStatus) entityStatusUserCase.buscarPorId(entityFour.getEntityStatus());
 				entityFour.setEntityStatus(entityStatus);
 				
-				entityStatus = (EntityStatus) buscarPorId(entityFive.getEntityStatus());
+				entityStatus = (EntityStatus) entityStatusUserCase.buscarPorId(entityFive.getEntityStatus());
 				entityFive.setEntityStatus(entityStatus);
 				
 				entityOne.setEntityTwo(entityTwo);
@@ -72,7 +99,7 @@ public class EntityOneUserCase extends AbstractUserCase {
 		return result;
 	}
 	
-	public void rowSalvar(List<Domain<?>> entityOnes) {
-		salvarLista(entityOnes);
+	public void rowSalvar(List<EntityOne> entityOnes) {
+		super.salvarLista(entityOnes);
 	}
 }

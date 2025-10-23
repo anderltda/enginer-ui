@@ -16,6 +16,6 @@ public @interface UIText {
 	String placeholder() default "";
 	int min() default 1;
 	int max() default 20;
-	boolean disabled() default false;
+	boolean disable() default false;
 	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.MODAL } ;
 }

@@ -12,7 +12,7 @@ import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 public @interface UITextArea {
 	String label();
 	String placeholder() default "";
-	boolean disabled() default false;
 	boolean editor() default false;
+	boolean disable() default false;
 	TypeTemplate[] template() default { TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.ROW, TypeTemplate.MODAL } ;
 }

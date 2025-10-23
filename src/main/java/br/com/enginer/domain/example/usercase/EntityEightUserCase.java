@@ -9,42 +9,53 @@ import br.com.enginer.domain.example.dto.entity.EntityEight;
 import br.com.enginer.domain.example.dto.entity.EntitySeven;
 import br.com.enginer.domain.example.dto.entity.EntitySix;
 import br.com.enginer.domain.ui.dto.PageResult;
+import br.com.enginer.domain.ui.usercase.annotation.AutoDependencyInjector;
 import br.com.enginer.domain.ui.usercase.exception.UncheckedException;
-import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
 
-public class EntityEightUserCase extends AbstractUserCase {
+public class EntityEightUserCase extends AbstractUserCase<EntityEight> {
 	
+	@AutoDependencyInjector
+	private EntitySevenUserCase entitySevenUserCase;
 	
-	@Override
-	public List<Domain<?>> salvarLista(List<Domain<?>> entities) throws UncheckedException {
+	@AutoDependencyInjector
+	private EntitySixUserCase entitySixUserCase;
+	
+    /**
+     * Sobrescrita de salvarLista com pós-processamento customizado.
+     * Agora totalmente tipada com EntityEight.
+     */
+    @Override
+    public List<EntityEight> salvarLista(List<EntityEight> entities) throws UncheckedException {
+        List<EntityEight> persisted = super.salvarLista(entities);
+        List<EntityEight> reloaded = new ArrayList<>();
 
-		List<Domain<?>> entitys = new ArrayList<>();
-		List<Domain<?>> list = super.salvarLista(entities);
-		
-		for (Domain<?> domain : list) {
-			EntityEight entityEight = (EntityEight) buscarPorId(domain);
-			entitys.add(entityEight);
-		}
-		
-		return entitys;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public PageResult<?> buscarTodosPaginado(Domain<?> domain, Map<String, Object> filter) throws UncheckedException {
-		
-		PageResult<EntityEight> result = (PageResult<EntityEight>) super.buscarTodosPaginado(domain, filter);
-		
-		if(result != null) {
-			result.getContent().forEach(entityEight -> {
-				EntitySeven entitySeven = (EntitySeven) buscarPorId(entityEight.getEntitySeven());
-				EntitySix entitySix = (EntitySix) buscarPorId(new EntitySix(entitySeven.getId().getIdEntitySix()));
-				entitySeven.getId().setEntitySix(entitySix);
-				entityEight.setEntitySeven(entitySeven);
-			});
-		}
-		
-		return result;
-	}
+        for (EntityEight entity : persisted) {
+            EntityEight refreshed = buscarPorId(entity);
+            reloaded.add(refreshed);
+        }
 
+        return reloaded;
+    }
+
+    /**
+     * Sobrescrita de buscarTodosPaginado com montagem de entidades relacionadas.
+     */
+    @Override
+    public PageResult<EntityEight> buscarTodosPaginado(EntityEight domain, Map<String, Object> filter) throws UncheckedException {
+
+        PageResult<EntityEight> result = super.buscarTodosPaginado(domain, filter);
+
+        if (result != null && result.getContent() != null) {
+            result.getContent().forEach(entityEight -> {
+                // busca as entidades relacionadas com tipagem forte
+                EntitySeven entitySeven = entitySevenUserCase.buscarPorId(entityEight.getEntitySeven());
+                EntitySix entitySix = entitySixUserCase.buscarPorId(new EntitySix(entitySeven.getId().getIdEntitySix()));
+
+                entitySeven.getId().setEntitySix(entitySix);
+                entityEight.setEntitySeven(entitySeven);
+            });
+        }
+
+        return result;
+    }	
 }

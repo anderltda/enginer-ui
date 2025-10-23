@@ -18,8 +18,6 @@ import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
 import br.com.enginer.domain.ui.usercase.schema.instance.DomainId;
 import br.com.enginer.domain.ui.usercase.utils.ReflectionUtils;
 import br.com.enginer.domain.ui.usercase.utils.StringsUtils;
-import br.com.enginer.domain.ui.usercase.utils.UUIDGenerator;
-import br.com.enginer.infrastructure.tracking.TrackingLogConfigurer;
 import br.com.enginer.infrastructure.utils.PackageScannerUtils;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -28,12 +26,6 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 @Component
 public class DomainResolver implements HandlerMethodArgumentResolver {
-
-    private final TrackingLogConfigurer trackingLogConfigurer;
-
-    public DomainResolver(TrackingLogConfigurer trackingLogConfigurer) {
-        this.trackingLogConfigurer = trackingLogConfigurer;
-    }
 
 	/**
 	 *
@@ -49,8 +41,6 @@ public class DomainResolver implements HandlerMethodArgumentResolver {
 	@Override
 	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 		
-		trackingLogConfigurer.setInnerId(UUIDGenerator.generate());
-
 		HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
 
 		String urlDomain = request.getHeader("X-UI-Url");

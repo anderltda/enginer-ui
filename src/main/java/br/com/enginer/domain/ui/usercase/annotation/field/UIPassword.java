@@ -15,6 +15,6 @@ public @interface UIPassword {
 	String placeholder() default "";
 	int min() default 4;
 	int max() default 20;
-	boolean disabled() default false;
+	boolean disable() default false;
 	TypeTemplate[] template() default { TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.ROW, TypeTemplate.MODAL } ;
 }

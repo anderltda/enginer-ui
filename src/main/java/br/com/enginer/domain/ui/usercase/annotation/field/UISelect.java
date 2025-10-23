@@ -14,6 +14,6 @@ public @interface UISelect {
 	Class<?> provider();
 	String method();
 	boolean multi() default false;
-	boolean disabled() default false;
+	boolean disable() default false;
 	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.MODAL } ;
 }

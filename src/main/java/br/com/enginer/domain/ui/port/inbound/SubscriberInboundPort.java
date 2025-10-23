@@ -7,7 +7,7 @@ import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
 /**
  * 
  */
-public interface SubscriberInboundPort extends InboundPort {
+public interface SubscriberInboundPort<T extends Domain<?>> extends InboundPort {
 	
 	/**
 	 * @param domain

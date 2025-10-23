@@ -13,6 +13,6 @@ public @interface UITime {
 	String label();
 	String icon() default "time";
 	String placeholder() default "";
-	boolean disabled() default false;
+	boolean disable() default false;
 	TypeTemplate[] template() default { TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.ROW, TypeTemplate.MODAL } ;
 }

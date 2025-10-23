@@ -4,21 +4,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -36,111 +27,68 @@ import br.com.enginer.domain.upload.dto.entity.UploadFile;
 import br.com.enginer.infrastructure.utils.NormalizeUtils;
 
 /**
- * 
+ * Adaptador REST responsável por receber requisições externas
+ * e delegar a execução de ações aos casos de uso (UserCases) correspondentes.
  */
 @RestController
 @RequestMapping("/v1/enginer-ui/action")
 public class ActionInboundAdapterPort {
 
-	private final ActionInboundPort actionInboundPort;
+	private final ActionInboundPort<?> actionInboundPort;
 	private final ObjectMapper objectMapper;
 	private final LoggerOutboundPort logger;
 
-	/**
-	 * @param actionInboundPort
-	 * @param objectMapper
-	 * @param logger
-	 */
-	public ActionInboundAdapterPort(ActionInboundPort actionInboundPort, ObjectMapper objectMapper,
-			LoggerOutboundPort logger) {
+	public ActionInboundAdapterPort(ActionInboundPort<?> actionInboundPort, ObjectMapper objectMapper, LoggerOutboundPort logger) {
 		this.actionInboundPort = actionInboundPort;
 		this.objectMapper = objectMapper;
 		this.logger = logger;
 	}
 
-	/**
-	 * @param domain
-	 * @param file
-	 * @param actionLoggerJson
-	 * @return
-	 * @throws Exception
-	 */
+	// ============================================================================================
+	// UPLOAD
+	// ============================================================================================
+
 	@PostMapping("/upload")
 	public ResponseEntity<Map<String, Object>> upload(@UIDomain Domain<?> domain, @RequestParam MultipartFile file, @RequestParam("actionLogger") String actionLoggerJson) throws Exception {
 
 		try {
-
-	        if (file.isEmpty()) {
-	            return ResponseEntity.badRequest().body(Map.of("error", "Arquivo está vazio."));
-	        }
-
-	        // Diretório base do upload
-	        Path uploadPath = Path.of("/Users/anderson/Downloads/uploads/");
-	        Files.createDirectories(uploadPath);
-
-	        // Normaliza o nome do arquivo e define o destino
-	        String filename = StringUtils.cleanPath(file.getOriginalFilename());
-	        Path destination = uploadPath.resolve(filename);
-
-	        // Salva o arquivo fisicamente
-	        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
-
-	        ActionLogger actionLogger = objectMapper.readValue(actionLoggerJson, ActionLogger.class);
-	        
-	        // Cria o objeto File (entidade da tabela files)
-	        UploadFile uploadFile = new UploadFile();
-	        uploadFile.setName(filename);
-	        uploadFile.setType(file.getContentType());
-	        uploadFile.setSize(file.getSize());
-	        uploadFile.setPath(destination.toString());
-	        uploadFile.setStorageType("LOCAL");
-	        uploadFile.setChecksumSha256(DigestUtils.sha256Hex(file.getBytes()));
-	        uploadFile.setDomain(domain.getClass().getSimpleName());
-	        uploadFile.setDomainId(null); // Ainda não existe no momento do upload
-	        uploadFile.setIsPublic(false);
-	        uploadFile.setCreatedAt(LocalDateTime.now());
-	        uploadFile.setActionLogger(actionLogger);
-
-	        uploadFile = (UploadFile) actionInboundPort.methodName(uploadFile);
 			
-	        // Retorna metadados úteis
-	        Map<String, Object> response = Map.of(
-	        	"id", uploadFile.getId(),
-	        	"filename", filename
-	        );
-
-	        return ResponseEntity.ok(response);
-
-		} catch (Exception ex) {
-			logger.error(ActionInboundAdapterPort.class, ex);
-			throw ex;
-		}
-	}
-
-	/**
-	 * @param method
-	 * @param value
-	 * @return
-	 * @throws CheckedException
-	 */
-	@PostMapping("/validate/{method}/async")
-	public ResponseEntity<Map<String, Boolean>> validate(@UIDomain Domain<?> domain, @PathVariable String method, @RequestBody String value) throws CheckedException {
-
-		try {
-
-			logger.info(ActionInboundAdapterPort.class, "Executando domínio no validate: " + domain);
-			logger.info(ActionInboundAdapterPort.class, "Executando method: " + method);
-			logger.info(ActionInboundAdapterPort.class, "Valor recebido: " + value);
-
-			String[] array = new String[] { "johndoe", "admin", "user123" };
-			Map<String, Boolean> response = new HashMap<>();
-			response.put("validators", false);
-
-			for (String string : array) {
-				if (value.equals(string)) {
-					response.put("validators", true);
-				}
+			if (file.isEmpty()) {
+				return ResponseEntity.badRequest().body(Map.of("error", "Arquivo está vazio."));
 			}
+
+			Path uploadPath = Path.of("/Users/anderson/Downloads/uploads/");
+			Files.createDirectories(uploadPath);
+
+			String filename = StringUtils.cleanPath(file.getOriginalFilename());
+			Path destination = uploadPath.resolve(filename);
+
+			Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+
+			ActionLogger actionLogger = objectMapper.readValue(actionLoggerJson, ActionLogger.class);
+
+			UploadFile uploadFile = new UploadFile();
+			uploadFile.setName(filename);
+			uploadFile.setType(file.getContentType());
+			uploadFile.setSize(file.getSize());
+			uploadFile.setPath(destination.toString());
+			uploadFile.setStorageType("LOCAL");
+			uploadFile.setChecksumSha256(DigestUtils.sha256Hex(file.getBytes()));
+
+			// agora domainId aceita qualquer tipo (String, Long, UUID, etc.)
+			uploadFile.setDomain(domain.getClass().getSimpleName());
+			uploadFile.setDomainId(null);
+			uploadFile.setIsPublic(false);
+			uploadFile.setCreatedAt(LocalDateTime.now());
+			uploadFile.setActionLogger(actionLogger);
+
+			uploadFile = (UploadFile) actionInboundPort.methodName(uploadFile);
+
+			Map<String, Object> response = new LinkedHashMap<>();
+			response.put("id", uploadFile.getId());
+			response.put("filename", filename);
+			response.put("checksum", uploadFile.getChecksumSha256());
+			response.put("uploadedAt", uploadFile.getCreatedAt());
 
 			return ResponseEntity.ok(response);
 
@@ -150,22 +98,43 @@ public class ActionInboundAdapterPort {
 		}
 	}
 
-	/**
-	 * @param domain
-	 * @param filter
-	 * @return
-	 * @throws CheckedException
-	 */
-	@GetMapping({ "/autocomplete" })
-	public ResponseEntity<List<Domain<?>>> autocomplete(@UIDomain Domain<?> domain,
-			@RequestParam Map<String, Object> filter) throws CheckedException {
+	// ============================================================================================
+	// VALIDATE ASYNC
+	// ============================================================================================
+
+	@PostMapping("/validate/{method}/async")
+	public ResponseEntity<Map<String, Boolean>> validate(@UIDomain Domain<?> domain, @PathVariable String method, @RequestBody String value) throws CheckedException {
 
 		try {
+			
+			logger.info(ActionInboundAdapterPort.class, "Executando domínio no validate: " + domain);
+			logger.info(ActionInboundAdapterPort.class, "Executando método: " + method + " com valor: " + value);
 
+			List<String> blockedUsers = List.of("johndoe", "admin", "user123");
+			boolean exists = blockedUsers.contains(value);
+
+			Map<String, Boolean> response = Map.of("validators", exists);
+			return ResponseEntity.ok(response);
+
+		} catch (Exception ex) {
+			logger.error(ActionInboundAdapterPort.class, ex);
+			throw ex;
+		}
+	}
+
+	// ============================================================================================
+	// AUTOCOMPLETE
+	// ============================================================================================
+
+	@GetMapping("/autocomplete")
+	public ResponseEntity<List<Domain<?>>> autocomplete(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws CheckedException {
+
+		try {
+			
 			logger.info(ActionInboundAdapterPort.class, "Executando domínio no autocomplete: " + domain);
-
+			
 			List<Domain<?>> list = actionInboundPort.searchByConditions(domain, filter);
-
+			
 			return ResponseEntity.ok(list);
 
 		} catch (Exception ex) {
@@ -174,21 +143,19 @@ public class ActionInboundAdapterPort {
 		}
 	}
 
-	/**
-	 * @param domain
-	 * @param filter
-	 * @return
-	 * @throws CheckedException
-	 */
-	@GetMapping({ "/search" })
+	// ============================================================================================
+	// SEARCH PAGINADO
+	// ============================================================================================
+
+	@GetMapping("/search")
 	public ResponseEntity<PageResult<?>> search(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws CheckedException {
 
 		try {
-
+			
 			logger.info(ActionInboundAdapterPort.class, "Executando domínio no paginator: " + domain);
-
+			
 			PageResult<?> pageResult = actionInboundPort.searchPaginated(domain, filter);
-
+			
 			return ResponseEntity.ok(pageResult);
 
 		} catch (Exception ex) {
@@ -197,58 +164,45 @@ public class ActionInboundAdapterPort {
 		}
 	}
 
-	/**
-	 * @param domain
-	 * @param json
-	 * @return
-	 * @throws CheckedException
-	 */
+	// ============================================================================================
+	// ACTION (CREATE / UPDATE / DELETE)
+	// ============================================================================================
+
 	@PostMapping
 	public ResponseEntity<?> action(@UIDomain Domain<?> domain, @RequestBody JsonNode json) throws CheckedException {
 
 		try {
-
+			
 			logger.info(ActionInboundAdapterPort.class, "Executando domínio no save: " + domain);
-			logger.info(ActionInboundAdapterPort.class, "Payload recebido: \r " + json.toPrettyString());
+			logger.info(ActionInboundAdapterPort.class, "Payload recebido: \n" + json.toPrettyString());
 
 			List<Domain<?>> newDomains = new ArrayList<>();
-			
-			if (json.has("data") && json.get("data").isArray()) {
-				
-				ArrayNode dataArray = (ArrayNode) json.get("data");
-				
-				for (JsonNode itemNode : dataArray) {
-					
-					JsonNode normalizedNode = NormalizeUtils.normalizer(itemNode);
-					
-					logger.info(ActionInboundAdapterPort.class, "Payload normalized: \r " + normalizedNode.toPrettyString());
-					
-					Domain<?> itemDomain = objectMapper.convertValue(normalizedNode, domain.getClass());
-				
-					newDomains.add(itemDomain);
-				
-				}
-				
-				JsonNode actionNode = json.get("action");
 
-				ActionLogger actionLogger = objectMapper.convertValue(actionNode, ActionLogger.class);
-				
-				List<Domain<?>> domains = actionInboundPort.methodName(domain, newDomains, actionLogger);
-				
-				return ResponseEntity.ok(domains);
+			if (json.has("data") && json.get("data").isArray()) {
+
+				ArrayNode dataArray = (ArrayNode) json.get("data");
+
+				for (JsonNode itemNode : dataArray) {
+					JsonNode normalizedNode = NormalizeUtils.normalizer(itemNode);
+					logger.info(ActionInboundAdapterPort.class, "Payload normalizado: \n" + normalizedNode.toPrettyString());
+					Domain<?> itemDomain = objectMapper.convertValue(normalizedNode, domain.getClass());
+					newDomains.add(itemDomain);
+				}
+
+				ActionLogger actionLogger = objectMapper.convertValue(json.get("action"), ActionLogger.class);
+				List<Domain<?>> resultDomains = actionInboundPort.methodName(domain, newDomains, actionLogger);
+				return ResponseEntity.ok(resultDomains);
 			}
-			
+
+			// payload único
 			JsonNode normalizedNode = NormalizeUtils.normalizer(json);
-			
-			logger.info(ActionInboundAdapterPort.class, "Payload normalized: \r " + normalizedNode.toPrettyString());
+			logger.info(ActionInboundAdapterPort.class, "Payload normalizado: \n" + normalizedNode.toPrettyString());
 
 			Domain<?> newDomain = objectMapper.convertValue(normalizedNode, domain.getClass());
+			Domain<?> resultDomain = actionInboundPort.methodName(newDomain);
 
-			domain = actionInboundPort.methodName(newDomain);
-
-			logger.info(ActionInboundAdapterPort.class, "Payload enviado: \r " + domain);
-
-			return ResponseEntity.ok(domain);
+			logger.info(ActionInboundAdapterPort.class, "Payload processado com sucesso: " + resultDomain);
+			return ResponseEntity.ok(resultDomain);
 
 		} catch (Exception ex) {
 			logger.error(ActionInboundAdapterPort.class, ex);

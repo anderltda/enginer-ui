@@ -15,7 +15,7 @@ import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
 public @interface UIButton {
 	String label();
 	String icon() default "";
-	boolean disabled() default false;
+	boolean disable() default false;
 	boolean highlight() default false;
 	boolean dropdown() default false;
 	boolean confirm() default false;

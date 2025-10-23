@@ -9,10 +9,16 @@ import br.com.enginer.domain.example.dto.entity.EntityNine;
 import br.com.enginer.domain.example.dto.entity.EntityNineId;
 import br.com.enginer.domain.example.dto.entity.EntityStatus;
 import br.com.enginer.domain.ui.dto.PageResult;
+import br.com.enginer.domain.ui.usercase.annotation.AutoDependencyInjector;
 import br.com.enginer.domain.ui.usercase.exception.UncheckedException;
-import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
 
-public class EntityFiveUserCase extends AbstractUserCase {
+public class EntityFiveUserCase extends AbstractUserCase<EntityFive> {
+	
+	@AutoDependencyInjector
+	private EntityNineUserCase entityNineUserCase;
+	
+	@AutoDependencyInjector
+	private EntityStatusUserCase entityStatusUserCase;
 	
 	/**
 	 * @param domain
@@ -32,19 +38,18 @@ public class EntityFiveUserCase extends AbstractUserCase {
 		entityNineId.setIdEntitySix(1l);
 		entityNine.setId(entityNineId);
 		
-		Object object = buscarPorId(entityNine);
+		EntityNine object = entityNineUserCase.buscarPorId(entityNine);
 		System.out.println(object.toString());
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public PageResult<?> buscarTodosPaginado(Domain<?> domain, Map<String, Object> filter) throws UncheckedException {
+	public PageResult<EntityFive> buscarTodosPaginado(EntityFive domain, Map<String, Object> filter) throws UncheckedException {
 		
 		PageResult<EntityFive> result = (PageResult<EntityFive>) super.buscarTodosPaginado(domain, filter);
 		
 		if(result != null) {
 			result.getContent().forEach(entityFive -> {
-				entityFive.setEntityStatus((EntityStatus) buscarPorId(entityFive.getEntityStatus()));
+				entityFive.setEntityStatus((EntityStatus) entityStatusUserCase.buscarPorId(entityFive.getEntityStatus()));
 			});
 		}
 		
