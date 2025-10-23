@@ -17,9 +17,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
-import br.com.enginer.domain.ui.usercase.utils.ReflectionUtils;
-import br.com.enginer.domain.ui.usercase.utils.StringsUtils;
+import br.com.enginer.domain.system.usercase.schema.instance.Domain;
+import br.com.enginer.domain.system.usercase.utils.ReflectionUtils;
+import br.com.enginer.domain.system.usercase.utils.StringsUtils;
 
 /**
  * Utilitários para normalização de dados e JSON.

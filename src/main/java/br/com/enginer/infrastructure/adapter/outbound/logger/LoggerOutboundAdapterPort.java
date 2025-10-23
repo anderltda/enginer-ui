@@ -5,10 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
-import br.com.enginer.domain.system.AuditLog;
-import br.com.enginer.domain.system.Log;
-import br.com.enginer.domain.ui.dto.logger.ActionLogger;
-import br.com.enginer.domain.ui.port.outbound.LoggerOutboundPort;
+import br.com.enginer.domain.system.dto.entity.AuditLog;
+import br.com.enginer.domain.system.dto.entity.Log;
+import br.com.enginer.domain.system.usercase.logger.ActionLogger;
+import br.com.enginer.domain.system.usercase.port.outbound.LoggerOutboundPort;
 
 /**
  * Implementação padrão do {@link LoggerOutboundPort} utilizando SLF4J/Logback.

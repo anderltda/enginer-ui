@@ -3,50 +3,50 @@ package br.com.enginer.domain.example.dto.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import br.com.enginer.domain.Constants;
-import br.com.enginer.domain.ui.usercase.annotation.field.UIColumn;
-import br.com.enginer.domain.ui.usercase.annotation.field.UIFile;
-import br.com.enginer.domain.ui.usercase.annotation.field.UIFilter;
-import br.com.enginer.domain.ui.usercase.annotation.field.UIHidden;
-import br.com.enginer.domain.ui.usercase.annotation.field.UIId;
-import br.com.enginer.domain.ui.usercase.annotation.field.UIRow;
-import br.com.enginer.domain.ui.usercase.annotation.field.UIText;
-import br.com.enginer.domain.ui.usercase.annotation.field.UITextArea;
-import br.com.enginer.domain.ui.usercase.annotation.field.behavior.UIPosition;
-import br.com.enginer.domain.ui.usercase.annotation.field.behavior.validation.UIFieldValidation;
-import br.com.enginer.domain.ui.usercase.annotation.instance.UITitle;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIAction;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionMethod;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionRedirect;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionResponse;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionResponseError;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIActionResponseSuccess;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIButton;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIButtonAction;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterClear;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterFormNew;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterSearch;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterTabNew;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormBack;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormClear;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormDelete;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormEdit;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.row.UIButtonRowAdd;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.tab.UIButtonTabBack;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.tab.UIButtonTabFinish;
-import br.com.enginer.domain.ui.usercase.annotation.instance.paginator.UIConfig;
-import br.com.enginer.domain.ui.usercase.annotation.instance.paginator.UIPaginator;
-import br.com.enginer.domain.ui.usercase.annotation.instance.validate.conditional.UIConditional;
-import br.com.enginer.domain.ui.usercase.annotation.instance.validate.conditional.UIConditionalOn;
-import br.com.enginer.domain.ui.usercase.enums.TypeButtonState;
-import br.com.enginer.domain.ui.usercase.enums.TypeFileUpload;
-import br.com.enginer.domain.ui.usercase.enums.TypeOperator;
-import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
-import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
-import br.com.enginer.domain.upload.dto.entity.UploadFile;
+import br.com.enginer.domain.system.dto.entity.UploadFile;
+import br.com.enginer.domain.system.usercase.annotation.field.UIColumn;
+import br.com.enginer.domain.system.usercase.annotation.field.UIFile;
+import br.com.enginer.domain.system.usercase.annotation.field.UIFilter;
+import br.com.enginer.domain.system.usercase.annotation.field.UIHidden;
+import br.com.enginer.domain.system.usercase.annotation.field.UIId;
+import br.com.enginer.domain.system.usercase.annotation.field.UIRow;
+import br.com.enginer.domain.system.usercase.annotation.field.UIText;
+import br.com.enginer.domain.system.usercase.annotation.field.UITextArea;
+import br.com.enginer.domain.system.usercase.annotation.field.behavior.UIPosition;
+import br.com.enginer.domain.system.usercase.annotation.field.behavior.validation.UIFieldValidation;
+import br.com.enginer.domain.system.usercase.annotation.instance.UITitle;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIAction;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionMethod;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionRedirect;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionResponse;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionResponseError;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionResponseSuccess;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIButton;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIButtonAction;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.filter.UIButtonFilterClear;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.filter.UIButtonFilterFormNew;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.filter.UIButtonFilterSearch;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.filter.UIButtonFilterTabNew;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.form.UIButtonFormBack;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.form.UIButtonFormClear;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.form.UIButtonFormDelete;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.form.UIButtonFormEdit;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowAdd;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabBack;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabFinish;
+import br.com.enginer.domain.system.usercase.annotation.instance.paginator.UIConfig;
+import br.com.enginer.domain.system.usercase.annotation.instance.paginator.UIPaginator;
+import br.com.enginer.domain.system.usercase.annotation.instance.validate.conditional.UIConditional;
+import br.com.enginer.domain.system.usercase.annotation.instance.validate.conditional.UIConditionalOn;
+import br.com.enginer.domain.system.usercase.constants.Constants;
+import br.com.enginer.domain.system.usercase.enums.TypeButtonState;
+import br.com.enginer.domain.system.usercase.enums.TypeFileUpload;
+import br.com.enginer.domain.system.usercase.enums.TypeOperator;
+import br.com.enginer.domain.system.usercase.enums.TypeTemplate;
+import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
 
 /**
  * 
@@ -152,27 +152,28 @@ public class EntityTen extends DomainAbstract<Long> {
 	private EntityStatus entityStatus;
 	
 	@UIPosition(x = 1, y = 2)
-	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
+	@UIFieldValidation(required = false, template = { TypeTemplate.FORM, TypeTemplate.TAB })
 	@UITextArea(label = "Descrição", editor = false)
 	private String description;
 	
-	@UIPosition(x = 1, y = 3)
+	@UIPosition(x = 2, y = 2)
 	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
+	@UIFile(mode = TypeFileUpload.WALL_PICKER, limit = 3)
+	private List<UploadFile> wallPickers;
+
+	@UIPosition(x = 1, y = 3)
+	@UIFieldValidation(required = false, template = { TypeTemplate.FORM, TypeTemplate.TAB })
 	@UIFile(mode = TypeFileUpload.LIST)
 	private List<UploadFile> imageLists;
 	
 	@UIPosition(x = 2, y = 3)
-	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
+	@UIFieldValidation(required = false, template = { TypeTemplate.FORM, TypeTemplate.TAB })
 	@UIFile(mode = TypeFileUpload.SIMPLE)
 	private List<UploadFile> simpleLists;
 
-	@UIPosition(x = 1, y = 4)
-	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
-	@UIFile(mode = TypeFileUpload.WALL_PICKER, limit = 1)
-	private List<UploadFile> wallPickers;
 	
 	@UIPosition(x = 1, y = 5)
-	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
+	@UIFieldValidation(required = false, template = { TypeTemplate.FORM, TypeTemplate.TAB })
 	@UIFile(mode = TypeFileUpload.DRAG_DROP)
 	private List<UploadFile> imageDragDrops;
 

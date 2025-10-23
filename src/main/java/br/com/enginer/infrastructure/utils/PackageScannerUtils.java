@@ -7,8 +7,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.ClassUtils;
 
-import br.com.enginer.domain.ui.usercase.exception.CheckedException;
-import br.com.enginer.domain.ui.usercase.utils.StringsUtils;
+import br.com.enginer.domain.system.usercase.exception.CheckedException;
+import br.com.enginer.domain.system.usercase.utils.StringsUtils;
 
 /**
  *  PACKAGE SCANNER

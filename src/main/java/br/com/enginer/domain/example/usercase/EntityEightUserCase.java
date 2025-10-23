@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import br.com.enginer.domain.AbstractUserCase;
 import br.com.enginer.domain.example.dto.entity.EntityEight;
 import br.com.enginer.domain.example.dto.entity.EntitySeven;
 import br.com.enginer.domain.example.dto.entity.EntitySix;
-import br.com.enginer.domain.ui.dto.PageResult;
-import br.com.enginer.domain.ui.usercase.annotation.AutoDependencyInjector;
-import br.com.enginer.domain.ui.usercase.exception.UncheckedException;
+import br.com.enginer.domain.system.usercase.AbstractUserCase;
+import br.com.enginer.domain.system.usercase.annotation.AutoDependencyInjector;
+import br.com.enginer.domain.system.usercase.exception.UncheckedException;
+import br.com.enginer.domain.system.usercase.page.PageResult;
 
 public class EntityEightUserCase extends AbstractUserCase<EntityEight> {
 	

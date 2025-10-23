@@ -2,7 +2,8 @@ package br.com.enginer.infrastructure.adapter.outbound.repository;
 
 public enum TypeRepository {
 
-	QUERY("query"), MAPPER("mapper");
+	QUERY("query"), 
+	MAPPER("mapper");
 
 	private final String value;
 

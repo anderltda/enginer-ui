@@ -4,15 +4,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import br.com.enginer.domain.AbstractUserCase;
 import br.com.enginer.domain.example.dto.entity.EntityStatus;
 import br.com.enginer.domain.example.dto.entity.EntityTen;
-import br.com.enginer.domain.ui.dto.PageResult;
-import br.com.enginer.domain.ui.usercase.annotation.AutoDependencyInjector;
-import br.com.enginer.domain.ui.usercase.exception.CheckedException;
-import br.com.enginer.domain.ui.usercase.exception.UncheckedException;
-import br.com.enginer.domain.upload.dto.entity.UploadFile;
-import br.com.enginer.domain.upload.usercase.UploadFileUserCase;
+import br.com.enginer.domain.system.dto.entity.UploadFile;
+import br.com.enginer.domain.system.usercase.AbstractUserCase;
+import br.com.enginer.domain.system.usercase.UploadFileUserCase;
+import br.com.enginer.domain.system.usercase.annotation.AutoDependencyInjector;
+import br.com.enginer.domain.system.usercase.exception.CheckedException;
+import br.com.enginer.domain.system.usercase.exception.UncheckedException;
+import br.com.enginer.domain.system.usercase.page.PageResult;
 
 public class EntityTenUserCase extends AbstractUserCase<EntityTen> {
 	

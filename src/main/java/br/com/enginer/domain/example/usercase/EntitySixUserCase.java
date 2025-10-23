@@ -2,10 +2,10 @@ package br.com.enginer.domain.example.usercase;
 
 import java.util.List;
 
-import br.com.enginer.domain.AbstractUserCase;
 import br.com.enginer.domain.example.dto.entity.EntitySix;
-import br.com.enginer.domain.ui.usercase.exception.UncheckedException;
-import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
+import br.com.enginer.domain.system.usercase.AbstractUserCase;
+import br.com.enginer.domain.system.usercase.exception.UncheckedException;
+import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 
 public class EntitySixUserCase extends AbstractUserCase<EntitySix> {
 	

@@ -3,7 +3,7 @@ package br.com.enginer.domain.example.dto.view;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
 
 /**
  * 

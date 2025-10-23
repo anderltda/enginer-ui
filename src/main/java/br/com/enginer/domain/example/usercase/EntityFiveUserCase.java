@@ -3,14 +3,14 @@ package br.com.enginer.domain.example.usercase;
 import java.util.Map;
 import java.util.UUID;
 
-import br.com.enginer.domain.AbstractUserCase;
 import br.com.enginer.domain.example.dto.entity.EntityFive;
 import br.com.enginer.domain.example.dto.entity.EntityNine;
 import br.com.enginer.domain.example.dto.entity.EntityNineId;
 import br.com.enginer.domain.example.dto.entity.EntityStatus;
-import br.com.enginer.domain.ui.dto.PageResult;
-import br.com.enginer.domain.ui.usercase.annotation.AutoDependencyInjector;
-import br.com.enginer.domain.ui.usercase.exception.UncheckedException;
+import br.com.enginer.domain.system.usercase.AbstractUserCase;
+import br.com.enginer.domain.system.usercase.annotation.AutoDependencyInjector;
+import br.com.enginer.domain.system.usercase.exception.UncheckedException;
+import br.com.enginer.domain.system.usercase.page.PageResult;
 
 public class EntityFiveUserCase extends AbstractUserCase<EntityFive> {
 	

@@ -21,12 +21,12 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.enginer.domain.ui.dto.PageResult;
-import br.com.enginer.domain.ui.port.outbound.LoggerOutboundPort;
-import br.com.enginer.domain.ui.port.outbound.RepositoryOutboundPort;
-import br.com.enginer.domain.ui.usercase.exception.CheckedException;
-import br.com.enginer.domain.ui.usercase.exception.UncheckedException;
-import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
+import br.com.enginer.domain.system.usercase.exception.CheckedException;
+import br.com.enginer.domain.system.usercase.exception.UncheckedException;
+import br.com.enginer.domain.system.usercase.page.PageResult;
+import br.com.enginer.domain.system.usercase.port.outbound.LoggerOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 import br.com.enginer.infrastructure.exception.GlobalWebClientErrorHandler;
 import br.com.enginer.infrastructure.utils.UriUtils;
 import reactor.core.publisher.Flux;

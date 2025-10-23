@@ -4,14 +4,15 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.enginer.domain.ui.port.outbound.LoggerOutboundPort;
-import br.com.enginer.domain.ui.port.outbound.PublisherOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.LoggerOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.PublisherOutboundPort;
+import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 
 /**
  * 
  */
 @Component
-public class PublisherOutboundAdapterPort implements PublisherOutboundPort {
+public class PublisherOutboundAdapterPort<T extends Domain<?>> implements PublisherOutboundPort<T> {
 
 	@SuppressWarnings("unused")
 	private final LoggerOutboundPort logger;

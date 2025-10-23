@@ -1,16 +1,16 @@
 package br.com.enginer.domain.example.dto.entity;
 
-import br.com.enginer.domain.ui.usercase.annotation.field.UIFilter;
-import br.com.enginer.domain.ui.usercase.annotation.field.UIId;
-import br.com.enginer.domain.ui.usercase.annotation.field.UIJoin;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.UIButtonAction;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.filter.UIButtonFilterSearch;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormDelete;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.form.UIButtonFormSave;
-import br.com.enginer.domain.ui.usercase.annotation.instance.action.button.tab.UIButtonTabNext;
-import br.com.enginer.domain.ui.usercase.enums.TypeLayoutTarget;
-import br.com.enginer.domain.ui.usercase.enums.TypeTemplate;
-import br.com.enginer.domain.ui.usercase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usercase.annotation.field.UIFilter;
+import br.com.enginer.domain.system.usercase.annotation.field.UIId;
+import br.com.enginer.domain.system.usercase.annotation.field.UIJoin;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIButtonAction;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.filter.UIButtonFilterSearch;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.form.UIButtonFormDelete;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.form.UIButtonFormSave;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabNext;
+import br.com.enginer.domain.system.usercase.enums.TypeLayoutTarget;
+import br.com.enginer.domain.system.usercase.enums.TypeTemplate;
+import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
 
 /**
  * 

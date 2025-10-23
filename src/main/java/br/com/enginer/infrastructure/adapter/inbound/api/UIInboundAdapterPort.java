@@ -6,13 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import br.com.enginer.domain.ui.port.inbound.UIInboundPort;
-import br.com.enginer.domain.ui.port.outbound.LoggerOutboundPort;
-import br.com.enginer.domain.ui.usercase.annotation.instance.UIDomain;
-import br.com.enginer.domain.ui.usercase.schema.Form;
-import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
+import br.com.enginer.domain.system.usercase.annotation.instance.UIDomain;
+import br.com.enginer.domain.system.usercase.port.inbound.UIInboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.LoggerOutboundPort;
+import br.com.enginer.domain.system.usercase.schema.Form;
+import br.com.enginer.domain.system.usercase.schema.instance.Domain;
+import br.com.enginer.infrastructure.adapter.outbound.repository.RepositoryOutboundAdapterPort;
 
 /**
  * 
@@ -21,85 +20,91 @@ import br.com.enginer.domain.ui.usercase.schema.instance.Domain;
 @RequestMapping("/v1/enginer-ui/module")
 public class UIInboundAdapterPort {
 
-	private final ObjectMapper objectMapper;
 	private final UIInboundPort<Domain<?>> uIInboundPort;
 	private final LoggerOutboundPort logger;
 
-	/**
-	 * @param objectMapper
-	 * @param uIInboundPort
-	 * @param logger
-	 * @param trackingProvider
-	 */
-	public UIInboundAdapterPort(ObjectMapper objectMapper, UIInboundPort<Domain<?>> uIInboundPort, LoggerOutboundPort logger) {
-		this.objectMapper = objectMapper;
+	public UIInboundAdapterPort(UIInboundPort<Domain<?>> uIInboundPort, LoggerOutboundPort logger) {
 		this.uIInboundPort = uIInboundPort;
 		this.logger = logger;
 	}
 
 	/**
 	 * @param domain
-	 * @return
+	 * @return ResponseEntity<Form>
+	 * @throws Exception
 	 */
 	@GetMapping({ "/tab", "/tab/{id}" })
 	public ResponseEntity<Form> tab(@UIDomain Domain<?> domain) throws Exception {
+		long start = System.currentTimeMillis();
 		try {
 			Form form = uIInboundPort.tab(domain);
-			//logger.info(UIInboundAdapterPort.class, "Payload gerado: \r " + objectMapper.writeValueAsString(form));
 			return ResponseEntity.ok(form);
 		} catch (Exception ex) {
-			logger.error(UIInboundAdapterPort.class, "Erro ao criar entidade", ex);
+			logger.error(UIInboundAdapterPort.class, "Erro ao criar [template-tab]", ex);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} finally {
+			long duration = System.currentTimeMillis() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[template-tab] concluído em " + duration + "ms ");
 		}
 	}
 
 	/**
 	 * @param domain
-	 * @return
+	 * @return ResponseEntity<Form>
 	 * @throws Exception
 	 */
 	@GetMapping({ "/row", "/row/{id}" })
 	public ResponseEntity<Form> row(@UIDomain Domain<?> domain) throws Exception {
+		long start = System.currentTimeMillis();
 		try {
 			Form form = uIInboundPort.row(domain);
-			//logger.info(UIInboundAdapterPort.class, "Payload gerado: \r " + objectMapper.writeValueAsString(form));
 			return ResponseEntity.ok(form);
 		} catch (Exception ex) {
-			logger.error(UIInboundAdapterPort.class, "Erro ao criar entidade", ex);
+			logger.error(UIInboundAdapterPort.class, "Erro ao criar [template-row]", ex);
 			throw ex;
+		} finally {
+			long duration = System.currentTimeMillis() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[template-row] concluído em " + duration + "ms ");
 		}
 	}	
 
+
 	/**
 	 * @param domain
-	 * @return
+	 * @return ResponseEntity<Form>
 	 * @throws Exception
 	 */
 	@GetMapping({ "/form", "/form/{id}" })
 	public ResponseEntity<Form> form(@UIDomain Domain<?> domain) throws Exception {
+		long start = System.currentTimeMillis();
 		try {
 			Form form = uIInboundPort.form(domain);
-			//logger.info(UIInboundAdapterPort.class, "Payload gerado: \r " + objectMapper.writeValueAsString(form));
 			return ResponseEntity.ok(form);
 		} catch (Exception ex) {
-			logger.error(UIInboundAdapterPort.class, "Erro ao criar entidade", ex);
+			logger.error(UIInboundAdapterPort.class, "Erro ao criar [template-form]", ex);
 			throw ex;
+		} finally {
+			long duration = System.currentTimeMillis() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[template-form] concluído em " + duration + "ms ");
 		}
 	}
-
 	/**
 	 * @param domain
-	 * @return
+	 * @return ResponseEntity<Form>
+	 * @throws Exception
 	 */
 	@GetMapping({ "/filter", "/filter/{id}" })
 	public ResponseEntity<Form> filter(@UIDomain Domain<?> domain) throws Exception {
+		long start = System.currentTimeMillis();
 		try {
 			Form form = uIInboundPort.filter(domain);
-			//logger.info(UIInboundAdapterPort.class, "Payload gerado: \r " + objectMapper.writeValueAsString(form));
 			return ResponseEntity.ok(form);
 		} catch (Exception ex) {
-			logger.error(UIInboundAdapterPort.class, "Erro ao criar entidade", ex);
+			logger.error(UIInboundAdapterPort.class, "Erro ao criar [template-filter]", ex);
 			throw ex;
+		} finally {
+			long duration = System.currentTimeMillis() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[template-filter] concluído em " + duration + "ms ");
 		}
 	}
 }
