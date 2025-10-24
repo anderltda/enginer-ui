@@ -1,4 +1,4 @@
-package br.com.enginer.domain.system.usercase.port.inbound;
+package br.com.enginer.domain.system.usercase.port.inbound.subscriber;
 
 import br.com.enginer.domain.system.usercase.exception.CheckedException;
 import br.com.enginer.domain.system.usercase.port.InboundPort;

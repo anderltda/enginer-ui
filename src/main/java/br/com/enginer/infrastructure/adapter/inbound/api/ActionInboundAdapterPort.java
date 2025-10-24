@@ -1,17 +1,11 @@
 package br.com.enginer.infrastructure.adapter.inbound.api;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,8 +24,8 @@ import br.com.enginer.domain.system.usercase.annotation.instance.UIDomain;
 import br.com.enginer.domain.system.usercase.exception.CheckedException;
 import br.com.enginer.domain.system.usercase.logger.ActionLogger;
 import br.com.enginer.domain.system.usercase.page.PageResult;
-import br.com.enginer.domain.system.usercase.port.inbound.ActionInboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.LoggerOutboundPort;
+import br.com.enginer.domain.system.usercase.port.inbound.api.ActionInboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.logger.LoggerOutboundPort;
 import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 import br.com.enginer.infrastructure.utils.NormalizeUtils;
 
@@ -66,36 +60,22 @@ public class ActionInboundAdapterPort {
 				return ResponseEntity.badRequest().body(Map.of("error", "Arquivo está vazio."));
 			}
 
-			Path uploadPath = Path.of("/Users/anderson/Downloads/uploads/");
-			
-			Files.createDirectories(uploadPath);
-
-			String filename = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-			
-			Path destination = uploadPath.resolve(filename);
-
-			Files.copy(multipartFile.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
-
 			ActionLogger actionLogger = objectMapper.readValue(actionLoggerJson, ActionLogger.class);
 
 			UploadFile uploadFile = new UploadFile();
-			uploadFile.setName(filename);
-			uploadFile.setType(multipartFile.getContentType());
-			uploadFile.setSize(multipartFile.getSize());
-			uploadFile.setPath(destination.toString());
-			uploadFile.setStorageType("LOCAL");
-			uploadFile.setChecksumSha256(DigestUtils.sha256Hex(multipartFile.getBytes()));
-			uploadFile.setDomain(domain.getClass().getSimpleName());
-			uploadFile.setDomainId(null);
-			uploadFile.setIsPublic(false);
-			uploadFile.setCreatedAt(LocalDateTime.now());
-			uploadFile.setActionLogger(actionLogger);
-
+			uploadFile.setName(multipartFile.getOriginalFilename());
+		    uploadFile.setType(multipartFile.getContentType());
+		    uploadFile.setSize(multipartFile.getSize());
+		    uploadFile.setBytes(multipartFile.getBytes());
+		    uploadFile.setDomain(domain.getClass().getSimpleName());
+		    uploadFile.setStorageType("LOCAL"); // "LOCAL" ou "S3"
+		    uploadFile.setActionLogger(actionLogger);
+		    
 			uploadFile = (UploadFile) actionInboundPort.methodName(uploadFile);
 
 			Map<String, Object> response = new LinkedHashMap<>();
 			response.put("id", uploadFile.getId());
-			response.put("filename", filename);
+			response.put("filename", uploadFile.getName());
 			response.put("checksum", uploadFile.getChecksumSha256());
 			response.put("uploadedAt", uploadFile.getCreatedAt());
 

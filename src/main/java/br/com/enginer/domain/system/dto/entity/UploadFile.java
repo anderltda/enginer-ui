@@ -29,7 +29,9 @@ public class UploadFile extends DomainAbstract<Long> {
 	private String domainId;
 
 	private Boolean isPublic;
-
+	
+	private byte[] bytes;
+	
 	private LocalDateTime createdAt;
 
 	private UploadResponse response;
@@ -145,5 +147,13 @@ public class UploadFile extends DomainAbstract<Long> {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public byte[] getBytes() {
+		return bytes;
+	}
+	
+	public void setBytes(byte[] bytes) {
+		this.bytes = bytes;
 	}
 }

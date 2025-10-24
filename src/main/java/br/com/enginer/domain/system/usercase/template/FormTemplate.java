@@ -71,7 +71,7 @@ import br.com.enginer.domain.system.usercase.constants.Constants;
 import br.com.enginer.domain.system.usercase.enums.TypeButton;
 import br.com.enginer.domain.system.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usercase.helper.ComboHelper;
-import br.com.enginer.domain.system.usercase.port.outbound.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.repository.RepositoryOutboundPort;
 import br.com.enginer.domain.system.usercase.schema.Form;
 import br.com.enginer.domain.system.usercase.schema.field.Field;
 import br.com.enginer.domain.system.usercase.schema.field.behavior.Autocomplete;

@@ -6,8 +6,8 @@ import java.util.Set;
 
 import br.com.enginer.domain.system.usercase.AbstractUserCase;
 import br.com.enginer.domain.system.usercase.annotation.AutoDependencyInjector;
-import br.com.enginer.domain.system.usercase.port.outbound.PublisherOutboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.publisher.PublisherOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.repository.RepositoryOutboundPort;
 import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 
 /**
@@ -32,7 +32,7 @@ public final class DependencyInjector {
 	/**
 	 * Processamento recursivo com indentação visual.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static void processDependenciesInternal(AbstractUserCase<Domain<?>> domain, Set<Object> visited, int level) {
 		if (domain == null || visited.contains(domain)) return;
 		visited.add(domain);
@@ -64,15 +64,19 @@ public final class DependencyInjector {
 
 					// se for outro AbstractUserCase, propaga dependências e processa recursivamente
 					if (childInstance instanceof AbstractUserCase<?> childUserCase) {
+						
 						RepositoryOutboundPort<?> repository = domain.getRepositoryOutboundPort();
+						
 						if (repository != null) {
 							childUserCase.setRepositoryOutboundPort((RepositoryOutboundPort) repository);
 						}
 
 						PublisherOutboundPort<?> publisher = domain.getPublisherOutboundPort();
+						
 						if (publisher != null) {
 							childUserCase.setPublisherOutboundPort((PublisherOutboundPort) publisher);
 						}
+						
 						processDependenciesInternal(((AbstractUserCase<Domain<?>>) childUserCase), visited, level + 1);
 					}
 

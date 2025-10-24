@@ -6,8 +6,11 @@ import java.util.Map;
 import br.com.enginer.domain.system.usercase.exception.CheckedException;
 import br.com.enginer.domain.system.usercase.exception.UncheckedException;
 import br.com.enginer.domain.system.usercase.page.PageResult;
-import br.com.enginer.domain.system.usercase.port.outbound.PublisherOutboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.logger.LoggerOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.publisher.PublisherOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.repository.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.storage.FileStorageOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.storage.HashGeneratorOutboundPort;
 import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 import br.com.enginer.infrastructure.adapter.outbound.repository.TypeRepository;
 
@@ -24,10 +27,16 @@ public interface ActionUserCase<T extends Domain<?>> {
 	public static final String plus = "plus";
 	
 	// ------------------- Dependências -------------------
+	void setLoggerOutboundPort(LoggerOutboundPort loggerOutboundPort);
 	void setRepositoryOutboundPort(RepositoryOutboundPort<T> repositoryOutboundPort);
 	void setPublisherOutboundPort(PublisherOutboundPort<T> publisherOutboundPort);
+	void setHashGeneratorOutboundPort(HashGeneratorOutboundPort hashGeneratorOutboundPort);
+	void setFileStorageOutboundPort(FileStorageOutboundPort fileStorageOutboundPort);
+	LoggerOutboundPort getLoggerOutboundPort();
 	RepositoryOutboundPort<T> getRepositoryOutboundPort();
 	PublisherOutboundPort<T> getPublisherOutboundPort();
+	HashGeneratorOutboundPort getHashGeneratorOutboundPort();
+    FileStorageOutboundPort getFileStorageOutboundPort();
 
 	// ------------------- Ações principais -------------------
 	T buscarPorId(T domain) throws CheckedException;

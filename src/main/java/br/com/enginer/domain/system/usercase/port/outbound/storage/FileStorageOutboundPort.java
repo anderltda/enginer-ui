@@ -1,4 +1,4 @@
-package br.com.enginer.domain.system.usercase.port.outbound;
+package br.com.enginer.domain.system.usercase.port.outbound.storage;
 
 import java.io.IOException;
 import java.io.InputStream;

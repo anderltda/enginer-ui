@@ -5,8 +5,8 @@ import java.util.Map;
 
 import br.com.enginer.domain.system.usercase.exception.CheckedException;
 import br.com.enginer.domain.system.usercase.exception.UncheckedException;
-import br.com.enginer.domain.system.usercase.port.outbound.PublisherOutboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.publisher.PublisherOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.repository.RepositoryOutboundPort;
 import br.com.enginer.domain.system.usercase.schema.Form;
 import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 

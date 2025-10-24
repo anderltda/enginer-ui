@@ -6,10 +6,12 @@ import java.util.Map;
 import br.com.enginer.domain.system.usercase.exception.CheckedException;
 import br.com.enginer.domain.system.usercase.logger.ActionLogger;
 import br.com.enginer.domain.system.usercase.page.PageResult;
-import br.com.enginer.domain.system.usercase.port.inbound.ActionInboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.LoggerOutboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.PublisherOutboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usercase.port.inbound.api.ActionInboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.logger.LoggerOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.publisher.PublisherOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.repository.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.storage.FileStorageOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.storage.HashGeneratorOutboundPort;
 import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 import br.com.enginer.domain.system.usercase.utils.ReflectionUtils;
 
@@ -22,23 +24,31 @@ public class ActionInboundUserCase<T extends Domain<?>> implements ActionInbound
     private final LoggerOutboundPort logger;
     private final RepositoryOutboundPort<Domain<?>> repositoryOutboundPort;
     private final PublisherOutboundPort<Domain<?>> publisherOutboundPort;
+    private final FileStorageOutboundPort fileStorageOutboundPort;
+    private final HashGeneratorOutboundPort hashGeneratorOutboundPort;
 
-    /**
-     * @param logger
-     * @param repositoryOutboundPort
-     * @param publisherOutboundPort
-     */
-    public ActionInboundUserCase(LoggerOutboundPort logger, RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, PublisherOutboundPort<Domain<?>> publisherOutboundPort) {
-        this.logger = logger;
-        this.repositoryOutboundPort = repositoryOutboundPort;
-        this.publisherOutboundPort = publisherOutboundPort;
-    }
+	public ActionInboundUserCase(LoggerOutboundPort logger,
+								 RepositoryOutboundPort<Domain<?>> repositoryOutboundPort,
+								 PublisherOutboundPort<Domain<?>> publisherOutboundPort,
+								 FileStorageOutboundPort fileStorageOutboundPort,
+								 HashGeneratorOutboundPort hashGeneratorOutboundPort) {
+		this.logger = logger;
+		this.repositoryOutboundPort = repositoryOutboundPort;
+		this.publisherOutboundPort = publisherOutboundPort;
+		this.fileStorageOutboundPort = fileStorageOutboundPort;
+		this.hashGeneratorOutboundPort = hashGeneratorOutboundPort;
+	}
 
     /**
      * Injeta as dependências e instancia o UserCase correto para o domínio.
      */
     private Object injectedDependency(Domain<?> domain) throws Exception {
-        return ReflectionUtils.executeInjectedDependencyUserCaseCached(domain.getClass(), repositoryOutboundPort, publisherOutboundPort);
+        return ReflectionUtils.executeInjectedDependencyUserCaseCached(domain.getClass(), 
+        		logger,
+        		repositoryOutboundPort, 
+        		publisherOutboundPort, 
+        		fileStorageOutboundPort,
+        		hashGeneratorOutboundPort);
     }
 
     /**

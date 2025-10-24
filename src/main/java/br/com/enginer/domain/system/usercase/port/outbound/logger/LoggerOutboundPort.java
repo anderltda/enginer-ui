@@ -1,4 +1,4 @@
-package br.com.enginer.domain.system.usercase.port.outbound;
+package br.com.enginer.domain.system.usercase.port.outbound.logger;
 
 import br.com.enginer.domain.system.usercase.logger.ActionLogger;
 import br.com.enginer.domain.system.usercase.port.OutboundPort;

@@ -2,10 +2,10 @@ package br.com.enginer.domain.system.usercase;
 
 import br.com.enginer.domain.system.usercase.exception.CheckedException;
 import br.com.enginer.domain.system.usercase.logger.ActionLogger;
-import br.com.enginer.domain.system.usercase.port.inbound.SubscriberInboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.LoggerOutboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.PublisherOutboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usercase.port.inbound.subscriber.SubscriberInboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.logger.LoggerOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.publisher.PublisherOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.repository.RepositoryOutboundPort;
 import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 import br.com.enginer.domain.system.usercase.utils.ReflectionUtils;
 

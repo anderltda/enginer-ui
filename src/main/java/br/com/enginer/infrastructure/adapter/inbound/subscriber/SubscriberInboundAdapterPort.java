@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.enginer.domain.example.dto.entity.EntityOne;
 import br.com.enginer.domain.system.usercase.exception.CheckedException;
-import br.com.enginer.domain.system.usercase.port.inbound.SubscriberInboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.LoggerOutboundPort;
+import br.com.enginer.domain.system.usercase.port.inbound.subscriber.SubscriberInboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.logger.LoggerOutboundPort;
 import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 
 /**

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -24,20 +25,28 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import br.com.enginer.domain.system.usercase.ActionInboundUserCase;
 import br.com.enginer.domain.system.usercase.SubscriberInboundUserCase;
 import br.com.enginer.domain.system.usercase.UIInboundUserCase;
-import br.com.enginer.domain.system.usercase.port.inbound.ActionInboundPort;
-import br.com.enginer.domain.system.usercase.port.inbound.SubscriberInboundPort;
-import br.com.enginer.domain.system.usercase.port.inbound.UIInboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.LoggerOutboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.PublisherOutboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usercase.port.inbound.api.ActionInboundPort;
+import br.com.enginer.domain.system.usercase.port.inbound.api.UIInboundPort;
+import br.com.enginer.domain.system.usercase.port.inbound.subscriber.SubscriberInboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.logger.LoggerOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.publisher.PublisherOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.repository.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.storage.FileStorageOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.storage.HashGeneratorOutboundPort;
 import br.com.enginer.domain.system.usercase.schema.field.type.Id;
 import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalDateDeserializer;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalDateTimeDeserializer;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalTimeDeserializer;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
 
 @Configuration
 public class BeanConfiguration {
+	
+	@Value("${aws.s3.region:us-east-1}")
+	private String awsRegion;
 
 	/**
 	 * @return
@@ -85,6 +94,14 @@ public class BeanConfiguration {
 
 		return mapper;
 	}
+	
+	@Bean
+	S3Client s3Client() {
+		return S3Client.builder()
+			.region(Region.of(awsRegion))
+			.credentialsProvider(DefaultCredentialsProvider.create())
+			.build();
+	}	
 
 	/**
 	 * @param builder
@@ -108,15 +125,28 @@ public class BeanConfiguration {
 		return new UIInboundUserCase<Domain<?>>(logger, repositoryOutboundPort, publisherOutboundPort);
 	}
 	
+
 	/**
-	 * @param logger
+	 * @param loggerOutboundPort
 	 * @param repositoryOutboundPort
 	 * @param publisherOutboundPort
+	 * @param fileStorageOutboundPort
+	 * @param hashGeneratorOutboundPort
 	 * @return
 	 */
 	@Bean
-	ActionInboundPort<Domain<?>> actionInboundPort(LoggerOutboundPort logger, RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, PublisherOutboundPort<Domain<?>> publisherOutboundPort) {
-		return new ActionInboundUserCase<Domain<?>>(logger, repositoryOutboundPort, publisherOutboundPort);
+	ActionInboundPort<Domain<?>> actionInboundPort(
+			LoggerOutboundPort loggerOutboundPort, 
+			RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, 
+			PublisherOutboundPort<Domain<?>> publisherOutboundPort,
+			FileStorageOutboundPort fileStorageOutboundPort,
+			HashGeneratorOutboundPort hashGeneratorOutboundPort) {
+		return new ActionInboundUserCase<Domain<?>>(
+				loggerOutboundPort, 
+				repositoryOutboundPort, 
+				publisherOutboundPort, 
+				fileStorageOutboundPort, 
+				hashGeneratorOutboundPort);
 	}
 	
 	/**

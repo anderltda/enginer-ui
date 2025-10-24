@@ -1,4 +1,4 @@
-package br.com.enginer.domain.system.usercase.port.outbound;
+package br.com.enginer.domain.system.usercase.port.outbound.repository;
 
 import java.util.List;
 import java.util.Map;

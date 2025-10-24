@@ -22,6 +22,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.cloud.version>2023.0.3</spring.cloud.version>
 		<spring.cloud.aws.version>3.2.0</spring.cloud.aws.version>
+		<aws.sdk.version>2.27.16</aws.sdk.version>
 	</properties>
 	
 	<!-- Start Dependencias -->
@@ -112,6 +113,12 @@
 			<scope>test</scope>
 		</dependency>
 		<!-- h2 -->
+		<!-- aws sdk v2 -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+		</dependency>
+		<!-- aws sdk v2 -->
 	</dependencies>
 	<!-- End Dependencias -->
 
@@ -128,6 +135,13 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
 				<version>${spring.cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>bom</artifactId>
+				<version>${aws.sdk.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

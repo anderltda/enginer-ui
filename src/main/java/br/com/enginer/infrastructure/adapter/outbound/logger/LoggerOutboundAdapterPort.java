@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import br.com.enginer.domain.system.dto.entity.AuditLog;
 import br.com.enginer.domain.system.dto.entity.Log;
 import br.com.enginer.domain.system.usercase.logger.ActionLogger;
-import br.com.enginer.domain.system.usercase.port.outbound.LoggerOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.logger.LoggerOutboundPort;
 
 /**
  * Implementação padrão do {@link LoggerOutboundPort} utilizando SLF4J/Logback.

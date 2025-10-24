@@ -9,8 +9,11 @@ import br.com.enginer.domain.system.usercase.exception.CheckedException;
 import br.com.enginer.domain.system.usercase.exception.UncheckedException;
 import br.com.enginer.domain.system.usercase.injector.DependencyInjector;
 import br.com.enginer.domain.system.usercase.page.PageResult;
-import br.com.enginer.domain.system.usercase.port.outbound.PublisherOutboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.logger.LoggerOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.publisher.PublisherOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.repository.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.storage.FileStorageOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.storage.HashGeneratorOutboundPort;
 import br.com.enginer.domain.system.usercase.schema.Form;
 import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 import br.com.enginer.domain.system.usercase.schema.instance.DomainId;
@@ -24,6 +27,11 @@ import br.com.enginer.infrastructure.adapter.outbound.repository.TypeRepository;
  */
 public abstract class AbstractUserCase<T extends Domain<?>> implements TemplateUserCase<T>, ActionUserCase<T> {
 
+	/** 
+	 * Port de log.
+	 */
+	protected LoggerOutboundPort loggerOutboundPort;
+	
     /** 
      * Port de acesso a dados tipado com o domínio T.
      */
@@ -33,6 +41,16 @@ public abstract class AbstractUserCase<T extends Domain<?>> implements TemplateU
      * Port de publicação de eventos (também pode ser genérico).
      */
     protected PublisherOutboundPort<T> publisherOutboundPort;
+    
+    /**
+     * Port de publicação de eventos (também pode ser genérico).
+     */
+    protected HashGeneratorOutboundPort hashGeneratorOutboundPort;
+    
+    /**
+	 * Port de publicação de eventos (também pode ser genérico).
+	 */
+    protected FileStorageOutboundPort fileStorageOutboundPort;
 
 	/** 
 	 * --------------------------------------------------------------------------------------------
@@ -62,6 +80,42 @@ public abstract class AbstractUserCase<T extends Domain<?>> implements TemplateU
     public PublisherOutboundPort<T> getPublisherOutboundPort() {
         return publisherOutboundPort;
     }
+    
+	@Override
+	@SuppressWarnings("unchecked")
+	public void setHashGeneratorOutboundPort(HashGeneratorOutboundPort hashGeneratorOutboundPort) {
+        this.hashGeneratorOutboundPort = hashGeneratorOutboundPort;
+        DependencyInjector.processDependencies((AbstractUserCase<Domain<?>>) this);		
+	}
+
+	@Override
+	public HashGeneratorOutboundPort getHashGeneratorOutboundPort() {
+		return hashGeneratorOutboundPort;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public void setFileStorageOutboundPort(FileStorageOutboundPort fileStorageOutboundPort) {
+        this.fileStorageOutboundPort = fileStorageOutboundPort;
+        DependencyInjector.processDependencies((AbstractUserCase<Domain<?>>) this);
+	}
+
+	@Override
+	public FileStorageOutboundPort getFileStorageOutboundPort() {
+		return fileStorageOutboundPort;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public void setLoggerOutboundPort(LoggerOutboundPort loggerOutboundPort) {
+		this.loggerOutboundPort = loggerOutboundPort;
+		DependencyInjector.processDependencies((AbstractUserCase<Domain<?>>) this);
+	}
+
+	@Override
+	public LoggerOutboundPort getLoggerOutboundPort() {
+		return loggerOutboundPort;
+	}
 
 	/** 
 	 * --------------------------------------------------------------------------------------------
