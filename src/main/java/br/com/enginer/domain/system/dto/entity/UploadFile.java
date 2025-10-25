@@ -1,40 +1,33 @@
 package br.com.enginer.domain.system.dto.entity;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Objects;
 
 import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
 
+/**
+ * Representa um arquivo enviado ao sistema, incluindo seus metadados e
+ * informações de armazenamento.
+ */
 public class UploadFile extends DomainAbstract<Long> {
 
 	private Long id;
-
-	private String uid;
-
-	private String status;
-
 	private String name;
-
+	private String storageName;
 	private String type;
-
 	private Long size;
-
 	private String path;
-
 	private String storageType;
-
 	private String checksumSha256;
-
 	private String domain;
-
 	private String domainId;
-
 	private Boolean isPublic;
-	
-	private byte[] bytes;
-	
 	private LocalDateTime createdAt;
-
-	private UploadResponse response;
+	private transient String uid;
+	private transient String status;
+	private transient byte[] bytes;
+	private transient UploadResponse response;
 
 	@Override
 	public Long getId() {
@@ -46,15 +39,23 @@ public class UploadFile extends DomainAbstract<Long> {
 	}
 
 	public String getName() {
-		return this.name;
+		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	public String getStorageName() {
+		return storageName;
+	}
+
+	public void setStorageName(String storageName) {
+		this.storageName = storageName;
+	}
+
 	public String getType() {
-		return this.type;
+		return type;
 	}
 
 	public void setType(String type) {
@@ -62,7 +63,7 @@ public class UploadFile extends DomainAbstract<Long> {
 	}
 
 	public Long getSize() {
-		return this.size;
+		return size;
 	}
 
 	public void setSize(Long size) {
@@ -70,7 +71,7 @@ public class UploadFile extends DomainAbstract<Long> {
 	}
 
 	public String getPath() {
-		return this.path;
+		return path;
 	}
 
 	public void setPath(String path) {
@@ -78,7 +79,7 @@ public class UploadFile extends DomainAbstract<Long> {
 	}
 
 	public String getStorageType() {
-		return this.storageType;
+		return storageType;
 	}
 
 	public void setStorageType(String storageType) {
@@ -86,7 +87,7 @@ public class UploadFile extends DomainAbstract<Long> {
 	}
 
 	public String getChecksumSha256() {
-		return this.checksumSha256;
+		return checksumSha256;
 	}
 
 	public void setChecksumSha256(String checksumSha256) {
@@ -94,7 +95,7 @@ public class UploadFile extends DomainAbstract<Long> {
 	}
 
 	public String getDomain() {
-		return this.domain;
+		return domain;
 	}
 
 	public void setDomain(String domain) {
@@ -102,7 +103,7 @@ public class UploadFile extends DomainAbstract<Long> {
 	}
 
 	public String getDomainId() {
-		return this.domainId;
+		return domainId;
 	}
 
 	public void setDomainId(String domainId) {
@@ -110,7 +111,7 @@ public class UploadFile extends DomainAbstract<Long> {
 	}
 
 	public Boolean getIsPublic() {
-		return this.isPublic;
+		return isPublic;
 	}
 
 	public void setIsPublic(Boolean isPublic) {
@@ -118,19 +119,11 @@ public class UploadFile extends DomainAbstract<Long> {
 	}
 
 	public LocalDateTime getCreatedAt() {
-		return this.createdAt;
+		return createdAt;
 	}
 
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
-	}
-
-	public UploadResponse getResponse() {
-		return response;
-	}
-
-	public void setResponse(UploadResponse response) {
-		this.response = response;
 	}
 
 	public String getUid() {
@@ -152,8 +145,43 @@ public class UploadFile extends DomainAbstract<Long> {
 	public byte[] getBytes() {
 		return bytes;
 	}
-	
+
 	public void setBytes(byte[] bytes) {
 		this.bytes = bytes;
 	}
+
+	public UploadResponse getResponse() {
+		return response;
+	}
+
+	public void setResponse(UploadResponse response) {
+		this.response = response;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UploadFile other = (UploadFile) obj;
+		return Objects.equals(id, other.id);
+	}
+
+	@Override
+	public String toString() {
+		return "UploadFile [id=" + id + ", name=" + name + ", storageName=" + storageName + ", type=" + type + ", size="
+				+ size + ", path=" + path + ", storageType=" + storageType + ", checksumSha256=" + checksumSha256
+				+ ", domain=" + domain + ", domainId=" + domainId + ", isPublic=" + isPublic + ", createdAt="
+				+ createdAt + ", uid=" + uid + ", status=" + status + ", bytes=" + Arrays.toString(bytes)
+				+ ", response=" + response + "]";
+	}
+
 }

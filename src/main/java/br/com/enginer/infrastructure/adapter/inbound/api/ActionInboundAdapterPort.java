@@ -77,6 +77,8 @@ public class ActionInboundAdapterPort {
 			response.put("id", uploadFile.getId());
 			response.put("filename", uploadFile.getName());
 			response.put("checksum", uploadFile.getChecksumSha256());
+			response.put("domain", uploadFile.getDomain());
+			response.put("domainId", uploadFile.getDomainId());
 			response.put("uploadedAt", uploadFile.getCreatedAt());
 
 			return ResponseEntity.ok(response);

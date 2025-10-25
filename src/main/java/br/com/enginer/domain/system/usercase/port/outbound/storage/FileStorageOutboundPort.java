@@ -8,22 +8,33 @@ import br.com.enginer.domain.system.usercase.port.OutboundPort;
 
 /**
  * Porta de saída genérica para armazenamento de arquivos.
- * Implementações podem ser locais, em nuvem (S3), FTP, etc.
+ * Implementações podem ser locais, em nuvem (S3), etc.
  */
 public interface FileStorageOutboundPort extends OutboundPort {
 
     /**
-     * Salva um arquivo e retorna o caminho ou identificador remoto.
+     * Salva um arquivo físico e retorna seu caminho completo.
      *
      * @param originalFilename nome original do arquivo
      * @param content fluxo de bytes do arquivo
-     * @return caminho físico ou remoto do arquivo salvo
-     * @throws IOException se ocorrer falha de I/O
+     * @return {@link Path} representando o caminho físico ou remoto
+     * @throws IOException se ocorrer falha de leitura/escrita
      */
     Path saveFile(String originalFilename, InputStream content) throws IOException;
 
     /**
-     * Retorna a URL pública ou caminho para download.
+     * Retorna uma URL pública (ou URI local) que permite acesso direto ao arquivo.
+     *
+     * @param path caminho físico ou remoto do arquivo
+     * @return URL ou URI pública
      */
     String getPublicUrl(Path path);
+
+    /**
+     * Exclui fisicamente o arquivo especificado, se existir.
+     *
+     * @param path caminho físico ou remoto do arquivo
+     * @throws IOException se ocorrer falha de exclusão
+     */
+    void deleteFile(Path path) throws IOException;
 }

@@ -74,8 +74,10 @@
     <!-- Logger da sua aplicação -->
     <logger name="br.com.enginer" level="DEBUG" additivity="false">
         <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE_APP" />
+   		<!-- 
+   		<appender-ref ref="FILE_APP" />
         <appender-ref ref="FILE_ERROR" />
+    	-->
     </logger>
 
     <!-- ========================= -->
@@ -83,8 +85,10 @@
     <!-- ========================= -->
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
-   <!-- <appender-ref ref="FILE_APP" /> -->
+   		<!-- 
+   		<appender-ref ref="FILE_APP" />
         <appender-ref ref="FILE_ERROR" />
+    	-->
     </root>
 
 </configuration>

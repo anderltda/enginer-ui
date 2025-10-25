@@ -158,7 +158,7 @@ public class EntityTen extends DomainAbstract<Long> {
 	
 	@UIPosition(x = 2, y = 2)
 	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
-	@UIFile(mode = TypeFileUpload.WALL_PICKER, limit = 3)
+	@UIFile(mode = TypeFileUpload.WALL_PICKER, limit = 5)
 	private List<UploadFile> wallPickers;
 
 	@UIPosition(x = 1, y = 3)
@@ -170,7 +170,6 @@ public class EntityTen extends DomainAbstract<Long> {
 	@UIFieldValidation(required = false, template = { TypeTemplate.FORM, TypeTemplate.TAB })
 	@UIFile(mode = TypeFileUpload.SIMPLE)
 	private List<UploadFile> simpleLists;
-
 	
 	@UIPosition(x = 1, y = 5)
 	@UIFieldValidation(required = false, template = { TypeTemplate.FORM, TypeTemplate.TAB })
