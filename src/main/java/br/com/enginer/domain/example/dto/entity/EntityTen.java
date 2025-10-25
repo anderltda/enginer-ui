@@ -2,6 +2,7 @@ package br.com.enginer.domain.example.dto.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import br.com.enginer.domain.system.dto.entity.UploadFile;
 import br.com.enginer.domain.system.usercase.annotation.field.UIColumn;
@@ -158,23 +159,11 @@ public class EntityTen extends DomainAbstract<Long> {
 	
 	@UIPosition(x = 2, y = 2)
 	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
-	@UIFile(mode = TypeFileUpload.WALL_PICKER, limit = 5)
-	private List<UploadFile> wallPickers;
-
-	@UIPosition(x = 1, y = 3)
-	@UIFieldValidation(required = false, template = { TypeTemplate.FORM, TypeTemplate.TAB })
-	@UIFile(mode = TypeFileUpload.LIST)
-	private List<UploadFile> imageLists;
-	
-	@UIPosition(x = 2, y = 3)
-	@UIFieldValidation(required = false, template = { TypeTemplate.FORM, TypeTemplate.TAB })
-	@UIFile(mode = TypeFileUpload.SIMPLE)
-	private List<UploadFile> simpleLists;
-	
-	@UIPosition(x = 1, y = 5)
-	@UIFieldValidation(required = false, template = { TypeTemplate.FORM, TypeTemplate.TAB })
-	@UIFile(mode = TypeFileUpload.DRAG_DROP)
-	private List<UploadFile> imageDragDrops;
+	//@UIFile(label = "Imagem", mode = TypeFileUpload.WALL_PICKER, limit = 5)
+	@UIFile(label = "Arquivos", mode = TypeFileUpload.LIST)
+	//@UIFile(label = "Arquivos", mode = TypeFileUpload.SIMPLE)
+	//@UIFile(label = "Arquivos", mode = TypeFileUpload.DRAG_DROP)
+	private transient List<UploadFile> files;
 
 	@UIHidden
 	@UIColumn(label = "Data de Criacao", initial = false)
@@ -239,36 +228,12 @@ public class EntityTen extends DomainAbstract<Long> {
 		this.description = description;
 	}
 	
-	public List<UploadFile> getWallPickers() {
-		return wallPickers;
+	public List<UploadFile> getFiles() {
+		return files;
 	}
-
-	public void setWallPickers(List<UploadFile> wallPickers) {
-		this.wallPickers = wallPickers;
-	}
-
-	public List<UploadFile> getImageLists() {
-		return imageLists;
-	}
-
-	public void setImageLists(List<UploadFile> imageLists) {
-		this.imageLists = imageLists;
-	}
-
-	public List<UploadFile> getSimpleLists() {
-		return simpleLists;
-	}
-
-	public void setSimpleLists(List<UploadFile> simpleLists) {
-		this.simpleLists = simpleLists;
-	}
-
-	public List<UploadFile> getImageDragDrops() {
-		return imageDragDrops;
-	}
-
-	public void setImageDragDrops(List<UploadFile> imageDragDrops) {
-		this.imageDragDrops = imageDragDrops;
+	
+	public void setFiles(List<UploadFile> files) {
+		this.files = files;
 	}
 
 	public LocalDateTime getDateCreate() {
@@ -286,11 +251,29 @@ public class EntityTen extends DomainAbstract<Long> {
 	public void setDateUpdate(LocalDateTime dateUpdate) {
 		this.dateUpdate = dateUpdate;
 	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EntityTen other = (EntityTen) obj;
+		return Objects.equals(id, other.id);
+	}
 
 	@Override
 	public String toString() {
 		return "EntityTen [id=" + id + ", name=" + name + ", totalAmount=" + totalAmount + ", totalValue=" + totalValue
-				+ ", entityStatus=" + entityStatus + ", dateCreate=" + dateCreate + ", dateUpdate=" + dateUpdate + "]";
+				+ ", entityStatus=" + entityStatus + ", description=" + description + ", files=" + files
+				+ ", dateCreate=" + dateCreate + ", dateUpdate=" + dateUpdate + "]";
 	}
 
 }

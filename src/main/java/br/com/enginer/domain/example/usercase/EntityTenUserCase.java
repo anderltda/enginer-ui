@@ -49,7 +49,7 @@ public class EntityTenUserCase extends AbstractUserCase<EntityTen> {
 		
 		EntityTen entityTenNew = (EntityTen) super.salvar(entityTen);
 		
-		entityTen.getWallPickers().forEach(file -> {
+		entityTen.getFiles().forEach(file -> {
 			uploadFileUserCase.salvarEntityId(file, entityTenNew.getId());
 		});
 		
@@ -61,13 +61,11 @@ public class EntityTenUserCase extends AbstractUserCase<EntityTen> {
 		
 		EntityTen entityTen = (EntityTen) super.buscarPorId(domain);
 		
-		List<UploadFile> wallPickers = (List<UploadFile>) uploadFileUserCase.buscarPorEntityIdAndDomain(
-			entityTen.getId(), 
-			EntityTen.class.getSimpleName()
-		);
+		List<UploadFile> files = (List<UploadFile>) uploadFileUserCase.buscarPorDomainAndDomainId(EntityTen.class.getSimpleName(), entityTen.getId());
 		
-		entityTen.setWallPickers(wallPickers);
+		entityTen.setFiles(files);
 		
 		return entityTen;
 	}
+	
 }

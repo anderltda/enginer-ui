@@ -25,6 +25,16 @@ public interface ActionInboundPort<T extends Domain<?>> extends InboundPort {
      * @throws CheckedException em caso de erro de regra de negócio
      */
 	Domain<?> searchWithById(Domain<?> domain) throws CheckedException;
+	
+	
+    /**
+     * Busca uma entidade unica com base em filtros.
+     *
+     * @param domain domínio com identificador preenchido
+     * @return domínio encontrado (ou nulo se não encontrado)
+     * @throws CheckedException em caso de erro de regra de negócio
+     */
+	Domain<?> searchWithBySingleConditions(Domain<?> domain, Map<String, Object> filter) throws CheckedException;	
 
     /**
      * Busca entidades com base em filtros dinâmicos.

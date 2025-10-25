@@ -52,8 +52,10 @@ public class ActionInboundUserCase<T extends Domain<?>> implements ActionInbound
     }
 
     /**
+     * Busca uma entidade pelo seu ID.
      * @param domain
-     * @return T
+     * @return Domain<?>
+     * @throws CheckedException
      */
 	@Override
     public Domain<?> searchWithById(Domain<?> domain) throws CheckedException {
@@ -65,8 +67,27 @@ public class ActionInboundUserCase<T extends Domain<?>> implements ActionInbound
             throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);
         }
     }
+	
 
-    /**
+	/**
+	 * 
+	 * @param domain
+	 * @param filter
+	 * @return Domain<?>
+	 * @throws CheckedException
+	 */
+	@Override
+	public Domain<?> searchWithBySingleConditions(Domain<?> domain, Map<String, Object> filter) throws CheckedException {
+		try {
+			Object userCase = injectedDependency(domain);
+			return (Domain<?>) ReflectionUtils.executeMethod(userCase, ActionUserCase.buscarPorRegistroUnico, domain, filter);
+		} catch (Exception ex) {
+			logger.error(ActionInboundUserCase.class, ex);
+			throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);
+		}
+	}
+
+	/**
 	 * @param domain
 	 * @param filter
 	 * @return List<T>

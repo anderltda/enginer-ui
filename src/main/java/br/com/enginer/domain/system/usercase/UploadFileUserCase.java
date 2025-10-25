@@ -78,7 +78,9 @@ public class UploadFileUserCase extends AbstractUserCase<UploadFile> {
 	 */
 	@Override
 	public void excluir(UploadFile uploadFile) throws UncheckedException {
+		
 		try {
+			
 			loggerOutboundPort.info(getClass(), "Exclusão iniciada para arquivo: " + uploadFile.getName());
 
 			// Busca o arquivo para garantir que ele existe
@@ -115,14 +117,14 @@ public class UploadFileUserCase extends AbstractUserCase<UploadFile> {
 	}
 
 	/**
-	 * @param entityId
 	 * @param domain
+	 * @param domainId
 	 * @return List<UploadFile>
 	 * @throws UncheckedException
 	 */
-	public List<UploadFile> buscarPorEntityIdAndDomain(Object entityId, String domain) throws UncheckedException {
+	public List<UploadFile> buscarPorDomainAndDomainId(String domain, Object domainId) throws UncheckedException {
 
-		Map<String, Object> filter = Map.of("domain", domain, "domainId", entityId.toString());
+		Map<String, Object> filter = Map.of("domain", domain, "domainId", domainId.toString());
 
 		List<UploadFile> files = super.buscarTodos(new UploadFile(), filter);
 

@@ -1,10 +1,14 @@
 package br.com.enginer.infrastructure.adapter.inbound.api;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -88,6 +92,25 @@ public class ActionInboundAdapterPort {
 			throw ex;
 		}
 	}
+	
+	// ============================================================================================
+	// DOWNLOAD
+	// ============================================================================================
+	
+	@GetMapping("/download")
+	public ResponseEntity<byte[]> download(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws IOException {
+
+		UploadFile file = (UploadFile) actionInboundPort.searchWithBySingleConditions(new UploadFile(), filter);		
+		
+	    Path path = Path.of(file.getPath());
+
+	    byte[] content = Files.readAllBytes(path);
+
+	    return ResponseEntity.ok()
+	            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getName() + "\"")
+	            .header(HttpHeaders.CONTENT_TYPE, file.getType())
+	            .body(content);
+	}	
 
 	// ============================================================================================
 	// VALIDATE ASYNC
