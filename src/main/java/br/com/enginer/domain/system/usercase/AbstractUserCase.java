@@ -12,6 +12,7 @@ import br.com.enginer.domain.system.usercase.page.PageResult;
 import br.com.enginer.domain.system.usercase.port.outbound.logger.LoggerOutboundPort;
 import br.com.enginer.domain.system.usercase.port.outbound.publisher.PublisherOutboundPort;
 import br.com.enginer.domain.system.usercase.port.outbound.repository.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.storage.FileChunkStorageOutboundPort;
 import br.com.enginer.domain.system.usercase.port.outbound.storage.FileStorageOutboundPort;
 import br.com.enginer.domain.system.usercase.port.outbound.storage.HashGeneratorOutboundPort;
 import br.com.enginer.domain.system.usercase.schema.Form;
@@ -51,6 +52,11 @@ public abstract class AbstractUserCase<T extends Domain<?>> implements TemplateU
 	 * Port de publicação de eventos (também pode ser genérico).
 	 */
     protected FileStorageOutboundPort fileStorageOutboundPort;
+    
+    /** 
+	 * Port de publicação de eventos (também pode ser genérico).
+	 */
+    protected FileChunkStorageOutboundPort fileChunkStorageOutboundPort;
 
 	/** 
 	 * --------------------------------------------------------------------------------------------
@@ -115,6 +121,18 @@ public abstract class AbstractUserCase<T extends Domain<?>> implements TemplateU
 	@Override
 	public LoggerOutboundPort getLoggerOutboundPort() {
 		return loggerOutboundPort;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public void setFileChunkStorageOutboundPort(FileChunkStorageOutboundPort fileChunkStorageOutboundPort) {
+		this.fileChunkStorageOutboundPort = fileChunkStorageOutboundPort;
+		DependencyInjector.processDependencies((AbstractUserCase<Domain<?>>) this);
+	}
+	
+	@Override
+	public FileChunkStorageOutboundPort getFileChunkStorageOutboundPort() {
+		return fileChunkStorageOutboundPort;
 	}
 
 	/** 

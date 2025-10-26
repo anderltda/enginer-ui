@@ -50,4 +50,14 @@ public class LocalFileStorageAdapterPort implements FileStorageOutboundPort {
     public String getPublicUrl(Path path) {
         return path != null ? path.toUri().toString() : null;
     }
+    
+    /**
+     *
+     */
+    @Override
+    public Path resolveFinalPath(String storageName) throws IOException {
+        Files.createDirectories(UPLOAD_DIR);
+        String clean = StringUtils.cleanPath(storageName);
+        return UPLOAD_DIR.resolve(clean);
+    }
 }

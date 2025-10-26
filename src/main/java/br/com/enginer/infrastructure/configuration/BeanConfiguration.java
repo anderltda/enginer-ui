@@ -31,6 +31,7 @@ import br.com.enginer.domain.system.usercase.port.inbound.subscriber.SubscriberI
 import br.com.enginer.domain.system.usercase.port.outbound.logger.LoggerOutboundPort;
 import br.com.enginer.domain.system.usercase.port.outbound.publisher.PublisherOutboundPort;
 import br.com.enginer.domain.system.usercase.port.outbound.repository.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.storage.FileChunkStorageOutboundPort;
 import br.com.enginer.domain.system.usercase.port.outbound.storage.FileStorageOutboundPort;
 import br.com.enginer.domain.system.usercase.port.outbound.storage.HashGeneratorOutboundPort;
 import br.com.enginer.domain.system.usercase.schema.field.type.Id;
@@ -124,28 +125,30 @@ public class BeanConfiguration {
 	UIInboundPort<Domain<?>> uIInboundPort(LoggerOutboundPort logger, RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, PublisherOutboundPort<Domain<?>> publisherOutboundPort) {
 		return new UIInboundUserCase<Domain<?>>(logger, repositoryOutboundPort, publisherOutboundPort);
 	}
-	
 
 	/**
 	 * @param loggerOutboundPort
 	 * @param repositoryOutboundPort
 	 * @param publisherOutboundPort
 	 * @param fileStorageOutboundPort
+	 * @param fileChunkStorageOutboundPort
 	 * @param hashGeneratorOutboundPort
 	 * @return
 	 */
 	@Bean
 	ActionInboundPort<Domain<?>> actionInboundPort(
-			LoggerOutboundPort loggerOutboundPort, 
-			RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, 
+			LoggerOutboundPort loggerOutboundPort,
+			RepositoryOutboundPort<Domain<?>> repositoryOutboundPort,
 			PublisherOutboundPort<Domain<?>> publisherOutboundPort,
 			FileStorageOutboundPort fileStorageOutboundPort,
+			FileChunkStorageOutboundPort fileChunkStorageOutboundPort,
 			HashGeneratorOutboundPort hashGeneratorOutboundPort) {
 		return new ActionInboundUserCase<Domain<?>>(
 				loggerOutboundPort, 
 				repositoryOutboundPort, 
 				publisherOutboundPort, 
-				fileStorageOutboundPort, 
+				fileStorageOutboundPort,
+				fileChunkStorageOutboundPort,
 				hashGeneratorOutboundPort);
 	}
 	

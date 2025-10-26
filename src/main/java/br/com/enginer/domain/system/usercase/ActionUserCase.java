@@ -9,6 +9,7 @@ import br.com.enginer.domain.system.usercase.page.PageResult;
 import br.com.enginer.domain.system.usercase.port.outbound.logger.LoggerOutboundPort;
 import br.com.enginer.domain.system.usercase.port.outbound.publisher.PublisherOutboundPort;
 import br.com.enginer.domain.system.usercase.port.outbound.repository.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.storage.FileChunkStorageOutboundPort;
 import br.com.enginer.domain.system.usercase.port.outbound.storage.FileStorageOutboundPort;
 import br.com.enginer.domain.system.usercase.port.outbound.storage.HashGeneratorOutboundPort;
 import br.com.enginer.domain.system.usercase.schema.instance.Domain;
@@ -28,15 +29,28 @@ public interface ActionUserCase<T extends Domain<?>> {
 	
 	// ------------------- Dependências -------------------
 	void setLoggerOutboundPort(LoggerOutboundPort loggerOutboundPort);
+	
 	void setRepositoryOutboundPort(RepositoryOutboundPort<T> repositoryOutboundPort);
+	
 	void setPublisherOutboundPort(PublisherOutboundPort<T> publisherOutboundPort);
+	
 	void setHashGeneratorOutboundPort(HashGeneratorOutboundPort hashGeneratorOutboundPort);
+	
 	void setFileStorageOutboundPort(FileStorageOutboundPort fileStorageOutboundPort);
+	
+	void setFileChunkStorageOutboundPort(FileChunkStorageOutboundPort fileChunkStorageOutboundPort);
+	
 	LoggerOutboundPort getLoggerOutboundPort();
+	
 	RepositoryOutboundPort<T> getRepositoryOutboundPort();
+	
 	PublisherOutboundPort<T> getPublisherOutboundPort();
+	
 	HashGeneratorOutboundPort getHashGeneratorOutboundPort();
-    FileStorageOutboundPort getFileStorageOutboundPort();
+    
+	FileStorageOutboundPort getFileStorageOutboundPort();
+	
+	FileChunkStorageOutboundPort getFileChunkStorageOutboundPort();
 
 	// ------------------- Ações principais -------------------
 	T buscarPorId(T domain) throws CheckedException;

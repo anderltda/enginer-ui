@@ -37,4 +37,9 @@ public interface FileStorageOutboundPort extends OutboundPort {
      * @throws IOException se ocorrer falha de exclusão
      */
     void deleteFile(Path path) throws IOException;
+    
+    /** 
+     * Resolve o caminho final (no storage) para um storageName. 
+     */
+    Path resolveFinalPath(String storageName) throws IOException;
 }

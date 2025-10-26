@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,7 +42,7 @@ import br.com.enginer.infrastructure.utils.NormalizeUtils;
 @RestController
 @RequestMapping("/v1/enginer-ui/action")
 public class ActionInboundAdapterPort {
-
+	
 	private final ActionInboundPort<?> actionInboundPort;
 	private final ObjectMapper objectMapper;
 	private final LoggerOutboundPort logger;
@@ -75,6 +77,8 @@ public class ActionInboundAdapterPort {
 		    uploadFile.setStorageType("LOCAL"); // "LOCAL" ou "S3"
 		    uploadFile.setActionLogger(actionLogger);
 		    
+		    //Thread.sleep(35000); // Simula algum processamento
+		    
 			uploadFile = (UploadFile) actionInboundPort.methodName(uploadFile);
 
 			Map<String, Object> response = new LinkedHashMap<>();
@@ -92,6 +96,37 @@ public class ActionInboundAdapterPort {
 			throw ex;
 		}
 	}
+	
+	// ============================================================================================
+	// CHUNKED UPLOAD
+	// ============================================================================================
+
+	@PostMapping("/session")
+    public ResponseEntity<Map<String, String>> startSession() throws CheckedException {
+		
+        String uploadId = (String) actionInboundPort.methodName(new UploadFile(), "startSession");
+        
+        return ResponseEntity.ok(Map.of("uploadId", Objects.toString(uploadId, "")));
+    }
+
+    @PostMapping("/chunk")
+    public ResponseEntity<Void> uploadChunk(@RequestParam("uploadId") String uploadId, @RequestParam("chunkIndex") int chunkIndex, @RequestParam("file") MultipartFile part) throws Exception {
+
+        actionInboundPort.methodName(new UploadFile(), "uploadChunk", uploadId, chunkIndex, part.getInputStream());
+        
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/finalize")
+    public ResponseEntity<UploadFile> finalizeUpload(@RequestParam("uploadId") String uploadId, @RequestPart("meta") String jsonMeta) throws Exception {
+
+        UploadFile uploadFile = objectMapper.readValue(jsonMeta, UploadFile.class);
+        uploadFile.setUid(uploadId);
+        
+        uploadFile = (UploadFile) actionInboundPort.methodName(uploadFile);
+
+        return ResponseEntity.ok(uploadFile);
+    }	
 	
 	// ============================================================================================
 	// DOWNLOAD
