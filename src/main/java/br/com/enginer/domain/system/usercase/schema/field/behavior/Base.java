@@ -23,6 +23,7 @@ public abstract class Base {
 	private String title;
 	private String action;
 	private String domain;
+	private String listType;
 	private Class<?> domainClass;
 	private String method;
 	private Integer min;
@@ -117,7 +118,7 @@ public abstract class Base {
 	public void setAction(String action) {
 		this.action = action;
 	}
-
+	
 	public String getDomain() {
 		return domain;
 	}
@@ -126,6 +127,14 @@ public abstract class Base {
 		this.domain = domain;
 	}
 
+	public String getListType() {
+		return listType;
+	}
+	
+	public void setListType(String listType) {
+		this.listType = listType;
+	}
+	
 	public Class<?> getDomainClass() {
 		return domainClass;
 	}

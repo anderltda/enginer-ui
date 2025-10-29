@@ -196,6 +196,7 @@ public class Default {
 		file.setValue(value);
 		file.setAction("http://localhost:8081/api/upload");
 		file.setMode(TypeFileUpload.SIMPLE);
+		file.setListType("text");
 		file.setFiles(files);
 		file.setPosition(position);
 		file.setDisable(disable);

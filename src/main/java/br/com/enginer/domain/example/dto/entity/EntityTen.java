@@ -159,10 +159,10 @@ public class EntityTen extends DomainAbstract<Long> {
 	
 	@UIPosition(x = 2, y = 2)
 	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
-	//@UIFile(label = "Imagem", mode = TypeFileUpload.WALL_PICKER, limit = 5)
-	@UIFile(label = "Arquivos", mode = TypeFileUpload.LIST)
-	//@UIFile(label = "Arquivos", mode = TypeFileUpload.SIMPLE)
-	//@UIFile(label = "Arquivos", mode = TypeFileUpload.DRAG_DROP)
+	//@UIFile(label = "Imagem", mode = TypeFileUpload.WALL_PICKER, listType = "picture-card", limit = 5)
+	@UIFile(label = "Arquivos", mode = TypeFileUpload.LIST, listType = "text", limit = 2)
+	//@UIFile(label = "Arquivos", mode = TypeFileUpload.SIMPLE, listType = "picture", limit = 3)
+	//@UIFile(label = "Arquivos", mode = TypeFileUpload.DRAG_DROP, listType = "text", limit = 2)
 	private transient List<UploadFile> files;
 
 	@UIHidden

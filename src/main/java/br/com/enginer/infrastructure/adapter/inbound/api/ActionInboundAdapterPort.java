@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -54,50 +53,6 @@ public class ActionInboundAdapterPort {
 	}
 
 	// ============================================================================================
-	// UPLOAD
-	// ============================================================================================
-
-	@PostMapping("/upload")
-	public ResponseEntity<Map<String, Object>> upload(@UIDomain Domain<?> domain, @RequestParam MultipartFile multipartFile, @RequestParam("actionLogger") String actionLoggerJson) throws Exception {
-
-		try {
-			
-			if (multipartFile.isEmpty()) {
-				return ResponseEntity.badRequest().body(Map.of("error", "Arquivo está vazio."));
-			}
-
-			ActionLogger actionLogger = objectMapper.readValue(actionLoggerJson, ActionLogger.class);
-
-			UploadFile uploadFile = new UploadFile();
-			uploadFile.setName(multipartFile.getOriginalFilename());
-		    uploadFile.setType(multipartFile.getContentType());
-		    uploadFile.setSize(multipartFile.getSize());
-		    uploadFile.setBytes(multipartFile.getBytes());
-		    uploadFile.setDomain(domain.getClass().getSimpleName());
-		    uploadFile.setStorageType("LOCAL"); // "LOCAL" ou "S3"
-		    uploadFile.setActionLogger(actionLogger);
-		    
-		    //Thread.sleep(35000); // Simula algum processamento
-		    
-			uploadFile = (UploadFile) actionInboundPort.methodName(uploadFile);
-
-			Map<String, Object> response = new LinkedHashMap<>();
-			response.put("id", uploadFile.getId());
-			response.put("filename", uploadFile.getName());
-			response.put("checksum", uploadFile.getChecksumSha256());
-			response.put("domain", uploadFile.getDomain());
-			response.put("domainId", uploadFile.getDomainId());
-			response.put("uploadedAt", uploadFile.getCreatedAt());
-
-			return ResponseEntity.ok(response);
-
-		} catch (Exception ex) {
-			logger.error(ActionInboundAdapterPort.class, ex);
-			throw ex;
-		}
-	}
-	
-	// ============================================================================================
 	// CHUNKED UPLOAD
 	// ============================================================================================
 
@@ -110,7 +65,7 @@ public class ActionInboundAdapterPort {
     }
 
     @PostMapping("/chunk")
-    public ResponseEntity<Void> uploadChunk(@RequestParam("uploadId") String uploadId, @RequestParam("chunkIndex") int chunkIndex, @RequestParam("file") MultipartFile part) throws Exception {
+    public ResponseEntity<Void> uploadChunk(@RequestParam String uploadId, @RequestParam int chunkIndex, @RequestParam("file") MultipartFile part) throws Exception {
 
         actionInboundPort.methodName(new UploadFile(), "uploadChunk", uploadId, chunkIndex, part.getInputStream());
         
@@ -118,9 +73,10 @@ public class ActionInboundAdapterPort {
     }
 
     @PostMapping("/finalize")
-    public ResponseEntity<UploadFile> finalizeUpload(@RequestParam("uploadId") String uploadId, @RequestPart("meta") String jsonMeta) throws Exception {
+    public ResponseEntity<UploadFile> finalizeUpload(@RequestParam String uploadId, @RequestPart("meta") String jsonMeta) throws Exception {
 
         UploadFile uploadFile = objectMapper.readValue(jsonMeta, UploadFile.class);
+        
         uploadFile.setUid(uploadId);
         
         uploadFile = (UploadFile) actionInboundPort.methodName(uploadFile);
@@ -135,6 +91,10 @@ public class ActionInboundAdapterPort {
 	@GetMapping("/download")
 	public ResponseEntity<byte[]> download(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws IOException {
 
+		if(filter != null && filter.isEmpty()) {
+			return ResponseEntity.badRequest().build();
+		}
+		
 		UploadFile file = (UploadFile) actionInboundPort.searchWithBySingleConditions(new UploadFile(), filter);		
 		
 	    Path path = Path.of(file.getPath());

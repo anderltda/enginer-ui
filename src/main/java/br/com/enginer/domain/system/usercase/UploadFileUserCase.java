@@ -1,6 +1,5 @@
 package br.com.enginer.domain.system.usercase;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,8 +15,6 @@ import java.util.UUID;
 
 import br.com.enginer.domain.system.dto.entity.UploadFile;
 import br.com.enginer.domain.system.usercase.exception.UncheckedException;
-import br.com.enginer.domain.system.usercase.utils.FileNameUtils;
-import br.com.enginer.domain.system.usercase.validator.UploadFileValidator;
 
 /**
  * 
@@ -132,61 +129,6 @@ public class UploadFileUserCase extends AbstractUserCase<UploadFile> {
 
 		String sha256 = HexFormat.of().formatHex(md.digest());
 		return Map.of("checksum", sha256, "size", size);
-	}
-
-	/**
-	 * Realiza o upload do arquivo, salvando-o fisicamente e registrando seus
-	 * metadados.
-	 * 
-	 * @param uploadFile
-	 * @return UploadFile
-	 * @throws UncheckedException
-	 */
-	public UploadFile uploadFile(UploadFile uploadFile) throws UncheckedException {
-
-		UploadFileValidator validator = new UploadFileValidator(loggerOutboundPort, this);
-
-		try {
-
-			loggerOutboundPort.info(getClass(), "Iniciando upload: " + uploadFile.getName());
-
-			validator.validateRequiredFields(uploadFile);
-
-			String storageName = FileNameUtils.generateStorageName(uploadFile.getName());
-
-			uploadFile.setStorageName(storageName);
-
-			validator.validateDuplicity(uploadFile);
-
-			Path destination = fileStorageOutboundPort.saveFile(storageName,
-					new ByteArrayInputStream(uploadFile.getBytes()));
-
-			String checksum = hashGeneratorOutboundPort.generateSha256(uploadFile.getBytes());
-
-			uploadFile.setPath(destination.toString());
-			uploadFile.setChecksumSha256(checksum);
-			uploadFile.setCreatedAt(LocalDateTime.now());
-			uploadFile.setIsPublic(false);
-
-			validator.validateBeforeSave(uploadFile);
-
-			uploadFile = super.salvar(uploadFile);
-
-			loggerOutboundPort.info(getClass(),
-					String.format("Upload concluído: %s (%s)", uploadFile.getName(), uploadFile.getStorageName()));
-
-			return uploadFile;
-
-		} catch (IOException e) {
-			loggerOutboundPort.error(getClass(), "Erro de I/O ao salvar o arquivo: " + e.getMessage(), e);
-			throw new UncheckedException("Erro ao fazer upload do arquivo: " + e.getMessage(), e);
-		} catch (UncheckedException e) {
-			loggerOutboundPort.error(getClass(), "Falha de validação ao processar upload: " + e.getMessage(), e);
-			throw e;
-		} catch (Exception e) {
-			loggerOutboundPort.error(getClass(), "Erro inesperado no upload: " + e.getMessage(), e);
-			throw new UncheckedException("Falha inesperada ao processar upload", e);
-		}
 	}
 
 	/**
