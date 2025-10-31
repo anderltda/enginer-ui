@@ -68,6 +68,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		        .codecs(cfg -> {
 		            cfg.defaultCodecs().jackson2JsonEncoder(new Jackson2JsonEncoder(objectMapper, MediaType.APPLICATION_JSON));
 		            cfg.defaultCodecs().jackson2JsonDecoder(new Jackson2JsonDecoder(objectMapper, MediaType.APPLICATION_JSON));
+		            cfg.defaultCodecs().maxInMemorySize(10 * 1024 * 1024);
 		        })				
 				.build();
 	}
