@@ -2,6 +2,7 @@ package br.com.enginer.domain.example.dto.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,6 +15,7 @@ import br.com.enginer.domain.system.usercase.annotation.field.UIId;
 import br.com.enginer.domain.system.usercase.annotation.field.UIRow;
 import br.com.enginer.domain.system.usercase.annotation.field.UIText;
 import br.com.enginer.domain.system.usercase.annotation.field.UITextArea;
+import br.com.enginer.domain.system.usercase.annotation.field.UITime;
 import br.com.enginer.domain.system.usercase.annotation.field.behavior.UIPosition;
 import br.com.enginer.domain.system.usercase.annotation.field.behavior.validation.UIFieldValidation;
 import br.com.enginer.domain.system.usercase.annotation.instance.UITitle;
@@ -45,6 +47,7 @@ import br.com.enginer.domain.system.usercase.annotation.instance.validate.condit
 import br.com.enginer.domain.system.usercase.annotation.instance.validate.conditional.UIConditionalOn;
 import br.com.enginer.domain.system.usercase.constants.Constants;
 import br.com.enginer.domain.system.usercase.enums.TypeButtonState;
+import br.com.enginer.domain.system.usercase.enums.TypeDateFormat;
 import br.com.enginer.domain.system.usercase.enums.TypeFileUpload;
 import br.com.enginer.domain.system.usercase.enums.TypeOperator;
 import br.com.enginer.domain.system.usercase.enums.TypeTemplate;
@@ -146,6 +149,9 @@ public class EntityTen extends DomainAbstract<Long> {
 	@UIColumn(label = "Valor Total", initial = true)
 	@UIRow(visible = true)
 	private BigDecimal totalValue;
+	
+	@UITime(label = "Tempo Fixo", format = TypeDateFormat.TIME_HHMM_FORMAT)
+	private LocalTime timeProcess;
 
 	@UIPosition(x = 2, y = 1)
 	@UIFilter(label = "Status", field = "name", select = true, filter = { "status=0", "status_op=ge" }, template = { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.FORM, TypeTemplate.ROW, TypeTemplate.MODAL })
@@ -213,6 +219,14 @@ public class EntityTen extends DomainAbstract<Long> {
 		this.totalValue = totalValue;
 	}
 
+	public LocalTime getTimeProcess() {
+		return timeProcess;
+	}
+
+	public void setTimeProcess(LocalTime timeProcess) {
+		this.timeProcess = timeProcess;
+	}
+
 	public EntityStatus getEntityStatus() {
 		return entityStatus;
 	}
@@ -220,7 +234,7 @@ public class EntityTen extends DomainAbstract<Long> {
 	public void setEntityStatus(EntityStatus entityStatus) {
 		this.entityStatus = entityStatus;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
@@ -228,11 +242,11 @@ public class EntityTen extends DomainAbstract<Long> {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	public List<UploadFile> getFiles() {
 		return files;
 	}
-	
+
 	public void setFiles(List<UploadFile> files) {
 		this.files = files;
 	}
@@ -252,7 +266,7 @@ public class EntityTen extends DomainAbstract<Long> {
 	public void setDateUpdate(LocalDateTime dateUpdate) {
 		this.dateUpdate = dateUpdate;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -273,8 +287,7 @@ public class EntityTen extends DomainAbstract<Long> {
 	@Override
 	public String toString() {
 		return "EntityTen [id=" + id + ", name=" + name + ", totalAmount=" + totalAmount + ", totalValue=" + totalValue
-				+ ", entityStatus=" + entityStatus + ", description=" + description + ", files=" + files
+				+ ", timeProcess=" + timeProcess + ", entityStatus=" + entityStatus + ", description=" + description
 				+ ", dateCreate=" + dateCreate + ", dateUpdate=" + dateUpdate + "]";
 	}
-
 }

@@ -1,5 +1,6 @@
 package br.com.enginer.domain.example.usercase;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,21 +38,27 @@ public class EntityElevenUserCase extends AbstractUserCase<EntityEleven> {
 	@Override
 	public List<EntityEleven> salvarLista(List<EntityEleven> entities) throws UncheckedException {
 		Integer totalAmount = 0;
-		Double totalValue = 0d;
+		BigDecimal totalValue = BigDecimal.ZERO;
 		for (Domain<?> domain : entities) {
-			EntityEleven entityEleven = (EntityEleven)domain;
-			entityEleven.setDateCreate(LocalDateTime.now());
+		    EntityEleven entityEleven = (EntityEleven) domain;
+		    entityEleven.setDateCreate(LocalDateTime.now());
+		    // Soma a quantidade total
 		    totalAmount += entityEleven.getAmount();
-		    //totalValue += entityEleven.getAmount() * entityEleven.getValue();
-			if(entityEleven.getId() != null) {
-				entityEleven.setDateUpdate(LocalDateTime.now());
-			}
-		};
+		    // Multiplica o valor unitário pela quantidade e soma no total
+		    if (entityEleven.getValue() != null && entityEleven.getAmount() != null) {
+		        BigDecimal amount = BigDecimal.valueOf(entityEleven.getAmount());
+		        BigDecimal lineValue = amount.multiply(entityEleven.getValue());
+		        totalValue = totalValue.add(lineValue);
+		    }
+		    if (entityEleven.getId() != null) {
+		        entityEleven.setDateUpdate(LocalDateTime.now());
+		    }
+		}
 		List<EntityEleven> list = super.salvarLista(entities);
 		EntityEleven entityEleven = (EntityEleven) super.buscarPorId(((EntityEleven)list.get(0)));
 		EntityTen entityTen = (EntityTen) entityTenUserCase.buscarPorId(entityEleven.getEntityTen());
 		entityTen.setTotalAmount(totalAmount);
-		//entityTen.setTotalValue(totalValue);
+		entityTen.setTotalValue(totalValue);
 		entityTenUserCase.salvar(entityTen);
 
 		List<EntityEleven> updatedList = new ArrayList<>();
