@@ -3,11 +3,14 @@ package br.com.enginer.domain.example.dto.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Objects;
 
 import br.com.enginer.domain.system.usercase.annotation.field.UIColumn;
 import br.com.enginer.domain.system.usercase.annotation.field.UIDate;
 import br.com.enginer.domain.system.usercase.annotation.field.UIDecimal;
+import br.com.enginer.domain.system.usercase.annotation.field.UIEmail;
 import br.com.enginer.domain.system.usercase.annotation.field.UIId;
+import br.com.enginer.domain.system.usercase.annotation.field.UIPassword;
 import br.com.enginer.domain.system.usercase.annotation.field.UIRow;
 import br.com.enginer.domain.system.usercase.annotation.field.UIText;
 import br.com.enginer.domain.system.usercase.annotation.field.UITime;
@@ -129,64 +132,75 @@ public class EntitySix extends DomainAbstract<Long> {
 	@UIColumn(label = "EntitySix Package", initial = true)
 	@UIRow(visible = true)
 	private String packageName;
-	
+
 	@UIPosition(x = 1, y = 2)
+	@UIEmail(label = "E-mail")
+    private String email;
+    
+	@UIPosition(x = 2, y = 2)
+	@UIPassword(label = "Senha", min = 3, max = 10)
+    private String password;	
+	
+	@UIPosition(x = 1, y = 3)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Valor Monetário", typeFormat = TypeFormat.decimal, precision = 2)
 	private BigDecimal valorMonetario;
 
-	@UIPosition(x = 2, y = 2)
+	@UIPosition(x = 2, y = 3)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Percentual", typeFormat = TypeFormat.percentage)
 	private BigDecimal percentual;
 
-	@UIPosition(x = 3, y = 2)
+	@UIPosition(x = 3, y = 3)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Câmbio", typeFormat = TypeFormat.exchange)
 	private BigDecimal cambio;
 
-	@UIPosition(x = 1, y = 3)
+	@UIPosition(x = 1, y = 4)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Quantidade", typeFormat = TypeFormat.quantity)
 	private BigDecimal quantidade;
 
-	@UIPosition(x = 2, y = 3)
+	@UIPosition(x = 2, y = 4)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Peso Medida", typeFormat = TypeFormat.weight)
 	private BigDecimal pesoMedida;
 
-	@UIPosition(x = 1, y = 4)
+	@UIPosition(x = 1, y = 5)
 	@UIFieldValidation(required = true)
-	@UIDecimal(label = "Latitude", min = -90, max = 90, typeFormat = TypeFormat.latitude)
+	//@UIDecimal(label = "Latitude", min = -90, max = 90, typeFormat = TypeFormat.latitude)
+	@UIText(label = "Latitude", mask = "00.00000000")
 	private BigDecimal latitude;
 
-	@UIPosition(x = 2, y = 4)
+	@UIPosition(x = 2, y = 5)
 	@UIFieldValidation(required = true)
-	@UIDecimal(label = "Longitude", min = -180, max = 180, typeFormat = TypeFormat.longitude)
+	//@UIDecimal(label = "Longitude", min = -180, max = 180, typeFormat = TypeFormat.longitude)
+	@UIText(label = "Longitude", mask = "00.00000000")
 	private BigDecimal longitude;
 
-	@UIPosition(x = 1, y = 5)
+	@UIPosition(x = 1, y = 6)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Duração", typeFormat = TypeFormat.duration)
 	private BigDecimal duracao;
 
-	@UIPosition(x = 2, y = 5)
+	@UIPosition(x = 2, y = 6)
 	@UIFieldValidation(required = true)
+	@UIText(label = "Valor Cientifico", mask = "0.000000000000")
 	private Double valorCientifico;
 
-	@UIPosition(x = 2, y = 6)
+	@UIPosition(x = 2, y = 7)
 	@UIFieldValidation(required = true)
 	@UITime(label = "Tempo Fixo", format = TypeDateFormat.TIME_HHMMSS_FORMAT)
 	private LocalTime tempoFixo;
 
-	@UIPosition(x = 1, y = 6)
+	@UIPosition(x = 1, y = 7)
 	@UIFieldValidation(required = true)
 	@UIDate(label = "Start", format = TypeDateFormat.DATE_FORMAT)
 	@UIColumn(label = "EntitySix Data Aberta", initial = false)	
 	@UIRow(visible = true)
 	private LocalDate startDate;
 
-	@UIPosition(x = 3, y = 6)
+	@UIPosition(x = 3, y = 7)
 	@UIFieldValidation(required = true)
 	@UIDate(label = "Stop", format = TypeDateFormat.DATE_FORMAT)
 	@UIColumn(label = "EntitySix Data Fechada", initial = false)
@@ -211,7 +225,27 @@ public class EntitySix extends DomainAbstract<Long> {
 	}
 
 	public String getPackageName() {
-		return this.packageName;
+		return packageName;
+	}
+
+	public void setPackageName(String packageName) {
+		this.packageName = packageName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public BigDecimal getValorMonetario() {
@@ -230,14 +264,6 @@ public class EntitySix extends DomainAbstract<Long> {
 		this.percentual = percentual;
 	}
 
-	public BigDecimal getPesoMedida() {
-		return pesoMedida;
-	}
-
-	public void setPesoMedida(BigDecimal pesoMedida) {
-		this.pesoMedida = pesoMedida;
-	}
-
 	public BigDecimal getCambio() {
 		return cambio;
 	}
@@ -252,6 +278,14 @@ public class EntitySix extends DomainAbstract<Long> {
 
 	public void setQuantidade(BigDecimal quantidade) {
 		this.quantidade = quantidade;
+	}
+
+	public BigDecimal getPesoMedida() {
+		return pesoMedida;
+	}
+
+	public void setPesoMedida(BigDecimal pesoMedida) {
+		this.pesoMedida = pesoMedida;
 	}
 
 	public BigDecimal getLatitude() {
@@ -278,20 +312,20 @@ public class EntitySix extends DomainAbstract<Long> {
 		this.duracao = duracao;
 	}
 
-	public LocalTime getTempoFixo() {
-		return tempoFixo;
-	}
-
-	public void setTempoFixo(LocalTime tempoFixo) {
-		this.tempoFixo = tempoFixo;
-	}
-
 	public Double getValorCientifico() {
 		return valorCientifico;
 	}
 
 	public void setValorCientifico(Double valorCientifico) {
 		this.valorCientifico = valorCientifico;
+	}
+
+	public LocalTime getTempoFixo() {
+		return tempoFixo;
+	}
+
+	public void setTempoFixo(LocalTime tempoFixo) {
+		this.tempoFixo = tempoFixo;
 	}
 
 	public LocalDate getStartDate() {
@@ -310,16 +344,29 @@ public class EntitySix extends DomainAbstract<Long> {
 		this.stopDate = stopDate;
 	}
 
-	public void setPackageName(String packageName) {
-		this.packageName = packageName;
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EntitySix other = (EntitySix) obj;
+		return Objects.equals(id, other.id);
 	}
 
 	@Override
 	public String toString() {
-		return "EntitySix [id=" + id + ", packageName=" + packageName + ", valorMonetario=" + valorMonetario
-				+ ", percentual=" + percentual + ", pesoMedida=" + pesoMedida + ", cambio=" + cambio + ", quantidade="
-				+ quantidade + ", latitude=" + latitude + ", longitude=" + longitude + ", duracao=" + duracao
-				+ ", tempoFixo=" + tempoFixo + ", valorCientifico=" + valorCientifico + ", startDate=" + startDate
-				+ ", stopDate=" + stopDate + "]";
+		return "EntitySix [id=" + id + ", packageName=" + packageName + ", email=" + email + ", password=" + password
+				+ ", valorMonetario=" + valorMonetario + ", percentual=" + percentual + ", cambio=" + cambio
+				+ ", quantidade=" + quantidade + ", pesoMedida=" + pesoMedida + ", latitude=" + latitude
+				+ ", longitude=" + longitude + ", duracao=" + duracao + ", valorCientifico=" + valorCientifico
+				+ ", tempoFixo=" + tempoFixo + ", startDate=" + startDate + ", stopDate=" + stopDate + "]";
 	}
 }

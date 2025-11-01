@@ -32,7 +32,5 @@ public class Decimal extends Base {
 	public void setPrecision(Integer precision) {
 		this.precision = precision > 0 ? precision : null;
 	}
-	
-	
 
 }
