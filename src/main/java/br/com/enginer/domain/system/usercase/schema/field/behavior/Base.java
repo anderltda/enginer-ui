@@ -164,7 +164,7 @@ public abstract class Base {
 	}
 
 	public void setMin(Integer min) {
-		this.min = min;
+		this.min = min != 0 ? min : null;
 	}
 
 	public Integer getMax() {
@@ -172,7 +172,7 @@ public abstract class Base {
 	}
 
 	public void setMax(Integer max) {
-		this.max = max;
+		this.max = max > 0 ? max : null;
 	}
 
 	public Integer getLimit() {

@@ -1,5 +1,6 @@
 package br.com.enginer.domain.example.dto.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -144,7 +145,7 @@ public class EntityTen extends DomainAbstract<Long> {
 	@UIHidden
 	@UIColumn(label = "Valor Total", initial = true)
 	@UIRow(visible = true)
-	private Double totalValue;
+	private BigDecimal totalValue;
 
 	@UIPosition(x = 2, y = 1)
 	@UIFilter(label = "Status", field = "name", select = true, filter = { "status=0", "status_op=ge" }, template = { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.FORM, TypeTemplate.ROW, TypeTemplate.MODAL })
@@ -204,11 +205,11 @@ public class EntityTen extends DomainAbstract<Long> {
 		this.totalAmount = totalAmount;
 	}
 
-	public Double getTotalValue() {
+	public BigDecimal getTotalValue() {
 		return totalValue;
 	}
 
-	public void setTotalValue(Double totalValue) {
+	public void setTotalValue(BigDecimal totalValue) {
 		this.totalValue = totalValue;
 	}
 

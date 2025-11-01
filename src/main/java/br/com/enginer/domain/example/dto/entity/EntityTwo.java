@@ -1,5 +1,6 @@
 package br.com.enginer.domain.example.dto.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -187,7 +188,7 @@ public class EntityTwo extends DomainAbstract<UUID> {
 	@UIFieldValidation(required = true)
 	@UIColumn(label = "Custo", initial = true)
 	@UIRow(visible = true)
-	private Double cost;
+	private BigDecimal cost;
 
 	@UIFieldValidation(required = true, template = TypeTemplate.FORM)
 	@UIFilter(label = "Entity Status", field = "name", select = false)
@@ -244,11 +245,11 @@ public class EntityTwo extends DomainAbstract<UUID> {
 		this.hex = hex;
 	}
 
-	public Double getCost() {
+	public BigDecimal getCost() {
 		return cost;
 	}
 
-	public void setCost(Double cost) {
+	public void setCost(BigDecimal cost) {
 		this.cost = cost;
 	}
 

@@ -1,5 +1,6 @@
 package br.com.enginer.domain.example.dto.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -262,7 +263,7 @@ public class EntityOne extends DomainAbstract<Long> {
 	@UIText(label = "Height", mask = "0.00", template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
 	@UIColumn(label = "EntityOne Altura", initial = false)
 	@UIRow(visible = true, editable = true, order = 4)
-	private Double height;
+	private BigDecimal height;
 
 	@UIPosition(x = 3, y = 3)
 	@UIFieldValidation(required = true)
@@ -433,11 +434,11 @@ public class EntityOne extends DomainAbstract<Long> {
 		this.age = age;
 	}
 
-	public Double getHeight() {
+	public BigDecimal getHeight() {
 		return height;
 	}
 
-	public void setHeight(Double height) {
+	public void setHeight(BigDecimal height) {
 		this.height = height;
 	}
 

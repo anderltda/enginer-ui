@@ -1,5 +1,6 @@
 package br.com.enginer.domain.example.dto.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -119,7 +120,7 @@ public class EntityTree extends DomainAbstract<UUID> {
 	@UIColumn(label = "EntityTree Montante", initial = false)
 	@UIDecimal(label = "Montante")
 	@UIRow(visible = true)
-	private Double amount;
+	private BigDecimal amount;
 
 	@UIPosition(x = 4, y = 2)
 	@UIFieldValidation(required = true)
@@ -177,11 +178,11 @@ public class EntityTree extends DomainAbstract<UUID> {
 		this.indicator = indicator;
 	}
 
-	public Double getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 
-	public void setAmount(Double amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 

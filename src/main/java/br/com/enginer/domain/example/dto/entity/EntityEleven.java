@@ -1,5 +1,6 @@
 package br.com.enginer.domain.example.dto.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import br.com.enginer.domain.system.usercase.annotation.field.UIColumn;
@@ -98,7 +99,7 @@ public class EntityEleven extends DomainAbstract<Long> {
 	@UIHidden
 	@UIColumn(label = "Valor Unitario", initial = false)
 	@UIRow(visible = true, editable = true)
-	private Double value;
+	private BigDecimal value;
 
 	@UIHidden
 	@UIColumn(label = "Data de Criacao", initial = false)
@@ -111,7 +112,7 @@ public class EntityEleven extends DomainAbstract<Long> {
 	@UIHidden(label = "Valor Total", template = { TypeTemplate.ROW })
 	@UIColumn(label = "Valor Total", initial = false)
 	@UIRow(calculation = "amount * value", totalizer = true, label = "Custo total" , visible = true)
-	private Double amountTotal;
+	private BigDecimal amountTotal;
 
 	public void setIdEntityTen(Long idEntityTen) {
 		this.entityTen = new EntityTen();
@@ -157,11 +158,11 @@ public class EntityEleven extends DomainAbstract<Long> {
 		this.amount = amount;
 	}
 
-	public Double getValue() {
+	public BigDecimal getValue() {
 		return value;
 	}
 
-	public void setValue(Double value) {
+	public void setValue(BigDecimal value) {
 		this.value = value;
 	}
 
@@ -181,11 +182,11 @@ public class EntityEleven extends DomainAbstract<Long> {
 		this.dateUpdate = dateUpdate;
 	}
 	
-	public Double getAmountTotal() {
+	public BigDecimal getAmountTotal() {
 		return amountTotal;
 	}
 
-	public void setAmountTotal(Double amountTotal) {
+	public void setAmountTotal(BigDecimal amountTotal) {
 		this.amountTotal = amountTotal;
 	}
 

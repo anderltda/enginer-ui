@@ -42,7 +42,7 @@ public class EntityElevenUserCase extends AbstractUserCase<EntityEleven> {
 			EntityEleven entityEleven = (EntityEleven)domain;
 			entityEleven.setDateCreate(LocalDateTime.now());
 		    totalAmount += entityEleven.getAmount();
-		    totalValue += entityEleven.getAmount() * entityEleven.getValue();
+		    //totalValue += entityEleven.getAmount() * entityEleven.getValue();
 			if(entityEleven.getId() != null) {
 				entityEleven.setDateUpdate(LocalDateTime.now());
 			}
@@ -51,7 +51,7 @@ public class EntityElevenUserCase extends AbstractUserCase<EntityEleven> {
 		EntityEleven entityEleven = (EntityEleven) super.buscarPorId(((EntityEleven)list.get(0)));
 		EntityTen entityTen = (EntityTen) entityTenUserCase.buscarPorId(entityEleven.getEntityTen());
 		entityTen.setTotalAmount(totalAmount);
-		entityTen.setTotalValue(totalValue);
+		//entityTen.setTotalValue(totalValue);
 		entityTenUserCase.salvar(entityTen);
 
 		List<EntityEleven> updatedList = new ArrayList<>();

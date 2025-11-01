@@ -5,6 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import br.com.enginer.domain.system.usercase.enums.TypeFormat;
 import br.com.enginer.domain.system.usercase.enums.TypeTemplate;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -14,5 +15,9 @@ public @interface UIDecimal {
 	String icon() default "";
 	String placeholder() default "";
 	boolean disable() default false;
+	int precision() default 0;
+	int min() default 0;
+	int max() default 0;
+	TypeFormat typeFormat() default TypeFormat.decimal;
 	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.ROW, TypeTemplate.FORM };
 }

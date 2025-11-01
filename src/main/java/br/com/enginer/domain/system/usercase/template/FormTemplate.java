@@ -69,6 +69,7 @@ import br.com.enginer.domain.system.usercase.annotation.instance.validate.global
 import br.com.enginer.domain.system.usercase.annotation.instance.validate.global.UIGlobalOn;
 import br.com.enginer.domain.system.usercase.constants.Constants;
 import br.com.enginer.domain.system.usercase.enums.TypeButton;
+import br.com.enginer.domain.system.usercase.enums.TypeFormat;
 import br.com.enginer.domain.system.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usercase.helper.ComboHelper;
 import br.com.enginer.domain.system.usercase.port.outbound.repository.RepositoryOutboundPort;
@@ -302,7 +303,8 @@ public final class FormTemplate {
 							boolean containsTemplate = checkTemplate(uiDecimal);
 
 							if (containsTemplate) {
-								field.setDecimal(getDecimal(f, default_, annotations));
+								Decimal decimal = getDecimal(f, default_, annotations);
+								field.setDecimal(decimal);
 								count++;
 							}
 
@@ -1021,6 +1023,8 @@ public final class FormTemplate {
 	 */
 	private static Decimal getDecimal(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
 		Decimal decimal = default_.getDecimal();
+		decimal.setTypeFormat(TypeFormat.decimal);
+		decimal.setPrecision(2);
 		addBehaviorAnnotation(decimal, f, annotations);
 		return decimal;
 	}
