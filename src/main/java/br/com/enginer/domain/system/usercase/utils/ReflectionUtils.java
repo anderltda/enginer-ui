@@ -256,7 +256,7 @@ public class ReflectionUtils {
      * Faz fallback para tipo genérico em caso de assinatura diferente.
      */
     @Deprecated
-    private static void injectDependency(Object target, String methodName, Object dependency) {
+    public static void injectDependency(Object target, String methodName, Object dependency) {
     	
         if (target == null || dependency == null) return;
 
