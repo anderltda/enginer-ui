@@ -1,26 +1,29 @@
 package br.com.enginer.domain.system.usercase.injector;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import br.com.enginer.domain.system.usercase.AbstractUserCase;
 import br.com.enginer.domain.system.usercase.annotation.AutoDependencyInjector;
-import br.com.enginer.domain.system.usercase.port.outbound.publisher.PublisherOutboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.repository.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usercase.port.OutboundPort;
 import br.com.enginer.domain.system.usercase.schema.instance.Domain;
+import br.com.enginer.domain.system.usercase.utils.ReflectionUtils;
+import br.com.enginer.domain.system.usercase.utils.StringsUtils;
 
 /**
  * Processador reflexivo para 
  * @AutoInjectDependencies com logs visuais hierárquicos.
- * 
  * Exemplo de saída: UserCase ├── FileUserCase │ └── DocumentUserCase
  */
 public final class DependencyInjector {
 
-	private DependencyInjector() {
-		// construtor privado para evitar instanciação
-	}
+	/**
+	 * 
+	 */
+	private DependencyInjector() {}
 
 	/**
 	 * Ponto de entrada principal.
@@ -31,65 +34,88 @@ public final class DependencyInjector {
 
 	/**
 	 * Processamento recursivo com indentação visual.
+	 * @param domain
+	 * @param visited
+	 * @param level
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	private static void processDependenciesInternal(AbstractUserCase<Domain<?>> domain, Set<Object> visited, int level) {
+		
 		if (domain == null || visited.contains(domain)) return;
+		
 		visited.add(domain);
-
-		//String indent = " ".repeat(Math.max(0, level * 2));
-		if (level == 0) {
-			//System.out.println("\n[DependencyInjector] Injetando dependências para: " + parent.getClass().getSimpleName());
-		}
-
+		
 		Class<?> clazz = domain.getClass();
+		
 		while (clazz != null && clazz != Object.class) {
+			
 			for (Field field : clazz.getDeclaredFields()) {
-				if (!field.isAnnotationPresent(AutoDependencyInjector.class))
-					continue;
+				
+				if (!field.isAnnotationPresent(AutoDependencyInjector.class)) continue;
 
 				field.setAccessible(true);
+				
 				try {
+				
 					Object childInstance = field.get(domain);
 
-					// cria instância se nula
 					if (childInstance == null) {
 						Class<?> fieldType = field.getType();
 						childInstance = fieldType.getDeclaredConstructor().newInstance();
 						field.set(domain, childInstance);
-						//System.out.printf("%s├── [instanciado] %s%n", indent, fieldType.getSimpleName());
-					} else {
-						//System.out.printf("%s├── [existente] %s%n", indent, childInstance.getClass().getSimpleName());
-					}
+					} 
 
 					// se for outro AbstractUserCase, propaga dependências e processa recursivamente
 					if (childInstance instanceof AbstractUserCase<?> childUserCase) {
 						
-						RepositoryOutboundPort<?> repository = domain.getRepositoryOutboundPort();
+						List<Field> fields = getAllFields(childInstance.getClass());
 						
-						if (repository != null) {
-							childUserCase.setRepositoryOutboundPort((RepositoryOutboundPort) repository);
-						}
+						for (Field fieldUserCase : fields) {
 
-						PublisherOutboundPort<?> publisher = domain.getPublisherOutboundPort();
-						
-						if (publisher != null) {
-							childUserCase.setPublisherOutboundPort((PublisherOutboundPort) publisher);
+							String getOutboundPort = StringsUtils.getMethod(fieldUserCase.getName());
+							
+							OutboundPort outboundPort = (OutboundPort) ReflectionUtils.get(getOutboundPort, domain);
+
+							if (outboundPort != null) {
+							
+								String setOutboundPort = StringsUtils.setMethod(fieldUserCase.getName());
+								
+				            	ReflectionUtils.set(childUserCase, setOutboundPort, new Class<?>[] { fieldUserCase.getType() }, new Object[] { outboundPort });
+					        
+							}
 						}
 						
 						processDependenciesInternal(((AbstractUserCase<Domain<?>>) childUserCase), visited, level + 1);
 					}
 
 				} catch (Exception ex) {
-					//System.err.printf("[DependencyInjector] Erro ao injetar campo '%s' em '%s': %s%n", field.getName(), clazz.getSimpleName(), e.getMessage());
 					ex.printStackTrace();
 				}
 			}
+			
 			clazz = clazz.getSuperclass();
 		}
+	}
+	
+	/**
+	 * @param type
+	 * @return
+	 */
+	private static List<Field> getAllFields(Class<?> type) {
+		
+	    List<Field> fields = new ArrayList<>();
 
-		if (level == 0) {
-			//System.out.println("[DependencyInjector] Injeção concluída para " + parent.getClass().getSimpleName() + "\n");
-		}
+	    Class<?> current = type;
+	    
+	    while (current != null && current != Object.class) {
+	    	
+	        for (Field f : current.getDeclaredFields()) {
+	            fields.add(f);
+	        }
+	        
+	        current = current.getSuperclass();
+	    }
+
+	    return fields;
 	}
 }

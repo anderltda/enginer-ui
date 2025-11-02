@@ -42,4 +42,14 @@ public interface FileStorageOutboundPort extends OutboundPort {
      * Resolve o caminho final (no storage) para um storageName. 
      */
     Path resolveFinalPath(String storageName) throws IOException;
+    
+    /**
+     * Move um arquivo existente para um novo diretório dentro do storage.
+     *
+     * @param source caminho atual do arquivo
+     * @param relativeDestinationPath subdiretório de destino (ex: "entityTen/123/")
+     * @return novo caminho absoluto do arquivo movido
+     * @throws IOException caso ocorra falha na operação
+     */
+    Path moveFile(Path source, String relativeDestinationPath) throws IOException;
 }

@@ -51,8 +51,8 @@ public class LocalFileStorageAdapterPort implements FileStorageOutboundPort {
         return path != null ? path.toUri().toString() : null;
     }
     
-    /**
-     *
+    /** 
+     * Resolve o caminho final (no storage) para um storageName. 
      */
     @Override
     public Path resolveFinalPath(String storageName) throws IOException {
@@ -60,4 +60,25 @@ public class LocalFileStorageAdapterPort implements FileStorageOutboundPort {
         String clean = StringUtils.cleanPath(storageName);
         return UPLOAD_DIR.resolve(clean);
     }
+    
+    /**
+     * Move um arquivo existente para um novo diretório dentro do storage.
+     *
+     * @param source caminho atual do arquivo
+     * @param relativeDestinationPath subdiretório de destino (ex: "entityTen/123/")
+     * @return novo caminho absoluto do arquivo movido
+     * @throws IOException caso ocorra falha na operação
+     */
+    @Override
+    public Path moveFile(Path source, String relativeDestinationPath) throws IOException {
+    	
+        Path destinationDir = UPLOAD_DIR.resolve(relativeDestinationPath);
+
+        Files.createDirectories(destinationDir);
+
+        Path destination = destinationDir.resolve(source.getFileName());
+        Files.move(source, destination, StandardCopyOption.REPLACE_EXISTING);
+
+        return destination;
+    }    
 }

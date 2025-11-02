@@ -20,6 +20,8 @@ import br.com.enginer.domain.system.usercase.exception.UncheckedException;
  * 
  */
 public class UploadFileUserCase extends AbstractUserCase<UploadFile> {
+	
+    private static final String PATH_DIR_FINAL = "final";
 
 	/** 
 	 * 
@@ -66,9 +68,13 @@ public class UploadFileUserCase extends AbstractUserCase<UploadFile> {
 			String original = uploadFile.getName();
 			String ext = "";
 			int dot = original.lastIndexOf('.');
-			if (dot >= 0)
+
+			if (dot >= 0) {
 				ext = original.substring(dot);
+			}
+			
 			String base = (dot >= 0 ? original.substring(0, dot) : original);
+			
 			String storageName = base + "-" + UUID.randomUUID().toString().replace("-", "").toUpperCase() + ext;
 			uploadFile.setStorageName(storageName);
 
@@ -163,18 +169,48 @@ public class UploadFileUserCase extends AbstractUserCase<UploadFile> {
 	}
 
 	/**
-	 * @param uploadFile
-	 * @param id
-	 * @return UploadFile
-	 * @throws UncheckedException
+	 * Associa um arquivo a uma entidade de domínio existente, movendo-o
+	 * para o diretório definitivo e atualizando seu metadado.
+	 *
+	 * @param uploadFile o arquivo previamente salvo (com domainId nulo)
+	 * @param id identificador da entidade à qual o arquivo será associado
+	 * @return UploadFile atualizado e persistido
+	 * @throws UncheckedException caso ocorra erro de I/O ou persistência
 	 */
 	public UploadFile salvarEntityId(UploadFile uploadFile, Object id) throws UncheckedException {
+		
+	    try {
+	    
+	    	// Busca o metadado atual
+	        UploadFile file = (UploadFile) buscarPorId(uploadFile);
 
-		UploadFile file = (UploadFile) buscarPorId(uploadFile);
+	        if (file == null) {
+	            throw new UncheckedException("Arquivo não encontrado para associação.");
+	        }
 
-		file.setDomainId(id.toString());
+	        // Define o novo domainId
+	        file.setDomainId(id.toString());
 
-		return super.salvar(file);
+	        // Define o diretório final: /uploads/<domain>/<domainId>/
+	        //String finalDirectory = String.format("%s/%s/", file.getDomain(), id);
+	        String finalDirectory = String.format("%s/", PATH_DIR_FINAL);
+
+	        // Move fisicamente o arquivo via FileStorageOutboundPort
+	        Path newPath = fileStorageOutboundPort.moveFile(Path.of(file.getPath()), finalDirectory);
+
+	        // Atualiza o metadado com o novo path
+	        file.setPath(newPath.toString());
+
+	        // Persiste a atualização
+	        file = super.salvar(file);
+
+	        loggerOutboundPort.info(getClass(), String.format("Arquivo [%s] movido para [%s]", file.getName(), newPath));
+
+	        return file;
+
+	    } catch (IOException e) {
+	        throw new UncheckedException("Erro ao mover o arquivo após associação: " + e.getMessage(), e);
+	    }
 	}
 
 	/**

@@ -129,18 +129,26 @@ public class ReflectionUtils {
 
         // 0) Se for um DomainId, busca o domínio pai (ex: EntityNineId → EntityNine)
         if (DomainId.class.isAssignableFrom(domainClass)) {
+        	
             String className = domainClass.getSimpleName();
+            
             if (className.endsWith("Id")) {
-                String parentName = className.substring(0, className.length() - 2); // remove "Id"
-                String packageName = domainClass.getPackageName();
-                // substitui ".dto.entity" → ".dto.entity" mesmo pacote
+            
+            	String parentName = className.substring(0, className.length() - 2); // remove "Id"
+                
+            	String packageName = domainClass.getPackageName();
+                
+            	// substitui ".dto.entity" → ".dto.entity" mesmo pacote
                 String parentQualifiedName = packageName + "." + parentName;
+                
                 if (INJECTION_LOG_ENABLED) {
-                    System.out.println("[ReflectionUtils] DomainId detectado: " + className +
-                            " → procurando UserCase do domínio pai: " + parentName);
+                    System.out.println("[ReflectionUtils] DomainId detectado: " + className + " → procurando UserCase do domínio pai: " + parentName);
                 }
+                
                 try {
+                	
                     domainClass = Class.forName(parentQualifiedName);
+                    
                 } catch (ClassNotFoundException e) {
                     throw new CheckedException("Domínio pai não encontrado para: " + className, e);
                 }
@@ -149,54 +157,54 @@ public class ReflectionUtils {
 
         // 1) Recupera (ou cria) a instância do UserCase a partir do cache
         Object userCaseInstance = USERCASE_CACHE.get(domainClass);
+        
         final boolean fromCache = (userCaseInstance != null);
 
         if (!fromCache) {
-            String userCaseName = findUserCaseQualifiedName(domainClass, domainClass.getSimpleName());
-            userCaseInstance = createInstance(userCaseName);
-            USERCASE_CACHE.put(domainClass, userCaseInstance);
+        
+        	String userCaseName = findUserCaseQualifiedName(domainClass, domainClass.getSimpleName());
+            
+        	userCaseInstance = createInstance(userCaseName);
+            
+        	USERCASE_CACHE.put(domainClass, userCaseInstance);
 
             if (INJECTION_LOG_ENABLED) {
                 logInjection("NEW", domainClass, userCaseInstance.getClass(), System.currentTimeMillis() - start);
             }
+            
         } else {
-            if (INJECTION_LOG_ENABLED) {
+            
+        	if (INJECTION_LOG_ENABLED) {
                 logInjection("CACHE", domainClass, userCaseInstance.getClass(), System.currentTimeMillis() - start);
             }
+        	
         }
 
         // 2) Injeta todas as dependências (repo, publisher, etc.)
         if (outboundPorts != null) {
-            for (OutboundPort port : outboundPorts) {
-                if (port == null) continue;
+        	
+            for (OutboundPort outboundPort : outboundPorts) {
+            	
+                if (outboundPort == null) continue;
 
-                boolean injectedAtLeastOnce = false;
-
-                // Tenta pelas interfaces implementadas
-                Class<?>[] ifaces = port.getClass().getInterfaces();
+                Class<?>[] ifaces = outboundPort.getClass().getInterfaces();
+                
                 for (Class<?> iface : ifaces) {
+                	
                     String setter = StringsUtils.setMethod(iface.getSimpleName()); // ex.: setRepositoryOutboundPort
+                    
                     try {
-                        Method m = userCaseInstance.getClass().getMethod(setter, iface);
-                        m.setAccessible(true);
-                        m.invoke(userCaseInstance, port);
-                        injectedAtLeastOnce = true;
+                    	
+		            	ReflectionUtils.set(userCaseInstance, setter, new Class<?>[] { iface }, new Object[] { outboundPort });
                         break;
-                    } catch (NoSuchMethodException e) {
-                        // ignora — pode não existir exatamente esse método
+                        
                     } catch (Exception e) {
                         if (INJECTION_LOG_ENABLED) {
-                            System.out.println("[ReflectionUtils] Falha ao injetar via interface "
-                                    + iface.getSimpleName() + " no método " + setter + ": " + e.getMessage());
+                            System.out.println("[ReflectionUtils] Falha ao injetar via interface " + iface.getSimpleName() + " no método " + setter + ": " + e.getMessage());
                         }
                     }
                 }
 
-                // Fallback genérico
-                if (!injectedAtLeastOnce) {
-                    injectDependency(userCaseInstance, "setRepositoryOutboundPort", port);
-                    injectDependency(userCaseInstance, "setPublisherOutboundPort", port);
-                }
             }
         }
 
@@ -247,7 +255,9 @@ public class ReflectionUtils {
      * Injeta uma dependência no UserCase (método setXXX via reflexão).
      * Faz fallback para tipo genérico em caso de assinatura diferente.
      */
+    @Deprecated
     private static void injectDependency(Object target, String methodName, Object dependency) {
+    	
         if (target == null || dependency == null) return;
 
         Class<?> depClass = dependency.getClass();
@@ -261,6 +271,7 @@ public class ReflectionUtils {
 
         // Tenta encontrar o método compatível
         boolean injected = false;
+        
         for (Class<?> type : candidateTypes) {
             try {
                 Method method = target.getClass().getMethod(methodName, type);
@@ -706,7 +717,7 @@ public class ReflectionUtils {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	}
+	}	
 
 	/**
 	 * @param newClassName
