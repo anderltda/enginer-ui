@@ -252,61 +252,26 @@ public class ReflectionUtils {
     }
 
     /**
-     * Injeta uma dependência no UserCase (método setXXX via reflexão).
-     * Faz fallback para tipo genérico em caso de assinatura diferente.
-     */
-    @Deprecated
-    public static void injectDependency(Object target, String methodName, Object dependency) {
-    	
-        if (target == null || dependency == null) return;
-
-        Class<?> depClass = dependency.getClass();
-        List<Class<?>> candidateTypes = new ArrayList<>();
-
-        // Tenta interfaces e superclasses
-        candidateTypes.addAll(Arrays.asList(depClass.getInterfaces()));
-        if (depClass.getSuperclass() != null) {
-            candidateTypes.add(depClass.getSuperclass());
-        }
-
-        // Tenta encontrar o método compatível
-        boolean injected = false;
-        
-        for (Class<?> type : candidateTypes) {
-            try {
-                Method method = target.getClass().getMethod(methodName, type);
-                method.setAccessible(true);
-                method.invoke(target, dependency);
-                injected = true;
-                break;
-            } catch (Exception ignored) {}
-        }
-
-        // Último fallback genérico
-        if (!injected) {
-            try {
-                Method method = target.getClass().getMethod(methodName, Object.class);
-                method.setAccessible(true);
-                method.invoke(target, dependency);
-            } catch (Exception ignored) {}
-        }
-    }
-
-	/**
 	 * @param object
 	 * @param recursive
 	 * @return
 	 */
 	public static List<Field> extractFieldsDomain(Object object, boolean recursive) {
+		
 		List<Field> fields = new ArrayList<>();
+		
 		if (recursive) {
+			
 			Set<Class<?>> visited = new HashSet<>();
+			
 			extractFieldsRecursively(object.getClass(), Object.class, visited, fields);
+			
 		} else {
+			
 			extractFields(object.getClass(), Object.class, fields, ".*");
-			// extractFieldsWithClassAbstract(object.getClass(), Object.class, fields,
-			// ".*");
+			// extractFieldsWithClassAbstract(object.getClass(), Object.class, fields, ".*");
 		}
+		
 		return fields;
 	}
 
