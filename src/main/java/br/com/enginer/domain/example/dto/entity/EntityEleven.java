@@ -10,6 +10,7 @@ import br.com.enginer.domain.system.usercase.annotation.field.UIId;
 import br.com.enginer.domain.system.usercase.annotation.field.UINumber;
 import br.com.enginer.domain.system.usercase.annotation.field.UIRow;
 import br.com.enginer.domain.system.usercase.annotation.field.behavior.UIPosition;
+import br.com.enginer.domain.system.usercase.annotation.field.behavior.validation.UIFieldValidation;
 import br.com.enginer.domain.system.usercase.annotation.instance.UITitle;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.UIButtonAction;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.filter.UIButtonFilterClear;
@@ -79,25 +80,28 @@ public class EntityEleven extends DomainAbstract<Long> {
 	private Long id;
 
 	@UIPosition(x = 1, y = 1)
+	@UIFieldValidation(required = true)
 	@UIFilter(label = "Ten", field = "name", readonly = false)
 	@UIColumn(label = "Ten", fields = { "id", "name", "totalAmount", "totalValue" }, initial = false)
 	@UIRow(visible = false, fields = { "name" })
 	private EntityTen entityTen;
 
 	@UIPosition(x = 1, y = 2)
+	@UIFieldValidation(required = true)
 	@UIFilter(label = "Six", field = "packageName", readonly = false)
 	@UIColumn(label = "Six", fields = { "id", "packageName", "startDate", "stopDate" }, initial = false)
 	@UIRow(visible = true, fields = { "packageName" })
 	private EntitySix entitySix;
 
 	@UIPosition(x = 2, y = 2)
+	@UIFieldValidation(required = true)
 	@UINumber(label = "Quantidade", min = 1, max = 100, template = { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.FORM, TypeTemplate.ROW, TypeTemplate.MODAL })
 	@UIColumn(label = "Quantidade", initial = false)
 	@UIRow(visible = true)
 	private Integer amount;
 
 	@UIHidden
-	@UIColumn(label = "Valor Unitario", initial = false)
+	@UIColumn(label = "Valor Unitario", initial = false, type = "currency")
 	@UIRow(visible = true, editable = true)
 	private BigDecimal value;
 

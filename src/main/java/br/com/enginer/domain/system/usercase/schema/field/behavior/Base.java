@@ -5,6 +5,7 @@ import java.util.List;
 import br.com.enginer.domain.system.dto.entity.UploadFile;
 import br.com.enginer.domain.system.usercase.enums.TypeDateFormat;
 import br.com.enginer.domain.system.usercase.enums.TypeFileUpload;
+import br.com.enginer.domain.system.usercase.enums.TypeFormat;
 import br.com.enginer.domain.system.usercase.enums.TypeLayoutTarget;
 import br.com.enginer.domain.system.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usercase.schema.field.behavior.validation.Validation;
@@ -29,6 +30,7 @@ public abstract class Base {
 	private Integer min;
 	private Integer max;
 	private Integer limit;
+	private Integer precision;
 	private Boolean required;
 	private Boolean disable;
 	private Boolean editor;
@@ -41,6 +43,7 @@ public abstract class Base {
 
 	private String format;
 	private TypeFileUpload mode;
+	private TypeFormat typeFormat;
 	private TypeTemplate[] template;
 	private TypeLayoutTarget layoutTarget;
 
@@ -334,5 +337,20 @@ public abstract class Base {
 	public void setTemplate(TypeTemplate[] template) {
 		this.template = template;
 	}
-	
+
+	public Integer getPrecision() {
+		return precision;
+	}
+
+	public void setPrecision(Integer precision) {
+		this.precision = precision;
+	}
+
+	public TypeFormat getTypeFormat() {
+		return typeFormat;
+	}
+
+	public void setTypeFormat(TypeFormat typeFormat) {
+		this.typeFormat = typeFormat;
+	}
 }

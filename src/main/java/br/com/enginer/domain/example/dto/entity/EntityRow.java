@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import br.com.enginer.domain.system.usercase.annotation.field.UICheckbox;
 import br.com.enginer.domain.system.usercase.annotation.field.UIColumn;
 import br.com.enginer.domain.system.usercase.annotation.field.UIDate;
+import br.com.enginer.domain.system.usercase.annotation.field.UIDecimal;
 import br.com.enginer.domain.system.usercase.annotation.field.UIFilter;
 import br.com.enginer.domain.system.usercase.annotation.field.UIHidden;
 import br.com.enginer.domain.system.usercase.annotation.field.UINumber;
@@ -42,6 +43,7 @@ import br.com.enginer.domain.system.usercase.annotation.instance.validate.condit
 import br.com.enginer.domain.system.usercase.constants.Constants;
 import br.com.enginer.domain.system.usercase.enums.TypeButtonState;
 import br.com.enginer.domain.system.usercase.enums.TypeDateFormat;
+import br.com.enginer.domain.system.usercase.enums.TypeFormat;
 import br.com.enginer.domain.system.usercase.enums.TypeOperator;
 import br.com.enginer.domain.system.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
@@ -123,7 +125,7 @@ public class EntityRow extends DomainAbstract<Long> {
 
 	@UIHidden(template = { TypeTemplate.ROW })
 	@UIColumn(label = "Double", initial = true)
-	@UIText(label = "Double", mask = "0000.00", template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
+	@UIDecimal(label = "Double", typeFormat = TypeFormat.decimal, precision = 2, template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
 	@UIRow(visible = true, editable = true, order = 3)
 	private Double lineDouble;
 

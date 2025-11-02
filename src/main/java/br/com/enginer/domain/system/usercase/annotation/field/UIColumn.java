@@ -28,8 +28,11 @@ public @interface UIColumn {
 	String label(); // nome da coluna
 	boolean initial(); // aparece logo na tela
 	String style() default ""; // class css para o valor da coluna
+	String type() default ""; // cpf,cnpj,cep,phone,currency,percentage,weight,exchange,quantity,latitude,longitude,duration
 	UIConditional conditional() default @UIConditional;
 	String[] fields() default {}; // fields do domain - Apenas utilizado em Objects Domain
 	boolean hidden() default false; // nunca exibida
 	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.MODAL };
 }
+
+

@@ -14,5 +14,5 @@ public @interface UIFieldValidation {
     UIPattern pattern() default @UIPattern;
     UIAsync async() default @UIAsync;
     UISync sync() default @UISync;
-	TypeTemplate[] template() default { TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL };
+	TypeTemplate[] template() default { TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.ROW, TypeTemplate.MODAL };
 }

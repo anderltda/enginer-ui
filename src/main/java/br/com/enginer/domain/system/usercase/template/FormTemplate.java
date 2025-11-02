@@ -638,7 +638,7 @@ public final class FormTemplate {
 						paramUtils.addInitials(name);
 					}
 					paramUtils.addColumnNames(field_.getName(), uiColumn.label());
-					paramUtils.addColumnTypes(field_.getName(), field_.getType().getSimpleName());
+					paramUtils.addColumnTypes(field_.getName(), uiColumn.type().isEmpty() ? field_.getType().getSimpleName() : uiColumn.type());
 					paramUtils.addColumnStyles(field_.getName(), uiColumn.style());
 					paramUtils.addVisibles(name);
 
@@ -745,7 +745,7 @@ public final class FormTemplate {
 					}
 					
 					paramUtils.addColumnNames(name, uiColumn.label());
-					paramUtils.addColumnTypes(name, field.getType().getSimpleName());
+					paramUtils.addColumnTypes(name, uiColumn.type().isEmpty() ? field.getType().getSimpleName() : uiColumn.type());
 					paramUtils.addColumnStyles(name, uiColumn.style());
 					paramUtils.addVisibles(name);
 					
