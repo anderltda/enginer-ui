@@ -81,7 +81,7 @@ value = {
 	)		
 })
 @UIPaginator(
-		config = @UIConfig(deletable = true, editable = true), 
+		config = @UIConfig(expandable = true), 
 		actions = @UIButtonAction(includes = { UIButtonPaginatorView.class, UIButtonPaginatorEdit.class, UIButtonPaginatorAdd.class, UIButtonRowSave.class }, 
         value = {
     		@UIButton(

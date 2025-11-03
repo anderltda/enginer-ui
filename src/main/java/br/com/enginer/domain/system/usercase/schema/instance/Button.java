@@ -15,6 +15,7 @@ public class Button {
 	private Boolean disable;
 	private Boolean highlight;
 	private Boolean dropdown;
+	private Boolean rowInlineButton;
 	private Boolean confirm;
 	private Boolean needsValidation;
 	private String[] notDomain;
@@ -77,6 +78,14 @@ public class Button {
 
 	public void setDropdown(Boolean dropdown) {
 		this.dropdown = dropdown;
+	}
+
+	public Boolean getRowInlineButton() {
+		return rowInlineButton;
+	}
+
+	public void setRowInlineButton(Boolean rowInlineButton) {
+		this.rowInlineButton = rowInlineButton;
 	}
 
 	public Boolean getConfirm() {

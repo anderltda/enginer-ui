@@ -88,7 +88,14 @@ import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
 	)		
 }
 )
-@UIPaginator(config = @UIConfig(deletable = true), actions = @UIButtonAction(includes = { UIButtonPaginatorView.class, UIButtonPaginatorEdit.class }))
+@UIPaginator(config = @UIConfig(expandable = true), 
+	actions = @UIButtonAction(
+		includes = { 
+			UIButtonPaginatorView.class, 
+			UIButtonPaginatorEdit.class 
+		}
+	)
+)
 public class EntityFour extends DomainAbstract<UUID> {
 
 	@UIId(label = "Id")

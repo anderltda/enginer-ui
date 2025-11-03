@@ -541,11 +541,9 @@ public final class FormTemplate {
 			UIPaginator uiPaginator = domain.getClass().getAnnotation(UIPaginator.class);
 
 			UIConfig uiConfig = uiPaginator.config();
-			config.setEditable(uiConfig.editable());
 			config.setEditableAll(uiConfig.editableAll());
 			config.setMultiSelectable(uiConfig.multiSelectable());
 			config.setExpandable(uiConfig.expandable());
-			config.setDeletable(uiConfig.deletable());
 
 			UIButtonAction uiButtonAction = uiPaginator.actions();
 			UIButton[] uiButtons = uiButtonAction.value();
@@ -1342,8 +1340,7 @@ public final class FormTemplate {
 							if (method.getName().equals("template"))
 								continue;
 
-							ReflectionUtils.set(button, StringsUtils.setMethod(method.getName()),
-									new Class<?>[] { buttonObject.getClass() }, new Object[] { buttonObject });
+							ReflectionUtils.set(button, StringsUtils.setMethod(method.getName()), new Class<?>[] { buttonObject.getClass() }, new Object[] { buttonObject });
 						}
 						buttons.add(button);
 					}

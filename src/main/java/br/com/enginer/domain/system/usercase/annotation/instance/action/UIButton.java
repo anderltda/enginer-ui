@@ -18,6 +18,7 @@ public @interface UIButton {
 	boolean disable() default false;
 	boolean highlight() default false;
 	boolean dropdown() default false;
+	boolean rowInlineButton() default false;
 	boolean confirm() default false;
 	boolean needsValidation() default true;
 	String[] notDomain() default {};

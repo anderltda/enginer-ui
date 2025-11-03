@@ -10,6 +10,6 @@ import br.com.enginer.domain.system.usercase.annotation.instance.action.UIButton
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface UIPaginator {
-    UIConfig config() default @UIConfig(expandable = false, multiSelectable = false, deletable = false);
+    UIConfig config() default @UIConfig(expandable = false, multiSelectable = false);
     UIButtonAction actions() default @UIButtonAction(value = {});
 }

@@ -79,7 +79,7 @@ value = {
 }
 )
 @UIPaginator(
-	config = @UIConfig(deletable = true), 
+	config = @UIConfig(multiSelectable = true), 
 	actions = @UIButtonAction(
 	includes = { 
 		UIButtonPaginatorView.class, 

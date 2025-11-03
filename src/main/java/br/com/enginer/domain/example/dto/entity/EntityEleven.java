@@ -29,6 +29,8 @@ import br.com.enginer.domain.system.usercase.annotation.instance.action.button.p
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowAdd;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowBack;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowClear;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowDelete;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowEdit;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabBack;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabFinish;
 import br.com.enginer.domain.system.usercase.annotation.instance.paginator.UIConfig;
@@ -63,13 +65,15 @@ import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
 	}
 )
 @UIPaginator(
-config = @UIConfig(expandable = false, editable = true, deletable = true, multiSelectable = false), 
+config = @UIConfig(expandable = false, multiSelectable = false), 
 actions = @UIButtonAction(
 	includes = { 
 		UIButtonPaginatorView.class, 
 		UIButtonPaginatorEdit.class, 
 		UIButtonPaginatorDelete.class,
-		UIButtonPaginatorSave.class 
+		UIButtonPaginatorSave.class,
+		UIButtonRowEdit.class,
+		UIButtonRowDelete.class
 	})
 )
 public class EntityEleven extends DomainAbstract<Long> {
