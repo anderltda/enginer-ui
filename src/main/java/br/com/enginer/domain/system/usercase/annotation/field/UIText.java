@@ -17,5 +17,6 @@ public @interface UIText {
 	int min() default 1;
 	int max() default 20;
 	boolean disable() default false;
+	boolean allowNegativeNumbers() default false;
 	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.MODAL } ;
 }

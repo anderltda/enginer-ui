@@ -169,13 +169,13 @@ public class EntitySix extends DomainAbstract<Long> {
 	@UIPosition(x = 1, y = 5)
 	@UIFieldValidation(required = true)
 	//@UIDecimal(label = "Latitude", min = -90, max = 90, typeFormat = TypeFormat.latitude)
-	@UIText(label = "Latitude", mask = "00.00000000")
+	@UIText(label = "Latitude", mask = "00.00000000", allowNegativeNumbers = true)
 	private BigDecimal latitude;
 
 	@UIPosition(x = 2, y = 5)
 	@UIFieldValidation(required = true)
 	//@UIDecimal(label = "Longitude", min = -180, max = 180, typeFormat = TypeFormat.longitude)
-	@UIText(label = "Longitude", mask = "00.00000000")
+	@UIText(label = "Longitude", mask = "00.00000000", allowNegativeNumbers = true)
 	private BigDecimal longitude;
 
 	@UIPosition(x = 1, y = 6)

@@ -39,6 +39,7 @@ public abstract class Base {
 	private Boolean enableSwitch;
 	private Boolean readonly;
 	private Boolean select;
+	private Boolean allowNegativeNumbers;
 	private Object value;
 
 	private String format;
@@ -248,6 +249,14 @@ public abstract class Base {
 
 	public void setSelect(Boolean select) {
 		this.select = select;
+	}
+	
+	public Boolean getAllowNegativeNumbers() {
+		return allowNegativeNumbers;
+	}
+
+	public void setAllowNegativeNumbers(Boolean allowNegativeNumbers) {
+		this.allowNegativeNumbers = allowNegativeNumbers;
 	}
 
 	public Object getValue() {

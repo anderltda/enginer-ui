@@ -188,4 +188,18 @@ public class StringsUtils {
 	public static LocalDateTime toLocalDateTime(Object value) {
 		return LocalDateTime.parse(value.toString(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 	}
+	
+	/**
+	 * Remove todos os caracteres não numéricos de uma String.
+	 *
+	 * @param value texto de entrada (ex: "CPF: 123.456.789-00")
+	 * @return apenas os números (ex: "12345678900"), 
+	 *         ou null se o valor for nulo ou vazio.
+	 */
+	public static String onlyNumbers(String value) {
+	    if (value == null || value.trim().isEmpty()) {
+	        return null;
+	    }
+	    return value.replaceAll("\\D", ""); // \\D = tudo que não é dígito
+	}
 }

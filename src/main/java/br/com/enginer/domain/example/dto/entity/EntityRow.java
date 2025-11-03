@@ -1,5 +1,6 @@
 package br.com.enginer.domain.example.dto.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -31,6 +32,7 @@ import br.com.enginer.domain.system.usercase.annotation.instance.action.button.p
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowDelete;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabBack;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabFinish;
 import br.com.enginer.domain.system.usercase.annotation.instance.paginator.UIConfig;
@@ -44,6 +46,7 @@ import br.com.enginer.domain.system.usercase.enums.TypeFormat;
 import br.com.enginer.domain.system.usercase.enums.TypeOperator;
 import br.com.enginer.domain.system.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usercase.utils.StringsUtils;
 
 /**
  * 
@@ -78,7 +81,8 @@ actions = @UIButtonAction(
 		UIButtonPaginatorEdit.class, 
 		UIButtonPaginatorDelete.class,			
 		UIButtonPaginatorBack.class,
-		UIButtonPaginatorAdd.class		
+		UIButtonPaginatorAdd.class,
+		UIButtonRowDelete.class
 	},
 	value = { 
 		@UIButton(
@@ -105,49 +109,68 @@ public class EntityRow extends DomainAbstract<Long> {
 	private EntityTen entityTen;
 
 	@UIHidden(template = { TypeTemplate.ROW })
-	@UIText(label = "String", template = { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.FORM, TypeTemplate.MODAL })
-	@UIColumn(label = "String", initial = false)
-	@UIRow(visible = true, editable = true, order = 1)
-	private String lineString;
-
-	@UIHidden(template = { TypeTemplate.ROW })
-	@UINumber(label = "Integer", min = 1, max = 60, template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
-	@UIColumn(label = "Integer", initial = true,
+	@UIText(label = "CPF", mask = "000.000.000-00", template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
+	@UIColumn(label = "CPF", initial = true, type = "cpf",
 	conditional = @UIConditional({
-		@UIConditionalOn(field = "lineDouble", operator = TypeOperator.BETWEEN, matchs = { "1","500" }, value = "badge badge-info"),
+		@UIConditionalOn(field = "valueDouble", operator = TypeOperator.BETWEEN, matchs = { "1","500" }, value = "badge badge-info"),
 		@UIConditionalOn(field = "lineDate", operator = TypeOperator.DATE_BEFORE, matchs = { "lineDateTime" }, value = "badge badge-warning"),
 	}))		
 	@UIRow(visible = true, editable = true, order = 2)
-	private Integer lineInteger;
-
+	private String cpf;
+	
 	@UIHidden(template = { TypeTemplate.ROW })
-	@UIColumn(label = "Double", initial = true)
-	@UIDecimal(label = "Double", typeFormat = TypeFormat.decimal, precision = 2, template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
+	@UIText(label = "CNPJ", mask = "00.000.000/0000-00" , template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
+	@UIColumn(label = "CNPJ", initial = true, type = "cnpj")		
 	@UIRow(visible = true, editable = true, order = 3)
-	private Double lineDouble;
+	private String cnpj;
 
 	@UIHidden(template = { TypeTemplate.ROW })
-	@UIColumn(label = "Long", initial = true)
+	@UIText(label = "Phone", mask = "(00)00000-0000" , template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
+	@UIColumn(label = "Phone", initial = true, type = "phone")		
 	@UIRow(visible = true, editable = true, order = 4)
-	private Long lineLong;
+	private String phone;
 
 	@UIHidden(template = { TypeTemplate.ROW })
-	@UICheckbox(label = "<b>Boolean</b>", enableSwitch = false, template = { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.FORM, TypeTemplate.MODAL })
-	@UIColumn(label = "Boolean", initial = false)
-	@UIRow(visible = true, editable = true, order = 5)
-	private Boolean lineBoolean;
+	@UIText(label = "CEP", mask = "00000-000" , template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
+	@UIColumn(label = "CEP", initial = true, type = "cep")		
+	@UIRow(visible = true, editable = true, order = 5)	
+	private String cep;
 
 	@UIHidden(template = { TypeTemplate.ROW })
-	@UIDate(label = "Date")
-	@UIColumn(label = "Date", initial = false)
+	@UIDecimal(label = "Custo", typeFormat = TypeFormat.decimal, precision = 2)
+	@UIColumn(label = "Custo", initial = true)		
 	@UIRow(visible = true, editable = true, order = 6)
-	private LocalDate lineDate;
+	private BigDecimal custo;	
 
 	@UIHidden(template = { TypeTemplate.ROW })
-	@UIDate(label = "Date Time", format = TypeDateFormat.DATE_TIME_FORMAT, showtime = true)
-	@UIColumn(label = "Date Time", initial = false)
+	@UIColumn(label = "Exchange", initial = true)
+	@UIDecimal(label = "Exchange", typeFormat = TypeFormat.currency, template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
 	@UIRow(visible = true, editable = true, order = 7)
-	private LocalDateTime lineDateTime;
+	private Double valueDouble;
+
+	@UIHidden(template = { TypeTemplate.ROW })
+	@UINumber(label = "Numero Longo", max = 5000, template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
+	@UIColumn(label = "Numero Longo", initial = true)
+	@UIRow(visible = true, editable = true, order = 8)
+	private Long valueLong;
+
+	@UIHidden(template = { TypeTemplate.ROW })
+	@UIDate(label = "Data Nascimento")
+	@UIColumn(label = "Data Nascimento", initial = false)
+	@UIRow(visible = true, editable = true, order = 10)
+	private LocalDate dataNascimento;
+
+	@UIHidden(template = { TypeTemplate.ROW })
+	@UIDate(label = "Data Processamento", format = TypeDateFormat.DATE_TIME_FORMAT, showtime = true)
+	@UIColumn(label = "Data Processamento", initial = false)
+	@UIRow(visible = true, editable = true, order = 11)
+	private LocalDateTime dataProcessamento;
+
+	@UIHidden(template = { TypeTemplate.ROW })
+	@UICheckbox(label = "<b>Ativo</b>", enableSwitch = false, template = { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.FORM, TypeTemplate.MODAL })
+	@UIColumn(label = "Boolean", initial = false)
+	@UIRow(visible = true, editable = true, order = 9)
+	private Boolean ativo;
 
 	public void setIdEntityTen(Long idEntityTen) {
 		this.entityTen = new EntityTen();
@@ -172,59 +195,83 @@ public class EntityRow extends DomainAbstract<Long> {
 		this.entityTen = entityTen;
 	}
 
-	public String getLineString() {
-		return lineString;
+	public String getCpf() {
+		return cpf;
 	}
 
-	public void setLineString(String lineString) {
-		this.lineString = lineString;
+	public void setCpf(String cpf) {
+		this.cpf = cpf != null ? StringsUtils.onlyNumbers(cpf) : cpf;
 	}
 
-	public Integer getLineInteger() {
-		return lineInteger;
+	public String getCnpj() {
+		return cnpj;
 	}
 
-	public void setLineInteger(Integer lineInteger) {
-		this.lineInteger = lineInteger;
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj != null ? StringsUtils.onlyNumbers(cnpj) : cnpj;
 	}
 
-	public Double getLineDouble() {
-		return lineDouble;
+	public String getPhone() {
+		return phone;
 	}
 
-	public void setLineDouble(Double lineDouble) {
-		this.lineDouble = lineDouble;
+	public void setPhone(String phone) {
+		this.phone = phone != null ? StringsUtils.onlyNumbers(phone) : phone;
 	}
 
-	public Long getLineLong() {
-		return lineLong;
+	public String getCep() {
+		return cep;
 	}
 
-	public void setLineLong(Long lineLong) {
-		this.lineLong = lineLong;
+	public void setCep(String cep) {
+		this.cep = cep != null ? StringsUtils.onlyNumbers(cep) : cep;
 	}
 
-	public Boolean getLineBoolean() {
-		return lineBoolean;
+	public BigDecimal getCusto() {
+		return custo;
 	}
 
-	public void setLineBoolean(Boolean lineBoolean) {
-		this.lineBoolean = lineBoolean;
+	public void setCusto(BigDecimal custo) {
+		this.custo = custo;
 	}
 
-	public LocalDate getLineDate() {
-		return lineDate;
+	public Double getValueDouble() {
+		return valueDouble;
 	}
 
-	public void setLineDate(LocalDate lineDate) {
-		this.lineDate = lineDate;
+	public void setValueDouble(Double valueDouble) {
+		this.valueDouble = valueDouble;
 	}
 
-	public LocalDateTime getLineDateTime() {
-		return lineDateTime;
+	public Long getValueLong() {
+		return valueLong;
 	}
 
-	public void setLineDateTime(LocalDateTime lineDateTime) {
-		this.lineDateTime = lineDateTime;
+	public void setValueLong(Long valueLong) {
+		this.valueLong = valueLong;
+	}
+
+	public Boolean getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
+	}
+
+	public LocalDate getDataNascimento() {
+		return dataNascimento;
+	}
+
+	public void setDataNascimento(LocalDate dataNascimento) {
+		this.dataNascimento = dataNascimento;
+	}
+
+	public LocalDateTime getDataProcessamento() {
+		return dataProcessamento;
+	}
+
+	public void setDataProcessamento(LocalDateTime dataProcessamento) {
+		this.dataProcessamento = dataProcessamento;
 	}
 }
