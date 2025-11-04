@@ -79,6 +79,7 @@ public final class DependencyInjector {
                 field.setAccessible(true);
 
                 try {
+                	
                     Object existingValue = field.get(domain);
 
                     // cria lazy handler se ainda não tiver instância
