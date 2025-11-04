@@ -43,7 +43,7 @@ public class UploadFileUserCase extends AbstractUserCase<UploadFile> {
 			
 			loggerOutboundPort.info(getClass(), "Chunk recebido: " + uploadId + " idx=" + chunkIndex);
 			
-			fileChunkStorageOutboundPort.saveChunk(uploadId, chunkIndex, content);
+			fileStorageOutboundPort.saveChunk(uploadId, chunkIndex, content);
 			
 		} catch (IOException e) {
 			throw new UncheckedException("Falha ao salvar chunk: " + e.getMessage(), e);
@@ -82,7 +82,7 @@ public class UploadFileUserCase extends AbstractUserCase<UploadFile> {
 			Path finalPath = fileStorageOutboundPort.resolveFinalPath(storageName);
 
 			// merge em streaming
-			fileChunkStorageOutboundPort.mergeChunks(uploadFile.getUid(), finalPath);
+			fileStorageOutboundPort.mergeChunks(uploadFile.getUid(), finalPath);
 
 			// calcula checksum e tamanho em streaming (sem carregar tudo na RAM)
 			Map<String, Object> result = calculateChecksumAndSize(finalPath);
@@ -99,7 +99,7 @@ public class UploadFileUserCase extends AbstractUserCase<UploadFile> {
 			UploadFile saved = super.salvar(uploadFile);
 
 			// limpa temporários da sessão
-			fileChunkStorageOutboundPort.cleanupSession(uploadFile.getUid());
+			fileStorageOutboundPort.cleanupSession(uploadFile.getUid());
 
 			loggerOutboundPort.info(getClass(), "Upload finalizado: " + saved.getStorageName() + " (" + saved.getSize() + " bytes)");
 

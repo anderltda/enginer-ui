@@ -127,7 +127,7 @@ public class ReflectionUtils {
 
         long start = System.currentTimeMillis();
 
-        // 0) Se for um DomainId, busca o domínio pai (ex: EntityNineId → EntityNine)
+        // 0 - Se for um DomainId, busca o domínio pai (ex: EntityNineId → EntityNine)
         if (DomainId.class.isAssignableFrom(domainClass)) {
         	
             String className = domainClass.getSimpleName();
@@ -138,12 +138,7 @@ public class ReflectionUtils {
                 
             	String packageName = domainClass.getPackageName();
                 
-            	// substitui ".dto.entity" → ".dto.entity" mesmo pacote
                 String parentQualifiedName = packageName + "." + parentName;
-                
-                if (INJECTION_LOG_ENABLED) {
-                    System.out.println("[ReflectionUtils] DomainId detectado: " + className + " → procurando UserCase do domínio pai: " + parentName);
-                }
                 
                 try {
                 	
@@ -155,7 +150,7 @@ public class ReflectionUtils {
             }
         }
 
-        // 1) Recupera (ou cria) a instância do UserCase a partir do cache
+        // 1 - Recupera (ou cria) a instância do UserCase a partir do cache
         Object userCaseInstance = USERCASE_CACHE.get(domainClass);
         
         final boolean fromCache = (userCaseInstance != null);
@@ -180,33 +175,8 @@ public class ReflectionUtils {
         	
         }
 
-        // 2) Injeta todas as dependências (repo, publisher, etc.)
-        if (outboundPorts != null) {
-        	
-            for (OutboundPort outboundPort : outboundPorts) {
-            	
-                if (outboundPort == null) continue;
-
-                Class<?>[] ifaces = outboundPort.getClass().getInterfaces();
-                
-                for (Class<?> iface : ifaces) {
-                	
-                    String setter = StringsUtils.setMethod(iface.getSimpleName()); // ex.: setRepositoryOutboundPort
-                    
-                    try {
-                    	
-		            	ReflectionUtils.set(userCaseInstance, setter, new Class<?>[] { iface }, new Object[] { outboundPort });
-                        break;
-                        
-                    } catch (Exception e) {
-                        if (INJECTION_LOG_ENABLED) {
-                            System.out.println("[ReflectionUtils] Falha ao injetar via interface " + iface.getSimpleName() + " no método " + setter + ": " + e.getMessage());
-                        }
-                    }
-                }
-
-            }
-        }
+        // 2 - Injeta todas as dependências (repo, publisher, etc.)
+        ReflectionUtils.set(userCaseInstance, "addOutboundPort", new Class<?>[] { outboundPorts.getClass() }, new Object[] { outboundPorts });
 
         return userCaseInstance;
     }    
@@ -682,7 +652,30 @@ public class ReflectionUtils {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	}	
+	}
+	
+    /**
+     * Executa um setter de forma segura, com fallback em caso de tipo incompatível.
+     */
+    public static void setFallback(Object target, String methodName, Class<?>[] paramTypes, Object[] args) throws Exception {
+        Class<?> clazz = target.getClass();
+        Method method = null;
+        try {
+            method = clazz.getMethod(methodName, paramTypes);
+        } catch (NoSuchMethodException e) {
+            // Fallback: tenta com superclasse do parâmetro
+            if (paramTypes.length > 0 && paramTypes[0].getSuperclass() != null) {
+                try {
+                    method = clazz.getMethod(methodName, new Class<?>[]{ paramTypes[0].getSuperclass() });
+                } catch (NoSuchMethodException ignored) {}
+            }
+            if (method == null) {
+                throw e;
+            }
+        }
+        method.setAccessible(true);
+        method.invoke(target, args);
+    }
 
 	/**
 	 * @param newClassName
@@ -785,11 +778,12 @@ public class ReflectionUtils {
 		Class[] paramTypes = transformParametersTypes(paramValue);
 		Method method = getMethod(object.getClass(), methodName, paramTypes);
 		if (method != null) {
+			method.setAccessible(true);
 			return method.invoke(object, paramValue);
 		}
 		return null;
 	}
-
+	
 	/**
 	 * @param params
 	 * @return

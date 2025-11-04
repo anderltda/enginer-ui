@@ -1,121 +1,139 @@
 package br.com.enginer.domain.system.usercase.injector;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import br.com.enginer.domain.system.usercase.AbstractUserCase;
 import br.com.enginer.domain.system.usercase.annotation.AutoDependencyInjector;
+import br.com.enginer.domain.system.usercase.injector.lazy.LazyProxyHandler;
 import br.com.enginer.domain.system.usercase.port.OutboundPort;
-import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 import br.com.enginer.domain.system.usercase.utils.ReflectionUtils;
 import br.com.enginer.domain.system.usercase.utils.StringsUtils;
 
 /**
- * Processador reflexivo para 
- * @AutoInjectDependencies com logs visuais hierárquicos.
- * Exemplo de saída: UserCase ├── FileUserCase │ └── DocumentUserCase
+ * Injetor reflexivo com suporte a Lazy Loading.
+ * Cria e injeta automaticamente os UserCases filhos anotados com @AutoDependencyInjector.
+ * Mantém cache de OutboundPorts e propaga hierarquicamente.
  */
 public final class DependencyInjector {
 
-	/**
-	 * 
-	 */
-	private DependencyInjector() {}
+    private static final Map<String, OutboundPort> OUTBOUND_PORT_CACHE = new ConcurrentHashMap<>();
 
-	/**
-	 * Ponto de entrada principal.
-	 */
-	public static void processDependencies(AbstractUserCase<Domain<?>> domain) {
-		processDependenciesInternal(domain, new HashSet<>(), 0);
-	}
+    private DependencyInjector() {}
 
-	/**
-	 * Processamento recursivo com indentação visual.
-	 * @param domain
-	 * @param visited
-	 * @param level
-	 */
-	@SuppressWarnings({ "unchecked" })
-	private static void processDependenciesInternal(AbstractUserCase<Domain<?>> domain, Set<Object> visited, int level) {
-		
-		if (domain == null || visited.contains(domain)) return;
-		
-		visited.add(domain);
-		
-		Class<?> clazz = domain.getClass();
-		
-		while (clazz != null && clazz != Object.class) {
-			
-			for (Field field : clazz.getDeclaredFields()) {
-				
-				if (!field.isAnnotationPresent(AutoDependencyInjector.class)) continue;
+    /**
+     * Inicializa e injeta dependências em um UserCase raiz.
+     * Esse método é chamado pelo LazyProxyHandler.
+     */
+    public static void processDependencies(AbstractUserCase<?> domain) {
+        processDependenciesInternal(domain, new HashSet<>(), 0);
+    }
 
-				field.setAccessible(true);
-				
-				try {
-				
-					Object childInstance = field.get(domain);
+    /**
+     * Adiciona portas outbound ao UserCase principal e propaga hierarquicamente.
+     */
+    public static void addOutboundPort(AbstractUserCase<?> domain, OutboundPort... outboundPorts) {
 
-					if (childInstance == null) {
-						Class<?> fieldType = field.getType();
-						childInstance = fieldType.getDeclaredConstructor().newInstance();
-						field.set(domain, childInstance);
-					} 
+        for (OutboundPort outboundPort : outboundPorts) {
+            if (outboundPort != null) {
 
-					// se for outro AbstractUserCase, propaga dependências e processa recursivamente
-					if (childInstance instanceof AbstractUserCase<?> childUserCase) {
-						
-						List<Field> fields = getAllFields(childInstance.getClass());
-						
-						for (Field fieldUserCase : fields) {
+                Class<?>[] interfaces = outboundPort.getClass().getInterfaces();
+                String interfaceName = interfaces.length > 0
+                        ? interfaces[0].getSimpleName()
+                        : outboundPort.getClass().getSimpleName();
 
-							String getOutboundPort = StringsUtils.getMethod(fieldUserCase.getName());
-							
-							OutboundPort outboundPort = (OutboundPort) ReflectionUtils.get(getOutboundPort, domain);
+                String setOutboundPort = StringsUtils.setMethod(interfaceName);
 
-							if (outboundPort != null) {
-							
-								String setOutboundPort = StringsUtils.setMethod(fieldUserCase.getName());
-								
-				            	ReflectionUtils.set(childUserCase, setOutboundPort, new Class<?>[] { fieldUserCase.getType() }, new Object[] { outboundPort });
-					        
-							}
-						}
-						
-						processDependenciesInternal(((AbstractUserCase<Domain<?>>) childUserCase), visited, level + 1);
-					}
+                OUTBOUND_PORT_CACHE.put(setOutboundPort, outboundPort);
 
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-			
-			clazz = clazz.getSuperclass();
-		}
-	}
-	
-	/**
-	 * @param type
-	 * @return
-	 */
-	private static List<Field> getAllFields(Class<?> type) {
-		
-	    List<Field> fields = new ArrayList<>();
+                ReflectionUtils.set(domain, setOutboundPort,
+                        new Class<?>[] { interfaces.length > 0 ? interfaces[0] : outboundPort.getClass() },
+                        new Object[] { outboundPort });
+            }
+        }
 
-	    Class<?> current = type;
-	    
-	    while (current != null && current != Object.class) {
-	    	
-	        for (Field f : current.getDeclaredFields()) {
-	            fields.add(f);
-	        }
-	        
-	        current = current.getSuperclass();
-	    }
+        processDependenciesInternal(domain, new HashSet<>(), 0);
+    }
 
-	    return fields;
-	}
+    /**
+     * Processa recursivamente dependências com logs hierárquicos e lazy loading.
+     */
+    @SuppressWarnings({ "unchecked" })
+    private static void processDependenciesInternal(AbstractUserCase<?> domain, Set<Object> visited, int level) {
+
+        if (domain == null || visited.contains(domain)) return;
+        
+        visited.add(domain);
+
+        Class<?> clazz = domain.getClass();
+
+        while (clazz != null && clazz != Object.class) {
+        	
+            for (Field field : clazz.getDeclaredFields()) {
+
+                if (!field.isAnnotationPresent(AutoDependencyInjector.class)) continue;
+
+                field.setAccessible(true);
+
+                try {
+                    Object existingValue = field.get(domain);
+
+                    // cria lazy handler se ainda não tiver instância
+                    if (existingValue == null) {
+
+                        Class<?> fieldType = field.getType();
+                        
+                        LazyProxyHandler<?> lazy = new LazyProxyHandler<>((Class<? extends AbstractUserCase<?>>) fieldType);
+
+                        Object instance = lazy.get(); // instancia real sob demanda
+                        
+                        field.set(domain, instance);
+
+                        logDependency(domain, instance, level);
+
+                        // Propaga outbound ports para o novo usercase
+                        OUTBOUND_PORT_CACHE.forEach((key, outboundPort) -> {
+                        	
+                            try {
+                            
+                            	Class<?>[] interfaces = outboundPort.getClass().getInterfaces();
+                                
+                            	Class<?> paramType = interfaces.length > 0 ? interfaces[0] : outboundPort.getClass();
+
+                                ReflectionUtils.set(instance, key, new Class<?>[]{paramType}, new Object[]{outboundPort});
+
+                            } catch (Exception e) {
+                                System.err.println("Erro ao injetar port '" + key + "': " + e.getMessage());
+                            }
+                        });
+
+                        // Recursão — processa dependências do filho
+                        if (instance instanceof AbstractUserCase<?> childCase) {
+                            processDependenciesInternal(childCase, visited, level + 1);
+                        }
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            clazz = clazz.getSuperclass();
+        }
+    }
+
+    /**
+     * Log visual hierárquico das dependências.
+     */
+    private static void logDependency(Object parent, Object child, int level) {
+    	
+        final String BLUE = "\u001B[34m";
+        final String CYAN = "\u001B[36m";
+        final String RESET = "\u001B[0m";
+
+        String indent = " ".repeat(level * 2);
+        System.out.println(BLUE + indent + "├── " + CYAN + child.getClass().getSimpleName() + RESET + " (inject into " + parent.getClass().getSimpleName() + ")");
+    }
 }

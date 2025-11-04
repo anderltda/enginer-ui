@@ -31,9 +31,7 @@ import br.com.enginer.domain.system.usercase.port.inbound.subscriber.SubscriberI
 import br.com.enginer.domain.system.usercase.port.outbound.logger.LoggerOutboundPort;
 import br.com.enginer.domain.system.usercase.port.outbound.publisher.PublisherOutboundPort;
 import br.com.enginer.domain.system.usercase.port.outbound.repository.RepositoryOutboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.storage.FileChunkStorageOutboundPort;
 import br.com.enginer.domain.system.usercase.port.outbound.storage.FileStorageOutboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.storage.HashGeneratorOutboundPort;
 import br.com.enginer.domain.system.usercase.schema.field.type.Id;
 import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalDateDeserializer;
@@ -131,25 +129,11 @@ public class BeanConfiguration {
 	 * @param repositoryOutboundPort
 	 * @param publisherOutboundPort
 	 * @param fileStorageOutboundPort
-	 * @param fileChunkStorageOutboundPort
-	 * @param hashGeneratorOutboundPort
 	 * @return
 	 */
 	@Bean
-	ActionInboundPort<Domain<?>> actionInboundPort(
-			LoggerOutboundPort loggerOutboundPort,
-			RepositoryOutboundPort<Domain<?>> repositoryOutboundPort,
-			PublisherOutboundPort<Domain<?>> publisherOutboundPort,
-			FileStorageOutboundPort fileStorageOutboundPort,
-			FileChunkStorageOutboundPort fileChunkStorageOutboundPort,
-			HashGeneratorOutboundPort hashGeneratorOutboundPort) {
-		return new ActionInboundUserCase<Domain<?>>(
-				loggerOutboundPort, 
-				repositoryOutboundPort, 
-				publisherOutboundPort, 
-				fileStorageOutboundPort,
-				fileChunkStorageOutboundPort,
-				hashGeneratorOutboundPort);
+	ActionInboundPort<Domain<?>> actionInboundPort(LoggerOutboundPort loggerOutboundPort, RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, PublisherOutboundPort<Domain<?>> publisherOutboundPort, FileStorageOutboundPort fileStorageOutboundPort) {
+		return new ActionInboundUserCase<Domain<?>>(loggerOutboundPort, repositoryOutboundPort, publisherOutboundPort, fileStorageOutboundPort);
 	}
 	
 	/**
