@@ -125,7 +125,7 @@ public class EntityRow extends DomainAbstract<Long> {
 	private String cnpj;
 
 	@UIHidden(template = { TypeTemplate.ROW })
-	@UIText(label = "Phone", mask = "(00)00000-0000" , template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
+	@UIText(label = "Phone", mask = "(00) 00000-0000" , template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
 	@UIColumn(label = "Phone", initial = true, type = "phone")		
 	@UIRow(visible = true, editable = true, order = 4)
 	private String phone;
