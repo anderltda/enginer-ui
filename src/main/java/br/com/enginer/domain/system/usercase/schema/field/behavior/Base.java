@@ -7,6 +7,7 @@ import br.com.enginer.domain.system.usercase.enums.TypeDateFormat;
 import br.com.enginer.domain.system.usercase.enums.TypeFileUpload;
 import br.com.enginer.domain.system.usercase.enums.TypeFormat;
 import br.com.enginer.domain.system.usercase.enums.TypeLayoutTarget;
+import br.com.enginer.domain.system.usercase.enums.TypeLocale;
 import br.com.enginer.domain.system.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usercase.schema.field.behavior.validation.Validation;
 
@@ -43,8 +44,10 @@ public abstract class Base {
 	private Object value;
 
 	private String format;
+	private String locale;
 	private TypeFileUpload mode;
 	private TypeFormat typeFormat;
+	private TypeLocale typeLocale;
 	private TypeTemplate[] template;
 	private TypeLayoutTarget layoutTarget;
 
@@ -352,7 +355,7 @@ public abstract class Base {
 	}
 
 	public void setPrecision(Integer precision) {
-		this.precision = precision;
+		this.precision = precision > 0 ? precision : null;
 	}
 
 	public TypeFormat getTypeFormat() {
@@ -361,5 +364,21 @@ public abstract class Base {
 
 	public void setTypeFormat(TypeFormat typeFormat) {
 		this.typeFormat = typeFormat;
+	}
+
+	public TypeLocale getTypeLocale() {
+		return typeLocale;
+	}
+
+	public void setTypeLocale(TypeLocale typeLocale) {
+		this.typeLocale = typeLocale;
+	}
+
+	public String getLocale() {
+		return locale;
+	}
+
+	public void setLocale(TypeLocale locale) {
+		this.locale = locale.getValue();
 	}
 }

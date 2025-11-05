@@ -13,7 +13,6 @@ import br.com.enginer.domain.system.usercase.annotation.AutoDependencyInjector;
 import br.com.enginer.domain.system.usercase.exception.CheckedException;
 import br.com.enginer.domain.system.usercase.exception.UncheckedException;
 import br.com.enginer.domain.system.usercase.page.PageResult;
-import br.com.enginer.domain.system.usercase.schema.Form;
 
 /**
  * 
@@ -64,12 +63,6 @@ public class EntityNineUserCase extends AbstractUserCase<EntityNine> {
 		return super.buscarPorId(domain);
 	}
 
-	@Override
-	public Form form(EntityNine domain) throws UncheckedException {
-		// TODO Auto-generated method stub
-		return super.form(domain);
-	}
-	
 	@Override
 	public EntityNine plus(EntityNine domain) {
 		EntityNine nine = (EntityNine) domain;

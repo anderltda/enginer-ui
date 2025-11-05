@@ -144,7 +144,7 @@ public class EntityRow extends DomainAbstract<Long> {
 
 	@UIHidden(template = { TypeTemplate.ROW })
 	@UIColumn(label = "Exchange", initial = true)
-	@UIDecimal(label = "Exchange", typeFormat = TypeFormat.currency, template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
+	@UIDecimal(label = "Exchange", typeFormat = TypeFormat.cambio, template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
 	@UIRow(visible = true, editable = true, order = 7)
 	private Double valueDouble;
 

@@ -2,6 +2,15 @@ package br.com.enginer.domain.system.usercase.enums;
 
 public enum TypeFormat {
 
-	decimal, currency, percentage, weight, exchange, quantity, latitude, longitude, duration
+	decimal,
+	monetario,
+	percentual,
+	pesoMedida,
+	cambio,
+	quantidade,
+	latitude,
+	longitude,
+	duracao,
+	cientifico;
 
 }
