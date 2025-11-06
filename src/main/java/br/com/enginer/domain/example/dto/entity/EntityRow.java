@@ -110,7 +110,7 @@ public class EntityRow extends DomainAbstract<Long> {
 
 	@UIHidden(template = { TypeTemplate.ROW })
 	@UIText(label = "CPF", mask = "000.000.000-00", template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
-	@UIColumn(label = "CPF", initial = true, type = "cpf",
+	@UIColumn(label = "CPF", initial = true, type = TypeFormat.cpf,
 	conditional = @UIConditional({
 		@UIConditionalOn(field = "valueDouble", operator = TypeOperator.BETWEEN, matchs = { "1","500" }, value = "badge badge-info"),
 		@UIConditionalOn(field = "lineDate", operator = TypeOperator.DATE_BEFORE, matchs = { "lineDateTime" }, value = "badge badge-warning"),
@@ -120,19 +120,19 @@ public class EntityRow extends DomainAbstract<Long> {
 	
 	@UIHidden(template = { TypeTemplate.ROW })
 	@UIText(label = "CNPJ", mask = "00.000.000/0000-00" , template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
-	@UIColumn(label = "CNPJ", initial = true, type = "cnpj")		
+	@UIColumn(label = "CNPJ", initial = true, type = TypeFormat.cnpj)		
 	@UIRow(visible = true, editable = true, order = 3)
 	private String cnpj;
 
 	@UIHidden(template = { TypeTemplate.ROW })
 	@UIText(label = "Phone", mask = "(00) 00000-0000" , template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
-	@UIColumn(label = "Phone", initial = true, type = "phone")		
+	@UIColumn(label = "Phone", initial = true, type = TypeFormat.phone)		
 	@UIRow(visible = true, editable = true, order = 4)
 	private String phone;
 
 	@UIHidden(template = { TypeTemplate.ROW })
 	@UIText(label = "CEP", mask = "00000-000" , template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
-	@UIColumn(label = "CEP", initial = true, type = "cep")		
+	@UIColumn(label = "CEP", initial = true, type = TypeFormat.cep)		
 	@UIRow(visible = true, editable = true, order = 5)	
 	private String cep;
 
@@ -143,7 +143,7 @@ public class EntityRow extends DomainAbstract<Long> {
 	private BigDecimal custo;	
 
 	@UIHidden(template = { TypeTemplate.ROW })
-	@UIColumn(label = "Exchange", initial = true)
+	@UIColumn(label = "Cambio", type = TypeFormat.cambio, initial = true)
 	@UIDecimal(label = "Exchange", typeFormat = TypeFormat.cambio, template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL })
 	@UIRow(visible = true, editable = true, order = 7)
 	private Double valueDouble;

@@ -36,7 +36,6 @@ public class NormalizeUtils {
 		List<Field> fields = ReflectionUtils.extractFieldsDomain(domain, false);
 		for (Field field : fields) {
 			if (jsonNode.has(field.getName())) {
-				System.out.println(StringsUtils.setMethod(field.getName()) + " = " + jsonNode.get(field.getName()));
 				ReflectionUtils.set(domain, StringsUtils.setMethod(field.getName()),
 						new Class<?>[] { identifyFieldClass(field.getType().getName()).getClass() },
 						new Object[] { extractValueFromJson(field, jsonNode) });

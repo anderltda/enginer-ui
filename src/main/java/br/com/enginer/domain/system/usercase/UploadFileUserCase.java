@@ -225,8 +225,6 @@ public class UploadFileUserCase extends AbstractUserCase<UploadFile> {
 
 		List<UploadFile> files = super.buscarTodos(new UploadFile(), filter);
 		
-		System.out.println("Files found: " + files.size());
-
 		return files;
 	}
 

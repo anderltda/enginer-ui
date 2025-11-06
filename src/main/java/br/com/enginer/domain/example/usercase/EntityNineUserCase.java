@@ -34,14 +34,12 @@ public class EntityNineUserCase extends AbstractUserCase<EntityNine> {
 			throw new UncheckedException("Faltou o id");
 		}
 
-		Object object = buscarPorId(entityNine);
-		System.out.println(object.toString());
+		buscarPorId(entityNine);
 	}
 
 	@Override
 	public PageResult<EntityNine> buscarTodosPaginado(EntityNine domain, Map<String, Object> filter) throws UncheckedException {
 
-		System.out.println(filter);
 		PageResult<EntityNine> result = (PageResult<EntityNine>) super.buscarTodosPaginado(domain, filter);
 
 		if (result != null) {
@@ -59,7 +57,6 @@ public class EntityNineUserCase extends AbstractUserCase<EntityNine> {
 
 	@Override
 	public EntityNine buscarPorId(EntityNine domain) throws CheckedException {
-		System.out.println(domain.getId());
 		return super.buscarPorId(domain);
 	}
 

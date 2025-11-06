@@ -35,6 +35,7 @@ import br.com.enginer.domain.system.usercase.annotation.instance.action.button.t
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabFinish;
 import br.com.enginer.domain.system.usercase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.system.usercase.annotation.instance.paginator.UIPaginator;
+import br.com.enginer.domain.system.usercase.enums.TypeFormat;
 import br.com.enginer.domain.system.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
 
@@ -105,7 +106,7 @@ public class EntityEleven extends DomainAbstract<Long> {
 	private Integer amount;
 
 	@UIHidden
-	@UIColumn(label = "Valor Unitario", initial = false, type = "currency")
+	@UIColumn(label = "Valor Unitario", initial = false, type = TypeFormat.monetario)
 	@UIRow(visible = true, editable = true)
 	private BigDecimal value;
 

@@ -38,8 +38,7 @@ public class EntityFiveUserCase extends AbstractUserCase<EntityFive> {
 		entityNineId.setIdEntitySix(1l);
 		entityNine.setId(entityNineId);
 		
-		EntityNine object = entityNineUserCase.buscarPorId(entityNine);
-		System.out.println(object.toString());
+		entityNineUserCase.buscarPorId(entityNine);
 	}
 	
 	@Override
