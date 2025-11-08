@@ -1,7 +1,7 @@
 package br.com.enginer.domain.system.usercase.port.outbound.logger;
 
 import br.com.enginer.domain.system.usercase.logger.ActionLogger;
-import br.com.enginer.domain.system.usercase.port.OutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.OutboundPort;
 
 /**
  * Porta de saída responsável por abstrair o mecanismo de logging do sistema.

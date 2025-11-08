@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 
-import br.com.enginer.domain.system.usercase.port.OutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.OutboundPort;
 
 /**
  * Porta de saída genérica para armazenamento de arquivos.

@@ -19,24 +19,22 @@ import br.com.enginer.domain.system.usercase.exception.UncheckedException;
 /**
  * 
  */
-public class UploadFileUserCase extends AbstractUserCase<UploadFile> {
+public class UploadFileUserCase extends AbstractUserCase<UploadFile> implements br.com.enginer.domain.system.usercase.port.UploadFileUserCase {
 	
     private static final String PATH_DIR_FINAL = "final";
 
 	/** 
-	 * 
 	 * Inicia uma sessão de upload (idempotente). 
-	 * 
 	 */
+    @Override
 	public String startSession() {
 		return UUID.randomUUID().toString().replace("-", "");
 	}
 
 	/**
-	 *  
 	 * Recebe 1 chunk (delegando ao adapter). 
-	 * 
 	 */
+    @Override    
 	public void uploadChunk(String uploadId, int chunkIndex, InputStream content) {
 		
 		try {
@@ -51,10 +49,9 @@ public class UploadFileUserCase extends AbstractUserCase<UploadFile> {
 	}
 
 	/**
-	 *  
 	 * Finaliza: faz merge, calcula checksum/size e persiste metadados. 
-	 *
 	 */
+    @Override
 	public UploadFile finalizeUpload(UploadFile uploadFile) {
 
 		try {
@@ -113,31 +110,6 @@ public class UploadFileUserCase extends AbstractUserCase<UploadFile> {
 	}
 
 	/**
-	 * Calcula o checksum SHA-256 e o tamanho de um arquivo sem carregar tudo na
-	 * memória. Ideal para grandes arquivos (usa streaming).
-	 *
-	 * @param path caminho do arquivo no sistema de arquivos
-	 * @return Map com "checksum" e "size"
-	 * @throws IOException caso ocorra falha de leitura
-	 */
-	private Map<String, Object> calculateChecksumAndSize(Path path) throws IOException {
-		MessageDigest md;
-		try {
-			md = MessageDigest.getInstance("SHA-256");
-		} catch (Exception e) {
-			throw new IOException("Algoritmo SHA-256 não disponível.", e);
-		}
-
-		long size;
-		try (InputStream in = Files.newInputStream(path); DigestInputStream dis = new DigestInputStream(in, md)) {
-			size = dis.transferTo(OutputStream.nullOutputStream()); // eficiente, sem buffer extra
-		}
-
-		String sha256 = HexFormat.of().formatHex(md.digest());
-		return Map.of("checksum", sha256, "size", size);
-	}
-
-	/**
 	 * Exclui o arquivo fisicamente e os metadados.
 	 * 
 	 * @param uploadFile
@@ -177,6 +149,7 @@ public class UploadFileUserCase extends AbstractUserCase<UploadFile> {
 	 * @return UploadFile atualizado e persistido
 	 * @throws UncheckedException caso ocorra erro de I/O ou persistência
 	 */
+    @Override
 	public UploadFile salvarEntityId(UploadFile uploadFile, Object id) throws UncheckedException {
 		
 	    try {
@@ -219,6 +192,7 @@ public class UploadFileUserCase extends AbstractUserCase<UploadFile> {
 	 * @return List<UploadFile>
 	 * @throws UncheckedException
 	 */
+    @Override
 	public List<UploadFile> buscarPorDomainAndDomainId(String domain, Object domainId) throws UncheckedException {
 
 		Map<String, Object> filter = Map.of("domain", domain.toUpperCase(), "domainId", domainId.toString());
@@ -228,4 +202,31 @@ public class UploadFileUserCase extends AbstractUserCase<UploadFile> {
 		return files;
 	}
 
+	/**
+	 * Calcula o checksum SHA-256 e o tamanho de um arquivo sem carregar tudo na
+	 * memória. Ideal para grandes arquivos (usa streaming).
+	 * @param path caminho do arquivo no sistema de arquivos
+	 * @return Map com "checksum" e "size"
+	 * @throws IOException caso ocorra falha de leitura
+	 */
+	private Map<String, Object> calculateChecksumAndSize(Path path) throws IOException {
+		
+		try {
+
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+			long size;
+			
+			try (InputStream in = Files.newInputStream(path); DigestInputStream dis = new DigestInputStream(in, md)) {
+				size = dis.transferTo(OutputStream.nullOutputStream());
+			}
+
+			String sha256 = HexFormat.of().formatHex(md.digest());
+			
+			return Map.of("checksum", sha256, "size", size);
+			
+		} catch (Exception e) {
+			throw new IOException("Algoritmo SHA-256 não disponível.", e);
+		}
+	}
 }

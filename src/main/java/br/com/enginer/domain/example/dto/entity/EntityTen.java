@@ -161,7 +161,7 @@ public class EntityTen extends DomainAbstract<Long> {
 	
 	@UIPosition(x = 1, y = 2)
 	@UIFieldValidation(required = false, template = { TypeTemplate.FORM, TypeTemplate.TAB })
-	@UITextArea(label = "Descrição", editor = true)
+	@UITextArea(label = "Descrição", editor = false)
 	private String description;
 	
 	@UIPosition(x = 2, y = 2)

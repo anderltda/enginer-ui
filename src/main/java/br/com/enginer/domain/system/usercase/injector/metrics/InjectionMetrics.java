@@ -1,0 +1,74 @@
+package br.com.enginer.domain.system.usercase.injector.metrics;
+
+/**
+ * Armazena as métricas mais recentes e o resumo global.
+ * Integra com o histórico de execuções.
+ */
+public final class InjectionMetrics {
+
+    private static int totalUserCases;
+    private static int totalOutboundPorts;
+    private static double totalTimeMs;
+
+    /**
+     * Construtor privado para nao ser instanciado
+     */
+    private InjectionMetrics() {}
+
+    /** 
+     * Atualiza o estado atual e registra histórico cumulativo 
+     */
+    public static synchronized void update(int userCases, int outbounds, double timeMs) {
+        totalUserCases = userCases;
+        totalOutboundPorts = outbounds;
+        totalTimeMs = timeMs;
+
+        // adiciona também ao histórico cumulativo
+        InjectionMetricsHistory.addSnapshot(userCases, outbounds, timeMs);
+    }
+
+    /**
+     * 
+     */
+    public static synchronized void reset() {
+        totalUserCases = 0;
+        totalOutboundPorts = 0;
+        totalTimeMs = 0.0;
+        InjectionMetricsHistory.reset();
+    }
+
+    /**
+     * @return
+     */
+    public static int getTotalUserCases() {
+        return totalUserCases;
+    }
+
+    /**
+     * @return
+     */
+    public static int getTotalOutboundPorts() {
+        return totalOutboundPorts;
+    }
+
+    /**
+     * @return
+     */
+    public static double getTotalTimeMs() {
+        return totalTimeMs;
+    }
+
+    /** 
+     * Retorna o resumo formatado 
+     */
+    public static String getSummary() {
+        return String.format(
+            "UserCases: %d | Outbounds: %d | Tempo total: %.2f ms | Injeções: %d | Média: %.2f ms",
+            totalUserCases,
+            totalOutboundPorts,
+            totalTimeMs,
+            InjectionMetricsHistory.getTotalExecutions(),
+            InjectionMetricsHistory.getAverageTimeMs()
+        );
+    }
+}

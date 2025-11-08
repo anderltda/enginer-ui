@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 import br.com.enginer.domain.system.usercase.exception.CheckedException;
 import br.com.enginer.domain.system.usercase.injector.DependencyInjector;
-import br.com.enginer.domain.system.usercase.port.OutboundPort;
+import br.com.enginer.domain.system.usercase.port.outbound.OutboundPort;
 import br.com.enginer.domain.system.usercase.schema.field.type.Id;
 import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 import br.com.enginer.domain.system.usercase.schema.instance.DomainId;
@@ -1032,5 +1032,23 @@ public class ReflectionUtils {
 		}
 
 		return false;
+	}
+	
+	/**
+	 * @param target
+	 * @param methodName
+	 * @param value
+	 * @return
+	 */
+	public static boolean invokeSetterFlexible(Object target, String methodName, Object value) {
+	    try {
+	        for (java.lang.reflect.Method m : target.getClass().getMethods()) {
+	            if (m.getName().equalsIgnoreCase(methodName) && m.getParameterCount() == 1) {
+	                m.invoke(target, value);
+	                return true;
+	            }
+	        }
+	    } catch (Exception ignored) {}
+	    return false;
 	}
 }

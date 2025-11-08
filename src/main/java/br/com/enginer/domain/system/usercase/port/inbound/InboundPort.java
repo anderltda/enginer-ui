@@ -1,4 +1,4 @@
-package br.com.enginer.domain.system.usercase.port;
+package br.com.enginer.domain.system.usercase.port.inbound;
 
 /**
  * Porta de entrada base (InboundPort) da arquitetura hexagonal.

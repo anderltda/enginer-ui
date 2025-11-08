@@ -1,4 +1,4 @@
-package br.com.enginer.domain.system.usercase.port;
+package br.com.enginer.domain.system.usercase.port.outbound;
 
 /**
  * Porta de saída base (OutboundPort) da arquitetura hexagonal.

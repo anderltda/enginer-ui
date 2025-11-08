@@ -6,7 +6,7 @@ import java.util.Map;
 import br.com.enginer.domain.system.usercase.exception.CheckedException;
 import br.com.enginer.domain.system.usercase.logger.ActionLogger;
 import br.com.enginer.domain.system.usercase.page.PageResult;
-import br.com.enginer.domain.system.usercase.port.InboundPort;
+import br.com.enginer.domain.system.usercase.port.inbound.InboundPort;
 import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 
 /**

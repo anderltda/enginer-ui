@@ -10,53 +10,68 @@ import java.util.concurrent.ConcurrentHashMap;
 import br.com.enginer.domain.system.usercase.AbstractUserCase;
 import br.com.enginer.domain.system.usercase.annotation.AutoDependencyInjector;
 import br.com.enginer.domain.system.usercase.injector.lazy.LazyProxyHandler;
-import br.com.enginer.domain.system.usercase.port.OutboundPort;
+import br.com.enginer.domain.system.usercase.injector.metrics.InjectionMetrics;
+import br.com.enginer.domain.system.usercase.injector.metrics.InjectionMetricsHistory;
+import br.com.enginer.domain.system.usercase.port.outbound.OutboundPort;
 import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 
 /**
- * Responsável por:
- * Registrar e injetar todos os OutboundPorts no UserCase raiz
- * Resolver dependências @AutoDependencyInjector recursivamente
- * Suportar proxies e beans Spring via fallback por interface
+ * Gerencia o registro e injeção de dependências entre UserCases e OutboundPorts.
+ * Inclui logs detalhados, métricas globais e histórico cumulativo.
  */
 public final class DependencyInjector {
 
-
-	/** 
-     * Cache global de OutboundPorts injetados 
+    /**
+     * Controle de log:
+     * LOG_VERBOSE = true  → logs detalhados (padrão para desenvolvimento)
+     * LOG_PERFORMANCE_ONLY = true → logs mínimos (ideal para produção)
      */
+    public static boolean LOG_VERBOSE = true;
+    public static boolean LOG_PERFORMANCE_ONLY = true;
+
+    // Cores ANSI para console
+    private static final String RESET = "\u001B[0m";
+    private static final String GREEN = "\u001B[32m";
+    private static final String BLUE = "\u001B[34m";
+    private static final String YELLOW = "\u001B[33m";
+    private static final String CYAN = "\u001B[36m";
+    private static final String MAGENTA = "\u001B[35m";
+    private static final String BOLD = "\u001B[1m";
+
+    // Caches globais
     private static final Map<String, OutboundPort> OUTBOUND_PORT_CACHE = new ConcurrentHashMap<>();
-
-    /** 
-     * Cache de LazyProxyHandlers para UserCases 
-     */
     private static final Map<Class<?>, LazyProxyHandler<?>> LAZY_CACHE = new ConcurrentHashMap<>();
 
     /**
-     * 
+     * Construtor privado para nao ser instaciado
      */
     private DependencyInjector() {}
 
-    /** 
-     * Acesso público ao cache global 
+    /**
+     * @return
      */
     public static Map<String, OutboundPort> getOutboundPortCache() {
         return OUTBOUND_PORT_CACHE;
     }
 
-    /** 
-     * Recupera (ou cria) um LazyProxyHandler 
+    /**
+     * 
      */
     @SuppressWarnings("unchecked")
     public static <T extends AbstractUserCase<? extends Domain<?>>> LazyProxyHandler<T> getLazyHandler(Class<T> clazz) {
         return (LazyProxyHandler<T>) LAZY_CACHE.computeIfAbsent(clazz, c -> new LazyProxyHandler<>(clazz));
-    } 
+    }
 
-    /** 
-     * Registra OutboundPorts no cache global 
+    /**
+     * Registra OutboundPorts no cache global, reinjeta dependências e atualiza métricas + histórico.
      */
     public static void registerOutboundPorts(OutboundPort... outboundPorts) {
+    	
         if (outboundPorts == null) return;
+
+        long start = System.nanoTime();
+        int count = 0;
+
         for (OutboundPort port : outboundPorts) {
             if (port == null) continue;
             Class<?>[] interfaces = port.getClass().getInterfaces();
@@ -64,48 +79,89 @@ public final class DependencyInjector {
             String ifaceName = iface.getSimpleName();
             String setMethod = "set" + ifaceName.substring(0, 1).toUpperCase() + ifaceName.substring(1);
             OUTBOUND_PORT_CACHE.put(setMethod, port);
+            count++;
+
+            if (LOG_VERBOSE && !LOG_PERFORMANCE_ONLY) {
+                System.out.printf(GREEN + "   [Cache]" + RESET + " Registrado %s → %s%n",
+                        ifaceName, port.getClass().getSimpleName());
+            }
         }
+
+        int totalUserCases = LAZY_CACHE.size();
+
+        if (LOG_VERBOSE && !LOG_PERFORMANCE_ONLY && totalUserCases > 0) {
+            System.out.printf(BLUE + "   [Injector]" + RESET +
+                    " Reaplicando dependências em %d UserCases existentes...%n", totalUserCases);
+        }
+
+        // Reinjeção de dependências em UserCases já carregados
+        for (LazyProxyHandler<?> handler : LAZY_CACHE.values()) {
+            handler.reinjectOutboundPorts();
+        }
+
+        long end = System.nanoTime();
+        double totalMs = (end - start) / 1_000_000.0;
+
+        // Atualiza métricas globais e histórico
+        InjectionMetrics.update(totalUserCases, count, totalMs);
+
+        // Exibe o resumo completo
+        printSummary(totalMs, count, totalUserCases);
+    }
+
+    /**
+     * Exibe um resumo final da injeção, incluindo tempo total e estatísticas cumulativas.
+     */
+    private static void printSummary(double totalMs, int outbounds, int userCases) {
+        int totalExecutions = InjectionMetricsHistory.getTotalExecutions();
+        double avgTime = InjectionMetricsHistory.getAverageTimeMs();
+
+        if (LOG_PERFORMANCE_ONLY) {
+            System.out.printf(MAGENTA + " →️ Injeção concluída → UserCases: %d | Outbounds: %d | Tempo: %.2f ms | Execuções: %d | Média: %.2f ms%n" + RESET,
+                    userCases, outbounds, totalMs, totalExecutions, avgTime);
+            return;
+        }
+
+        // → Modo detalhado (desenvolvimento)
+        System.out.printf("%n" + BOLD + MAGENTA + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━%n" + RESET);
+        System.out.printf(BOLD + MAGENTA + "   → Injeção concluída com sucesso%n" + RESET);
+        System.out.printf(BOLD + CYAN + "   → UserCases ativos:  %-4d%n", userCases);
+        System.out.printf(BOLD + CYAN + "   → OutboundPorts:     %-4d%n", outbounds);
+        System.out.printf(BOLD + CYAN + "   → Tempo total:       %.2f ms%n", totalMs);
+        System.out.printf(MAGENTA + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━%n" + RESET);
+
+        System.out.printf(GREEN + "→ Histórico atualizado → " + RESET + "%s%n", InjectionMetricsHistory.getHistory().get(InjectionMetricsHistory.getHistory().size() - 1).toString());
+        System.out.printf(YELLOW + "→ Estatísticas cumulativas → " + RESET + "Injeções: %d | Média: %.2f ms%n%n", totalExecutions, avgTime);
     }
 
     /** 
      * Registra e injeta os OutboundPorts + resolve dependências internas 
      */
-	public static void addOutboundPort(AbstractUserCase<?> domain, OutboundPort... outboundPorts) {
+    public static void addOutboundPort(AbstractUserCase<?> domain, OutboundPort... outboundPorts) {
+        if (domain == null || outboundPorts == null) return;
+        registerOutboundPorts(outboundPorts);
 
-		if (domain == null || outboundPorts == null) return;
+        for (OutboundPort outboundPort : outboundPorts) {
+            if (outboundPort == null) continue;
+            Class<?>[] interfaces = outboundPort.getClass().getInterfaces();
+            Class<?> portInterface = interfaces.length > 0 ? interfaces[0] : outboundPort.getClass();
+            String interfaceName = portInterface.getSimpleName();
+            String setMethod = "set" + interfaceName.substring(0, 1).toUpperCase() + interfaceName.substring(1);
+            invokeSetterFlexible(domain, setMethod, outboundPort, portInterface);
+        }
 
-		registerOutboundPorts(outboundPorts);
-
-		for (OutboundPort outboundPort : outboundPorts) {
-
-			if (outboundPort == null) continue;
-
-			Class<?>[] interfaces = outboundPort.getClass().getInterfaces();
-			Class<?> portInterface = interfaces.length > 0 ? interfaces[0] : outboundPort.getClass();
-
-			String interfaceName = portInterface.getSimpleName();
-			String setMethod = "set" + interfaceName.substring(0, 1).toUpperCase() + interfaceName.substring(1);
-
-			invokeSetterFlexible(domain, setMethod, outboundPort, portInterface);
-
-		}
-
-		processDependencies(domain);
-	}
+        processDependencies(domain);
+    }
 
     /** 
-     * Tenta invocar o setter de forma flexível (proxy-safe) 
+     * Tenta invocar o setter de forma flexível 
      */
     private static boolean invokeSetterFlexible(Object domain, String methodName, Object arg, Class<?> expectedType) {
-    	
         try {
-        
-        	Method m = domain.getClass().getMethod(methodName, expectedType);
+            Method m = domain.getClass().getMethod(methodName, expectedType);
             m.invoke(domain, arg);
             return true;
-        
         } catch (NoSuchMethodException e1) {
-        	
             for (Class<?> iface : arg.getClass().getInterfaces()) {
                 try {
                     Method m2 = domain.getClass().getMethod(methodName, iface);
@@ -113,15 +169,11 @@ public final class DependencyInjector {
                     return true;
                 } catch (Exception ignore) {}
             }
-            
             try {
-            	
                 Method m3 = domain.getClass().getMethod(methodName, arg.getClass().getSuperclass());
                 m3.invoke(domain, arg);
                 return true;
-                
             } catch (Exception ignore) {}
-            
             return false;
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,7 +182,7 @@ public final class DependencyInjector {
     }
 
     /** 
-     * Ponto de entrada principal da injeção hierárquica 
+     * Ponto de entrada da injeção hierárquica 
      */
     public static void processDependencies(AbstractUserCase<?> root) {
         if (root == null) return;
@@ -141,44 +193,42 @@ public final class DependencyInjector {
      * Injeção recursiva de UserCases dependentes 
      */
     private static void processDependenciesInternal(AbstractUserCase<?> root, Set<Class<?>> visited, int depth) {
-    	
         if (!visited.add(root.getClass())) return;
 
         for (Field field : root.getClass().getDeclaredFields()) {
-        	
             if (!field.isAnnotationPresent(AutoDependencyInjector.class)) continue;
 
             Class<?> type = field.getType();
-            
             if (!AbstractUserCase.class.isAssignableFrom(type)) continue;
 
             @SuppressWarnings("unchecked")
-            Class<? extends AbstractUserCase<?>> userCaseClass = (Class<? extends AbstractUserCase<?>>) type;
+            Class<? extends AbstractUserCase<?>> userCaseImplClass =
+                    (Class<? extends AbstractUserCase<?>>) resolveImplementationClass(type);
 
-            AbstractUserCase<?> dependency = getLazyHandler(userCaseClass).get();
-
+            AbstractUserCase<?> dependency = getLazyHandler(userCaseImplClass).get();
             field.setAccessible(true);
-            
             try {
-            	
                 field.set(root, dependency);
-                logLink(depth, root.getClass(), userCaseClass);
-                
             } catch (IllegalAccessException e) {
-                throw new RuntimeException("Erro ao injetar " + userCaseClass.getSimpleName() + " em " + root.getClass().getSimpleName(), e);
+                throw new RuntimeException("Erro ao injetar " + userCaseImplClass.getSimpleName()
+                        + " em " + root.getClass().getSimpleName(), e);
             }
 
             processDependenciesInternal(dependency, visited, depth + 1);
         }
     }
 
-    /**
-     * @param depth
-     * @param owner
-     * @param dep
+    /** 
+     * Resolve automaticamente a classe concreta de uma interface de UserCase. 
      */
-    private static void logLink(int depth, Class<?> owner, Class<?> dep) {
-        //String prefix = "  ".repeat(depth);
-        //System.out.printf("%s├── %s (injetado em %s)%n", prefix, dep.getSimpleName(), owner.getSimpleName());
+    private static Class<?> resolveImplementationClass(Class<?> iface) {
+        if (!iface.isInterface()) return iface;
+        String ifaceName = iface.getName();
+        String implName = ifaceName.replace(".port", "");
+        try {
+            return Class.forName(implName);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Implementação concreta não encontrada para interface: " + ifaceName);
+        }
     }
 }
