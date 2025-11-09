@@ -67,25 +67,16 @@ public final class LazyProxyHandler<T extends AbstractUserCase<? extends Domain<
 
                 if (DependencyInjector.LOG_VERBOSE) {
                     if (DependencyInjector.LOG_PERFORMANCE_ONLY) {
-                        System.out.printf(
-                            MAGENTA + " → LazyInit: %s (%.2f ms)%n" + RESET,
-                            targetClass.getSimpleName(), ms
-                        );
+                        System.out.printf(MAGENTA + " → LazyInit: %s (%.2f ms)%n" + RESET, targetClass.getSimpleName(), ms);
                     } else {
-                        System.out.printf(
-                            CYAN + "   [LazyProxy] " + RESET +
-                            "Instanciado %s em %.2f ms%n",
-                            targetClass.getSimpleName(), ms
-                        );
+                        System.out.printf(CYAN + "   [LazyProxy] " + RESET + "Instanciado %s em %.2f ms%n", targetClass.getSimpleName(), ms);
                     }
                 }
 
                 initialized = true;
                 
             } catch (Exception e) {
-                throw new RuntimeException(
-                    "Erro ao inicializar UserCase: " + targetClass.getSimpleName(), e
-                );
+                throw new RuntimeException("Erro ao inicializar UserCase: " + targetClass.getSimpleName(), e);
             }
         }
         
@@ -113,16 +104,9 @@ public final class LazyProxyHandler<T extends AbstractUserCase<? extends Domain<
 
         if (DependencyInjector.LOG_VERBOSE && injected > 0) {
             if (DependencyInjector.LOG_PERFORMANCE_ONLY) {
-                System.out.printf(
-                    GREEN + "   ↳ Reinjected %d Outbounds → %s (%.2f ms)%n" + RESET,
-                    injected, targetClass.getSimpleName(), ms
-                );
+                System.out.printf(GREEN + "   ↳ Reinjected %d Outbounds → %s (%.2f ms)%n" + RESET,injected, targetClass.getSimpleName(), ms);
             } else {
-                System.out.printf(
-                    YELLOW + "      [Reinject]" + RESET +
-                    " %d OutboundPorts aplicados em %s (%.2f ms)%n",
-                    injected, targetClass.getSimpleName(), ms
-                );
+                System.out.printf(YELLOW + "      [Reinject]" + RESET +" %d OutboundPorts aplicados em %s (%.2f ms)%n",injected, targetClass.getSimpleName(), ms);
             }
         }
     }
@@ -148,17 +132,22 @@ public final class LazyProxyHandler<T extends AbstractUserCase<? extends Domain<
         } catch (NoSuchMethodException e1) {
         	
             for (Class<?> iface : arg.getClass().getInterfaces()) {
+            	
                 try {
+                	
                     Method m2 = target.getClass().getMethod(methodName, iface);
                     m2.invoke(target, arg);
                     return true;
+                    
                 } catch (Exception ignore) {}
             }
             
             try {
+            	
                 Method m3 = target.getClass().getMethod(methodName, arg.getClass().getSuperclass());
                 m3.invoke(target, arg);
                 return true;
+                
             } catch (Exception ignore) {}
             
             return false;

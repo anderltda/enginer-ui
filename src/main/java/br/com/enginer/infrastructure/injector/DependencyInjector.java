@@ -27,7 +27,9 @@ import br.com.enginer.infrastructure.injector.metrics.InjectionMetricsHistory;
  */
 public final class DependencyInjector implements DependencyInjectorPort {
 
-    /** Configuração de log */
+    /** 
+     * Configuração de log 
+     */
     public static boolean LOG_VERBOSE = true;             // logs detalhados (modo DEV)
     public static boolean LOG_PERFORMANCE_ONLY = true;     // logs resumidos (modo PROD)
 
