@@ -7,7 +7,6 @@ import java.util.Map;
 import br.com.enginer.domain.system.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usercase.exception.CheckedException;
 import br.com.enginer.domain.system.usercase.exception.UncheckedException;
-import br.com.enginer.domain.system.usercase.injector.DependencyInjector;
 import br.com.enginer.domain.system.usercase.page.PageResult;
 import br.com.enginer.domain.system.usercase.port.outbound.OutboundPort;
 import br.com.enginer.domain.system.usercase.port.outbound.logger.LoggerOutboundPort;
@@ -20,6 +19,7 @@ import br.com.enginer.domain.system.usercase.schema.instance.DomainId;
 import br.com.enginer.domain.system.usercase.template.FormTemplate;
 import br.com.enginer.domain.system.usercase.utils.ReflectionUtils;
 import br.com.enginer.infrastructure.adapter.outbound.repository.TypeRepository;
+import br.com.enginer.infrastructure.injector.DependencyInjector;
 
 /**
  * Classe base para todos os casos de uso do domínio.

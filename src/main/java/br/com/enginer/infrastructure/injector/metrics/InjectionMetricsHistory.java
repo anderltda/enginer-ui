@@ -1,4 +1,4 @@
-package br.com.enginer.domain.system.usercase.injector.metrics;
+package br.com.enginer.infrastructure.injector.metrics;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

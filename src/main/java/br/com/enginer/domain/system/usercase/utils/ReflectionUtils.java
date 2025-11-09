@@ -22,12 +22,15 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import br.com.enginer.domain.system.usercase.AbstractUserCase;
 import br.com.enginer.domain.system.usercase.exception.CheckedException;
-import br.com.enginer.domain.system.usercase.injector.DependencyInjector;
+import br.com.enginer.domain.system.usercase.port.outbound.DependencyInjectorPort;
 import br.com.enginer.domain.system.usercase.port.outbound.OutboundPort;
+import br.com.enginer.domain.system.usercase.registry.DependencyInjectorRegistry;
 import br.com.enginer.domain.system.usercase.schema.field.type.Id;
 import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 import br.com.enginer.domain.system.usercase.schema.instance.DomainId;
+import br.com.enginer.infrastructure.injector.DependencyInjector;
 
 /**
  * Classe utilitária de reflexão central do projeto.
@@ -63,6 +66,7 @@ public class ReflectionUtils {
      * @throws Exception caso ocorra falha de reflexão, injeção ou criação de instância
      */
     public static Object executeInjectedDependencyUserCaseCached(Class<?> domainClass, OutboundPort... outboundPorts) throws Exception {
+        
         // 0 - Se for um DomainId, mapeia para o domínio pai (ex: EntityNineId → EntityNine)
         if (DomainId.class.isAssignableFrom(domainClass)) {
             String className = domainClass.getSimpleName();
@@ -77,7 +81,8 @@ public class ReflectionUtils {
                 }
             }
         }
-        // 1 - Recupera (ou cria) a instância do UserCase a partir do cache
+
+        // 1 - Recupera (ou cria) o UserCase no cache
         Object userCaseInstance = USERCASE_CACHE.get(domainClass);
         final boolean fromCache = (userCaseInstance != null);
 
@@ -86,47 +91,22 @@ public class ReflectionUtils {
             userCaseInstance = createInstance(userCaseName);
             USERCASE_CACHE.put(domainClass, userCaseInstance);
         }
-        // 2 - registra os OutboundPorts no cache global
-        //    → isso será usado pelo LazyProxyHandler e pelo DependencyInjector.processDependencies
-        DependencyInjector.registerOutboundPorts(outboundPorts);
-        // 3 - injeta os OutboundPorts no UserCase raiz via addOutboundPort(OutboundPort...)
-        injectOutboundPortsOnRootUserCase(userCaseInstance, outboundPorts);
+
+        // 2 - Obtém instância do injetor (infraestrutura)
+        DependencyInjectorPort injector = DependencyInjectorRegistry.get();
+
+        // 3 - Registra os OutboundPorts no cache global (serão aplicados em todos os UserCases)
+        injector.registerOutboundPorts(outboundPorts);
+
+        // 4 - Injeta os Outbounds no UserCase raiz e processa dependências internas
+        if (userCaseInstance instanceof AbstractUserCase<?>) {
+            AbstractUserCase<?> root = (AbstractUserCase<?>) userCaseInstance;
+            DependencyInjector.addOutboundPort(root, outboundPorts);
+        }
+
+        // 5 - Retorna o UserCase pronto para uso
         return userCaseInstance;
     }
-
-    /**
-     * Tenta invocar addOutboundPort(OutboundPort...) no UserCase raiz.
-     */
-    private static void injectOutboundPortsOnRootUserCase(Object userCaseInstance, OutboundPort... outboundPorts) {
-
-        if (userCaseInstance == null || outboundPorts == null || outboundPorts.length == 0) {
-            return;
-        }
-
-        Class<?> ucClass = userCaseInstance.getClass();
-
-        try {
-            // assinatura real do método varargs:
-            // public void addOutboundPort(OutboundPort... ports)
-            Method m = ucClass.getMethod("addOutboundPort", OutboundPort[].class);
-
-            // para invocar varargs via reflexão, precisamos passar o array como UM único argumento
-            Object[] args = new Object[] { outboundPorts };
-
-            m.invoke(userCaseInstance, args);
-
-        } catch (NoSuchMethodException e) {
-
-            System.err.printf("[ReflectionUtils] Método addOutboundPort(OutboundPort...) NÃO encontrado em %s%n",
-                    ucClass.getName());
-
-        } catch (Exception e) {
-
-            System.err.printf("[ReflectionUtils] Erro ao invocar addOutboundPort em %s: %s%n",
-                    ucClass.getName(), e.getMessage());
-            e.printStackTrace();
-        }
-    }    
 
     /**
      * Descobre o nome totalmente qualificado do UserCase baseado no domínio.
