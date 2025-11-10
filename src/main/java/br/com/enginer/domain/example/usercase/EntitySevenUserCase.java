@@ -53,7 +53,9 @@ public class EntitySevenUserCase extends AbstractUserCase<EntitySeven> {
 	@Override
 	public EntitySeven buscarPorId(EntitySeven domain) throws UncheckedException {
 		EntitySeven entitySeven = (EntitySeven) super.buscarPorId(domain);
-		entitySeven.getId().setEntitySix((EntitySix) entitySixUserCase.buscarPorId(new EntitySix(entitySeven.getId().getIdEntitySix())));
+		if(entitySeven != null) {
+			entitySeven.getId().setEntitySix((EntitySix) entitySixUserCase.buscarPorId(new EntitySix(entitySeven.getId().getIdEntitySix())));
+		}
 		return entitySeven;
 	}
 	

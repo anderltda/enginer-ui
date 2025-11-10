@@ -21,11 +21,15 @@ import br.com.enginer.domain.system.usercase.annotation.instance.action.button.f
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.form.UIButtonFormDelete;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.form.UIButtonFormEdit;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.form.UIButtonFormSave;
-import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorAdd;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorSave;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowAdd;
-import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowSave;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowBack;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowClear;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowDelete;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowEdit;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabBack;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabFinish;
 import br.com.enginer.domain.system.usercase.annotation.instance.paginator.UIConfig;
@@ -40,66 +44,66 @@ import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
  */
 @UITitle("Nono")
 @UIButtonAction(
-includes = { 
+includes = {
 	// FILTER
 	UIButtonFilterClear.class,
 	UIButtonFilterTabNew.class, 
 	UIButtonFilterFormNew.class, 
 	UIButtonFilterSearch.class, 
 	// FORM
-	UIButtonFormBack.class, 
 	UIButtonFormClear.class, 
+	UIButtonFormBack.class, 
 	UIButtonFormDelete.class,
 	UIButtonFormEdit.class, 
 	UIButtonFormSave.class,
 	// ROW
+	UIButtonRowClear.class, 
+	UIButtonRowBack.class,
 	UIButtonRowAdd.class,
 	// TAB
 	UIButtonTabBack.class, 
 	UIButtonTabFinish.class
-}, 
-value = { 
-	@UIButton(
-	    label = Constants.LABEL_BACK,
-	    icon = "undo",
-	    needsValidation = false,
-	    state = TypeButtonState.BTN_STATE_DEFAULT,
-	    template = { TypeTemplate.DISABLED },
-	    action = @UIAction(
-	        method = @UIActionMethod(clientMethod = "onBack")
-	    )
-	),
-	@UIButton(
-	    label = Constants.LABEL_CLEAR,
-	    icon = "bin_alt",
-	    needsValidation = false,
-	    template = { TypeTemplate.DISABLED },
-	    state = TypeButtonState.BTN_STATE_DEFAULT,
-	    action = @UIAction(
-	        method = @UIActionMethod(clientMethod = Constants.METHOD_CLEAR_FORM)
-	    )
-	)		
 })
 @UIPaginator(
-		config = @UIConfig(expandable = true), 
-		actions = @UIButtonAction(includes = { UIButtonPaginatorView.class, UIButtonPaginatorEdit.class, UIButtonPaginatorAdd.class, UIButtonRowSave.class }, 
-        value = {
-    		@UIButton(
-			    label = "Limpar",
-			    icon = "trash",
-			    state = TypeButtonState.BTN_STATE_PRIMARY,
-			    template = TypeTemplate.ROW,
-				action = @UIAction( 
-						method = @UIActionMethod(clientMethod = "triggerMethod", 
-						trigger = @UIActionTriggerMethod(clientMethod = Constants.METHOD_CLEAR_FORM)) 
-				)
-			),        		
-    		@UIButton(label = "Add EntitySeven in Nine", needsValidation = false, dropdown = true, template = TypeTemplate.PAGINATOR, 
-    		action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH, ui = "row", domain = "entityNine", param = "{ disable=true, field=id.entitySeven, value=$object }"))),
-    		@UIButton(label = "Add EntityEight in Nine", needsValidation = false, dropdown = true, template = TypeTemplate.PAGINATOR, 
-            action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH, ui = "row", domain = "entityNine", param = "{ disable=true, field=id.entityEight, value=$object }")))
-        })
-)
+config = @UIConfig(expandable = true), 
+actions = @UIButtonAction(
+includes = { 
+	UIButtonPaginatorView.class, 
+	UIButtonPaginatorEdit.class, 
+	UIButtonPaginatorDelete.class,
+	UIButtonPaginatorSave.class,
+	UIButtonRowEdit.class,
+	UIButtonRowDelete.class
+},
+value = {
+@UIButton(
+    label = "Clean",
+    icon = "trash",
+    state = TypeButtonState.BTN_STATE_PRIMARY,
+    template = TypeTemplate.ROW,
+	action = @UIAction( 
+		method = @UIActionMethod(clientMethod = "triggerMethod", 
+		trigger = @UIActionTriggerMethod(clientMethod = Constants.METHOD_CLEAR_FORM)) 
+	)
+),        		
+@UIButton(
+	label = "Add EntitySeven in Nine", 
+	needsValidation = false, 
+	dropdown = true, 
+	template = TypeTemplate.PAGINATOR, 
+	action = @UIAction(
+		redirect = @UIActionRedirect(value = Constants.PATH, ui = "row", domain = "entityNine", param = "{ disable=true, field=id.entitySeven, value=$object }")
+	)
+),
+@UIButton(
+	label = "Add EntityEight in Nine", 
+	needsValidation = false, 
+	dropdown = true, 
+	template = TypeTemplate.PAGINATOR, 
+	action = @UIAction(
+		redirect = @UIActionRedirect(value = Constants.PATH, ui = "row", domain = "entityNine", param = "{ disable=true, field=id.entityEight, value=$object }")
+	)
+)}))
 public class EntityNine extends DomainAbstract<EntityNineId> {
 
 	@UIJoin(template = { TypeTemplate.MODAL, TypeTemplate.TAB, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.FILTER })

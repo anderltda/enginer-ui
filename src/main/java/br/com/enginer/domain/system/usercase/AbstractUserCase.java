@@ -319,14 +319,16 @@ public abstract class AbstractUserCase<T extends Domain<?>> implements TemplateU
 	 * --------------------------------------------------------------------------------------------
      **/	
 	private T formId(T domain) throws Exception {
+
 		if (!(DomainId.class.isAssignableFrom(domain.getClass()))) {
-			T loadedDomain = (ReflectionUtils.isTypeMatching(domain.getClass(), "id", domain.getId()))
-					? buscarPorId(domain)
-					: null;
+			
+			T loadedDomain = (ReflectionUtils.isTypeMatching(domain.getClass(), "id", domain.getId())) ? buscarPorId(domain) : null;
+			
 			if (loadedDomain != null) {
 				domain = loadedDomain;
 			}
 		}
+		
 		return domain;
 	}
 
