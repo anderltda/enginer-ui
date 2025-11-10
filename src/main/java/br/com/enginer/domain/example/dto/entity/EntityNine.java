@@ -81,6 +81,7 @@ value = {
     icon = "trash",
     state = TypeButtonState.BTN_STATE_PRIMARY,
     template = TypeTemplate.ROW,
+    needsValidation = false,
 	action = @UIAction( 
 		method = @UIActionMethod(clientMethod = "triggerMethod", 
 		trigger = @UIActionTriggerMethod(clientMethod = Constants.METHOD_CLEAR_FORM)) 
