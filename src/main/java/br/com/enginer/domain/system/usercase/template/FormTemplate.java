@@ -125,7 +125,7 @@ import br.com.enginer.domain.system.usercase.utils.StringsUtils;
 /**
  * 
  */
-public final class FormTemplate {
+public class FormTemplate {
 
 	private static final Map<Class<? extends Annotation>, Class<? extends Annotation>> annotationMap = new HashMap<>();
 	private static TypeTemplate typeTemplate;
@@ -134,8 +134,6 @@ public final class FormTemplate {
 	private static Map<TypeTemplate, Object> mapTypeTemplates;
 	private static TemplateUserCase<?> userCase;
 	private static String mainDomain;
-
-	private FormTemplate() {}
 
 	static {
 
@@ -173,7 +171,7 @@ public final class FormTemplate {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Form create(Domain<?> domain, TemplateUserCase<?> templateUserCase, Map<TypeTemplate, Object> maps) throws Exception {
+	public Form create(Domain<?> domain, TemplateUserCase<?> templateUserCase, Map<TypeTemplate, Object> maps) throws Exception {
 		
 		List<Field> fields = new ArrayList<>();
 		Field field = null;
@@ -509,7 +507,7 @@ public final class FormTemplate {
 	 * @param domain
 	 * @return
 	 */
-	private static Tab getTab(Domain<?> domain) {
+	private Tab getTab(Domain<?> domain) {
 		Tab tab = new Tab(false);  // habilitado para cada acao chama o backend
 		//Tab tab = new Tab(true); // nao habilitado para cada acao chama o backend
 		return tab;
@@ -520,7 +518,7 @@ public final class FormTemplate {
 	 * @return
 	 * @throws Exception
 	 */
-	private static Paginator getPaginator(Domain<?> domain) throws Exception {
+	private Paginator getPaginator(Domain<?> domain) throws Exception {
 		Paginator paginator = new Paginator();
 		Config config = new Config();
 		Column column = new Column();
@@ -607,7 +605,7 @@ public final class FormTemplate {
 	 * @param paginator
 	 * @throws Exception
 	 */
-	private static void configPaginator(Domain<?> domain, Paginator paginator) throws Exception {
+	private void configPaginator(Domain<?> domain, Paginator paginator) throws Exception {
 
 		ParamUtils paramUtils = new ParamUtils();
 		paramUtils.setTypeTemplate(typeTemplate);
@@ -692,7 +690,7 @@ public final class FormTemplate {
 	 * @param fieldClass
 	 * @throws Exception
 	 */
-	private static void extractFieldPaginator(ParamUtils paramUtils, String simpleName, java.lang.reflect.Field fieldClass) throws Exception {
+	private void extractFieldPaginator(ParamUtils paramUtils, String simpleName, java.lang.reflect.Field fieldClass) throws Exception {
 
 		java.lang.reflect.Field[] declaredFields = new java.lang.reflect.Field[] {};
 
@@ -780,7 +778,7 @@ public final class FormTemplate {
 	 * @return
 	 * @throws Exception
 	 */
-	private static Filter getFilter(Domain<?> domain, java.lang.reflect.Field f, Default default_, Annotation[] annotations, UIFilter uiFilter) throws Exception {
+	private Filter getFilter(Domain<?> domain, java.lang.reflect.Field f, Default default_, Annotation[] annotations, UIFilter uiFilter) throws Exception {
 
 		Class<?> typeClass = f.getType();
 
@@ -873,7 +871,7 @@ public final class FormTemplate {
 	 * @param annotations
 	 * @return
 	 */
-	private static Area getTextArea(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
+	private Area getTextArea(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
 		Area textarea = default_.getTextarea();
 		addBehaviorAnnotation(textarea, f, annotations);
 		return textarea;
@@ -887,7 +885,7 @@ public final class FormTemplate {
 	 * @throws Exception 
 	 */
 	@SuppressWarnings("unchecked")
-	private static File getFiles(Domain<?> domain, java.lang.reflect.Field f, Default default_, Annotation[] annotations) throws Exception {
+	private File getFiles(Domain<?> domain, java.lang.reflect.Field f, Default default_, Annotation[] annotations) throws Exception {
 
 		List<UploadFile> files = new ArrayList<>();
 
@@ -909,7 +907,7 @@ public final class FormTemplate {
 	 * @param annotations
 	 * @return
 	 */
-	private static Tag getTag(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
+	private Tag getTag(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
 		Tag tag = default_.getTag();
 		addBehaviorAnnotation(tag, f, annotations);
 		return tag;
@@ -924,7 +922,7 @@ public final class FormTemplate {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	private static Select getSelect(java.lang.reflect.Field f, Default default_, Annotation[] annotations, UISelect uiSelect) throws Exception {
+	private Select getSelect(java.lang.reflect.Field f, Default default_, Annotation[] annotations, UISelect uiSelect) throws Exception {
 
 		List<Object> options = null;
 
@@ -951,7 +949,7 @@ public final class FormTemplate {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	private static Radio getRadio(java.lang.reflect.Field f, Default default_, Annotation[] annotations, UIRadio uiRadio) throws Exception {
+	private Radio getRadio(java.lang.reflect.Field f, Default default_, Annotation[] annotations, UIRadio uiRadio) throws Exception {
 
 		Object provider = uiRadio.provider().getDeclaredConstructor().newInstance();
 
@@ -970,7 +968,7 @@ public final class FormTemplate {
 	 * @param annotations
 	 * @return
 	 */
-	private static Time getTime(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
+	private Time getTime(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
 		Time time = default_.getTime();
 		addBehaviorAnnotation(time, f, annotations);
 		return time;
@@ -983,7 +981,7 @@ public final class FormTemplate {
 	 * @param showtime
 	 * @return
 	 */
-	private static Date getDate(java.lang.reflect.Field f, Default default_, Annotation[] annotations, Boolean showtime) {
+	private Date getDate(java.lang.reflect.Field f, Default default_, Annotation[] annotations, Boolean showtime) {
 		Date date = default_.getDate(showtime);
 		addBehaviorAnnotation(date, f, annotations);
 		return date;
@@ -995,7 +993,7 @@ public final class FormTemplate {
 	 * @param annotations
 	 * @return
 	 */
-	private static Checkbox getCheckbox(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
+	private Checkbox getCheckbox(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
 		Checkbox checkbox = default_.getCheckbox();
 		addBehaviorAnnotation(checkbox, f, annotations);
 		return checkbox;
@@ -1007,7 +1005,7 @@ public final class FormTemplate {
 	 * @param annotations
 	 * @return
 	 */
-	private static Number getNumber(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
+	private Number getNumber(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
 		Number number = default_.getNumber();
 		addBehaviorAnnotation(number, f, annotations);
 		return number;
@@ -1019,7 +1017,7 @@ public final class FormTemplate {
 	 * @param annotations
 	 * @return
 	 */
-	private static Decimal getDecimal(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
+	private Decimal getDecimal(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
 		Decimal decimal = default_.getDecimal();
 		decimal.setTypeFormat(TypeFormat.decimal);
 		decimal.setPrecision(2);
@@ -1033,7 +1031,7 @@ public final class FormTemplate {
 	 * @param annotations
 	 * @return
 	 */
-	private static Password getPassword(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
+	private Password getPassword(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
 		Password password = default_.getPassword();
 		addBehaviorAnnotation(password, f, annotations);
 		return password;
@@ -1045,7 +1043,7 @@ public final class FormTemplate {
 	 * @param annotations
 	 * @return
 	 */
-	private static Email getEmail(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
+	private Email getEmail(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
 		Email email = default_.getEmail();
 		addBehaviorAnnotation(email, f, annotations);
 		return email;
@@ -1057,7 +1055,7 @@ public final class FormTemplate {
 	 * @param annotations
 	 * @return
 	 */
-	private static Text getText(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
+	private Text getText(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
 		Text text = default_.getText();
 		addBehaviorAnnotation(text, f, annotations);
 		return text;
@@ -1069,7 +1067,7 @@ public final class FormTemplate {
 	 * @param annotations
 	 * @return
 	 */
-	private static Hidden getHidden(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
+	private Hidden getHidden(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
 		Hidden hidden = default_.getHidden();
 		addBehaviorAnnotation(hidden, f, annotations);
 		return hidden;
@@ -1082,7 +1080,7 @@ public final class FormTemplate {
 	 * @param annotations
 	 * @return
 	 */
-	private static Join getJoin(Domain<?> domain, java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
+	private Join getJoin(Domain<?> domain, java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
 
 		Object id = null;
 
@@ -1106,7 +1104,7 @@ public final class FormTemplate {
 	 * @param field
 	 * @param annotations
 	 */
-	private static void addBehaviorAnnotation(Base base, java.lang.reflect.Field field, Annotation[] annotations) {
+	private void addBehaviorAnnotation(Base base, java.lang.reflect.Field field, Annotation[] annotations) {
 
 		for (Annotation annotation : annotations) {
 
@@ -1182,7 +1180,7 @@ public final class FormTemplate {
 	 * @param sync
 	 * @return
 	 */
-	private static Validation createValidationIfNotNull(Pattern pattern, Async async, Sync sync) {
+	private Validation createValidationIfNotNull(Pattern pattern, Async async, Sync sync) {
 		if (pattern.getRegex() != null || async.getFunction() != null || sync.getFunctions() != null) {
 			Validation validation = new Validation();
 			validation.setPattern(pattern.getRegex() != null ? pattern : null);
@@ -1197,7 +1195,7 @@ public final class FormTemplate {
 	 * @param domain
 	 * @return
 	 */
-	private static Button getSubmit(Domain<?> domain) {
+	private Button getSubmit(Domain<?> domain) {
 
 		Button button = null;
 
@@ -1222,7 +1220,7 @@ public final class FormTemplate {
 	 * @param annotation
 	 * @return
 	 */
-	private static boolean checkTemplate(Annotation annotation) {
+	private boolean checkTemplate(Annotation annotation) {
 		TypeTemplate[] type = (TypeTemplate[]) ReflectionUtils.get("template", annotation);
 		boolean containsFilter = Arrays.stream(type).anyMatch(t -> t == typeTemplate);
 		return containsFilter;
@@ -1232,7 +1230,7 @@ public final class FormTemplate {
 	 * @param domain
 	 * @return
 	 */
-	private static String getTitle(Domain<?> domain) {
+	private String getTitle(Domain<?> domain) {
 		String title = StringsUtils.normalizeLabelToLowercaseCamelization(domain.getClass().getSimpleName().toString());
 		if (domain.getClass().isAnnotationPresent(UITitle.class)) {
 			UITitle uiTitle = domain.getClass().getAnnotation(UITitle.class);
@@ -1246,7 +1244,7 @@ public final class FormTemplate {
 	 * @return
 	 * @throws Exception
 	 */
-	private static List<Button> getButton(Domain<?> domain) throws Exception {
+	private List<Button> getButton(Domain<?> domain) throws Exception {
 
 		List<Button> buttons = null;
 
@@ -1355,7 +1353,7 @@ public final class FormTemplate {
 	 * @param uiButton
 	 * @return
 	 */
-	private static Action getButtonAction(UIButton uiButton) {
+	private Action getButtonAction(UIButton uiButton) {
 		boolean containsTemplate = false;
 		UIAction uiAction = uiButton.action();
 		Action action = new Action();
@@ -1461,7 +1459,7 @@ public final class FormTemplate {
 	 * @param domain
 	 * @return
 	 */
-	private static Validate getValidate(Domain<?> domain) {
+	private Validate getValidate(Domain<?> domain) {
 		Validate validate = null;
 		if (domain.getClass().isAnnotationPresent(UIValidate.class)) {
 			validate = new Validate();
@@ -1485,7 +1483,7 @@ public final class FormTemplate {
 	 * @param uiConditional
 	 * @return
 	 */
-	private static List<Conditional> getConditionalColumn(UIConditional uiConditional) {
+	private List<Conditional> getConditionalColumn(UIConditional uiConditional) {
 		List<Conditional> conditionals = new ArrayList<>();
 		boolean containsTemplate = checkTemplate(uiConditional);
 		if(containsTemplate) {
@@ -1512,7 +1510,7 @@ public final class FormTemplate {
 	 * @param uiDependency
 	 * @return
 	 */
-	private static List<Dependency> getDependecy(Domain<?> domain, UIDependency uiDependency) {
+	private List<Dependency> getDependecy(Domain<?> domain, UIDependency uiDependency) {
 		List<Dependency> dependencys = new ArrayList<>();
 		boolean containsTemplate = checkTemplate(uiDependency);
 		if (containsTemplate) {
@@ -1537,7 +1535,7 @@ public final class FormTemplate {
 	 * @param uiConditional
 	 * @return
 	 */
-	private static List<Conditional> getConditional(Domain<?> domain, UIConditional uiConditional) {
+	private List<Conditional> getConditional(Domain<?> domain, UIConditional uiConditional) {
 		List<Conditional> conditionals = new ArrayList<>();
 		boolean containsTemplate = checkTemplate(uiConditional);
 		if(containsTemplate) {
@@ -1564,7 +1562,7 @@ public final class FormTemplate {
 	 * @param uiCustom
 	 * @return
 	 */
-	private static List<Custom> getCustom(Domain<?> domain, UICustom uiCustom) {
+	private List<Custom> getCustom(Domain<?> domain, UICustom uiCustom) {
 		List<Custom> custons = new ArrayList<>();
 		boolean containsTemplate = checkTemplate(uiCustom);
 		if(containsTemplate) {
@@ -1589,7 +1587,7 @@ public final class FormTemplate {
 	 * @param uiGlobal
 	 * @return
 	 */
-	private static List<Global> getGlobal(Domain<?> domain, UIGlobal uiGlobal) {
+	private List<Global> getGlobal(Domain<?> domain, UIGlobal uiGlobal) {
 		List<Global> globals = new ArrayList<>();
 		boolean containsTemplate = checkTemplate(uiGlobal);
 		if (containsTemplate) {

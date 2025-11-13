@@ -127,7 +127,10 @@ public abstract class AbstractUserCase<T extends Domain<?>> implements TemplateU
 	}
 
 	private Form createTemplate(T domain, TypeTemplate templateType) {
+
 		try {
+			
+			FormTemplate form = new FormTemplate();
 			Map<TypeTemplate, Object> map = new LinkedHashMap<>();
 			map.put(TypeTemplate.TYPE_TEMPLATE, templateType);
 			map.put(TypeTemplate.MODAL, domain.isModal());
@@ -135,7 +138,8 @@ public abstract class AbstractUserCase<T extends Domain<?>> implements TemplateU
 			map.put(TypeTemplate.MAIN_DOMAIN, domain.getMainDomain());
 
 			domain = formId(domain);
-			return FormTemplate.create(domain, this, map);
+
+			return form.create(domain, this, map);
 
 		} catch (Exception ex) {
 			throw new UncheckedException("Erro ao montar o template " + templateType + " para " + domain.getClass().getSimpleName(), ex);
@@ -322,7 +326,13 @@ public abstract class AbstractUserCase<T extends Domain<?>> implements TemplateU
 
 		if (!(DomainId.class.isAssignableFrom(domain.getClass()))) {
 			
-			T loadedDomain = (ReflectionUtils.isTypeMatching(domain.getClass(), "id", domain.getId())) ? buscarPorId(domain) : null;
+			Boolean hasValueId = (ReflectionUtils.isTypeMatching(domain.getClass(), "id", domain.getId()));
+			
+			T loadedDomain = hasValueId ? buscarPorId(domain) : null;
+			
+			if(hasValueId && loadedDomain == null) {
+				throw new CheckedException("Nenhum registro encontrado");
+			}
 			
 			if (loadedDomain != null) {
 				domain = loadedDomain;
@@ -332,18 +342,29 @@ public abstract class AbstractUserCase<T extends Domain<?>> implements TemplateU
 		return domain;
 	}
 
+	/**
+	 * @param domain
+	 * @return
+	 * @throws UncheckedException
+	 */
 	private T findById(T domain) throws UncheckedException {
+		
 		if (domain.getId() == null) return null;
 
 		try {
+			
 			if (ReflectionUtils.isTypeId(domain.getId().getClass())) {
 				return repositoryOutboundPort.findById(domain, domain.getId());
 			}
+			
 			if (ReflectionUtils.isIdNullKeyCompositedByDomain(domain.getId().getClass(), domain)) {
 				return null;
 			}
+			
 			Map<String, Object> ids = ReflectionUtils.getCompositedKeyFields(domain);
+			
 			return repositoryOutboundPort.findByIdComposite(domain, ids);
+			
 		} catch (Exception ex) {
 			throw new UncheckedException(ex.getMessage(), ex);
 		}
