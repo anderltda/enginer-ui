@@ -135,63 +135,75 @@ public class EntitySix extends DomainAbstract<Long> {
 
 	@UIPosition(x = 1, y = 2)
 	@UIEmail(label = "E-mail")
+	@UIColumn(label = "E-mail", initial = false)
     private String email;
     
 	@UIPosition(x = 2, y = 2)
 	@UIPassword(label = "Senha", min = 3, max = 10)
+	@UIColumn(label = "Senha", initial = false)
     private String password;	
 	
 	@UIPosition(x = 1, y = 3)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Valor", typeFormat = TypeFormat.monetario)
+	@UIColumn(label = "Valor", initial = false)
 	private BigDecimal valorMonetario;
 
 	@UIPosition(x = 2, y = 3)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Percentual", typeFormat = TypeFormat.percentual)
+	@UIColumn(label = "Percentual", initial = false)
 	private BigDecimal percentual;
 
 	@UIPosition(x = 3, y = 3)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Câmbio", typeFormat = TypeFormat.cambio)
+	@UIColumn(label = "Câmbio", initial = false)
 	private BigDecimal cambio;
 
 	@UIPosition(x = 1, y = 4)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Quantidade", typeFormat = TypeFormat.quantidade)
+	@UIColumn(label = "Quantidade", initial = false)
 	private BigDecimal quantidade;
 
 	@UIPosition(x = 2, y = 4)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Peso Medida", typeFormat = TypeFormat.pesoMedida)
+	@UIColumn(label = "Peso Medida", initial = false)
 	private BigDecimal pesoMedida;
 
 	@UIPosition(x = 1, y = 5)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Latitude", min = -90, max = 90, typeFormat = TypeFormat.latitude)
+	@UIColumn(label = "Latitude", initial = false)
 	//@UIText(label = "Latitude", mask = "00.00000000", allowNegativeNumbers = true)
 	private BigDecimal latitude;
 
 	@UIPosition(x = 2, y = 5)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Longitude", min = -180, max = 180, typeFormat = TypeFormat.longitude)
+	@UIColumn(label = "Longitude", initial = false)	
 	//@UIText(label = "Longitude", mask = "00.00000000", allowNegativeNumbers = true)
 	private BigDecimal longitude;
 
 	@UIPosition(x = 1, y = 6)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Duração", typeFormat = TypeFormat.duracao)
+	@UIColumn(label = "Duração", initial = false)	
 	private BigDecimal duracao;
 
 	@UIPosition(x = 2, y = 6)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Valor Cientifico", typeFormat = TypeFormat.cientifico)
 	//@UIText(label = "Valor Cientifico", mask = "0.000000000000")
+	@UIColumn(label = "Valor Cientifico", initial = false)	
 	private Double valorCientifico;
 
 	@UIPosition(x = 2, y = 7)
 	@UIFieldValidation(required = true)
 	@UITime(label = "Tempo Fixo", format = TypeDateFormat.TIME_HHMMSS_FORMAT)
+	@UIColumn(label = "Tempo Fixo", initial = false)	
 	private LocalTime tempoFixo;
 
 	@UIPosition(x = 1, y = 7)
