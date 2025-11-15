@@ -1,5 +1,6 @@
 package br.com.enginer.domain.example.dto.entity;
 
+import java.util.List;
 import java.util.UUID;
 
 import br.com.enginer.domain.system.usercase.annotation.field.UIColumn;
@@ -9,6 +10,7 @@ import br.com.enginer.domain.system.usercase.annotation.field.UINumber;
 import br.com.enginer.domain.system.usercase.annotation.field.UIRow;
 import br.com.enginer.domain.system.usercase.annotation.field.UIText;
 import br.com.enginer.domain.system.usercase.annotation.field.behavior.UIPosition;
+import br.com.enginer.domain.system.usercase.annotation.field.behavior.UITag;
 import br.com.enginer.domain.system.usercase.annotation.field.behavior.validation.UIFieldValidation;
 import br.com.enginer.domain.system.usercase.annotation.instance.UITitle;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.UIAction;
@@ -128,6 +130,10 @@ public class EntityFive extends DomainAbstract<UUID> {
 	@UIColumn(label = "Entity Status", fields = { "name", "status" }, initial = false)
 	private EntityStatus entityStatus;
 	
+	@UIPosition(x = 1, y = 4)
+	@UITag(label = "Tags", disable = false)
+	private transient List<String> tags;
+	
 	public void setIdEntityStatus(Long idEntityStatus) {
 		this.entityStatus = new EntityStatus();
 		this.entityStatus.setId(idEntityStatus);
@@ -165,5 +171,13 @@ public class EntityFive extends DomainAbstract<UUID> {
 
 	public void setEntityStatus(EntityStatus entityStatus) {
 		this.entityStatus = entityStatus;
+	}
+
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
 	}
 }

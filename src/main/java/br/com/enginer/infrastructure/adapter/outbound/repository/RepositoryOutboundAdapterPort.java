@@ -160,7 +160,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		} catch (CheckedException ex) {
 			if (ex.getMessage().contains("Nenhum registro encontrado")) {
 				logger.info(RepositoryOutboundAdapterPort.class, ex.getMessage());
-				return domain;
+				return null;
 			} else {
 				logger.error(RepositoryOutboundAdapterPort.class, "[4XX or 5XX ERROR]", ex);
 				throw ex;

@@ -848,6 +848,21 @@ public class ReflectionUtils {
 
 		return isMatch;
 	}
+	
+	/**
+	 * Metodo responsavel por verificar existe valores em value.
+	 * @param value
+	 */
+	public static Boolean hasIdValue(Object value) throws Exception {
+
+		Boolean isMatch = Boolean.TRUE;
+
+		if (value == null) {
+			return Boolean.FALSE;
+		}
+
+		return isMatch;
+	}	
 
 	/**
 	 * Metodo responsavel por trazer a TYPE('Class') do FIELD informado da clazz

@@ -326,7 +326,7 @@ public abstract class AbstractUserCase<T extends Domain<?>> implements TemplateU
 
 		if (!(DomainId.class.isAssignableFrom(domain.getClass()))) {
 			
-			Boolean hasValueId = (ReflectionUtils.isTypeMatching(domain.getClass(), "id", domain.getId()));
+			Boolean hasValueId = ReflectionUtils.hasIdValue(domain.getId());
 			
 			T loadedDomain = hasValueId ? buscarPorId(domain) : null;
 			

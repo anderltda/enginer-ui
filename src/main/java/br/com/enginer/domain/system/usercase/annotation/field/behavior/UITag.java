@@ -11,8 +11,6 @@ import br.com.enginer.domain.system.usercase.enums.TypeTemplate;
 @Target(ElementType.FIELD)
 public @interface UITag {
 	String label();
-	int order() default -1;
-	int group() default -1;
-	boolean disable();
-	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.FORM, TypeTemplate.MODAL };
+	boolean disable() default false;
+	TypeTemplate[] template() default { TypeTemplate.FORM, TypeTemplate.TAB };
 }

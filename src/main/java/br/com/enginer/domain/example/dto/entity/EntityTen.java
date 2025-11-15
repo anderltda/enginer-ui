@@ -37,8 +37,13 @@ import br.com.enginer.domain.system.usercase.annotation.instance.action.button.f
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.form.UIButtonFormEdit;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorSave;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowAdd;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowBack;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowClear;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowDelete;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowEdit;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabBack;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabFinish;
 import br.com.enginer.domain.system.usercase.annotation.instance.paginator.UIConfig;
@@ -69,6 +74,8 @@ import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
 	UIButtonFormDelete.class,
 	UIButtonFormEdit.class,
 	// ROW
+	UIButtonRowClear.class, 
+	UIButtonRowBack.class,
 	UIButtonRowAdd.class,
 	// TAB
 	UIButtonTabBack.class, 
@@ -97,7 +104,10 @@ value = {
 		includes = { 
 			UIButtonPaginatorView.class, 
 			UIButtonPaginatorEdit.class, 
-			UIButtonPaginatorDelete.class  
+			UIButtonPaginatorDelete.class,
+			UIButtonPaginatorSave.class,
+			UIButtonRowEdit.class,
+			UIButtonRowDelete.class 
 		},
 		value = {
 			@UIButton(
