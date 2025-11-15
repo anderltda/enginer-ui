@@ -8,6 +8,7 @@ public enum TypeFormat {
 	cep,
 	phone,
 	decimal,
+	password,
 	monetario,
 	percentual,
 	pesoMedida,

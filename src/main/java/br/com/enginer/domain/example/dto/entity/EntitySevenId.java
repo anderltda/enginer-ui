@@ -20,7 +20,7 @@ public class EntitySevenId extends DomainAbstract<Object[]> implements DomainId 
 	private Long idEntitySix;
 	
 	@UIFilter(label = "Entity Six", field = "packageName", readonly = false)
-	@UIColumn(label = "Six", fields = { "id", "packageName", "startDate", "stopDate" }, initial = false)
+	@UIColumn(label = "Six", fields = { "id", "packageName", "email", "password", "valorMonetario", "percentual", "cambio", "quantidade", "pesoMedida", "latitude", "longitude", "duracao", "valorCientifico", "startDate", "stopDate" }, initial = false)
 	@UIRow(visible = true, fields = { "packageName" })
 	private EntitySix entitySix;
 	

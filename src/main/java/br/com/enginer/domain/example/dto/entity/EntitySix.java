@@ -135,75 +135,75 @@ public class EntitySix extends DomainAbstract<Long> {
 
 	@UIPosition(x = 1, y = 2)
 	@UIEmail(label = "E-mail")
-	@UIColumn(label = "E-mail", initial = false)
+	@UIColumn(label = "E-mail", initial = true)
     private String email;
     
 	@UIPosition(x = 2, y = 2)
-	@UIPassword(label = "Senha", min = 3, max = 10)
-	@UIColumn(label = "Senha", initial = false)
+	@UIPassword(label = "Senha", placeholder = "Password", min = 3, max = 10)
+	@UIColumn(label = "Senha", initial = true, type = TypeFormat.password)
     private String password;	
 	
 	@UIPosition(x = 1, y = 3)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Valor", typeFormat = TypeFormat.monetario)
-	@UIColumn(label = "Valor", initial = false)
+	@UIColumn(label = "Valor", initial = true, type = TypeFormat.monetario)
 	private BigDecimal valorMonetario;
 
 	@UIPosition(x = 2, y = 3)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Percentual", typeFormat = TypeFormat.percentual)
-	@UIColumn(label = "Percentual", initial = false)
+	@UIColumn(label = "Percentual", initial = true, type = TypeFormat.percentual)
 	private BigDecimal percentual;
 
 	@UIPosition(x = 3, y = 3)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Câmbio", typeFormat = TypeFormat.cambio)
-	@UIColumn(label = "Câmbio", initial = false)
+	@UIColumn(label = "Câmbio", initial = true, type = TypeFormat.cambio)
 	private BigDecimal cambio;
 
 	@UIPosition(x = 1, y = 4)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Quantidade", typeFormat = TypeFormat.quantidade)
-	@UIColumn(label = "Quantidade", initial = false)
+	@UIColumn(label = "Quantidade", initial = true, type = TypeFormat.quantidade)
 	private BigDecimal quantidade;
 
 	@UIPosition(x = 2, y = 4)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Peso Medida", typeFormat = TypeFormat.pesoMedida)
-	@UIColumn(label = "Peso Medida", initial = false)
+	@UIColumn(label = "Peso Medida", initial = true, type = TypeFormat.pesoMedida)
 	private BigDecimal pesoMedida;
 
 	@UIPosition(x = 1, y = 5)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Latitude", min = -90, max = 90, typeFormat = TypeFormat.latitude)
-	@UIColumn(label = "Latitude", initial = false)
+	@UIColumn(label = "Latitude", initial = true, type = TypeFormat.latitude)
 	//@UIText(label = "Latitude", mask = "00.00000000", allowNegativeNumbers = true)
 	private BigDecimal latitude;
 
 	@UIPosition(x = 2, y = 5)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Longitude", min = -180, max = 180, typeFormat = TypeFormat.longitude)
-	@UIColumn(label = "Longitude", initial = false)	
+	@UIColumn(label = "Longitude", initial = true, type = TypeFormat.longitude)	
 	//@UIText(label = "Longitude", mask = "00.00000000", allowNegativeNumbers = true)
 	private BigDecimal longitude;
 
 	@UIPosition(x = 1, y = 6)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Duração", typeFormat = TypeFormat.duracao)
-	@UIColumn(label = "Duração", initial = false)	
+	@UIColumn(label = "Duração", initial = true, type = TypeFormat.duracao)	
 	private BigDecimal duracao;
 
 	@UIPosition(x = 2, y = 6)
 	@UIFieldValidation(required = true)
 	@UIDecimal(label = "Valor Cientifico", typeFormat = TypeFormat.cientifico)
 	//@UIText(label = "Valor Cientifico", mask = "0.000000000000")
-	@UIColumn(label = "Valor Cientifico", initial = false)	
+	@UIColumn(label = "Valor Cientifico", initial = true, type = TypeFormat.cientifico)	
 	private Double valorCientifico;
 
 	@UIPosition(x = 2, y = 7)
 	@UIFieldValidation(required = true)
 	@UITime(label = "Tempo Fixo", format = TypeDateFormat.TIME_HHMMSS_FORMAT)
-	@UIColumn(label = "Tempo Fixo", initial = false)	
+	@UIColumn(label = "Tempo Fixo", initial = true)	
 	private LocalTime tempoFixo;
 
 	@UIPosition(x = 1, y = 7)
