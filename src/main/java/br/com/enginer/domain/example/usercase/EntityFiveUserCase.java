@@ -1,5 +1,6 @@
 package br.com.enginer.domain.example.usercase;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -9,16 +10,24 @@ import br.com.enginer.domain.example.dto.entity.EntityNineId;
 import br.com.enginer.domain.example.dto.entity.EntityStatus;
 import br.com.enginer.domain.system.usercase.AbstractUserCase;
 import br.com.enginer.domain.system.usercase.annotation.AutoDependencyInjector;
+import br.com.enginer.domain.system.usercase.annotation.PostAction;
+import br.com.enginer.domain.system.usercase.annotation.PreAction;
 import br.com.enginer.domain.system.usercase.exception.UncheckedException;
 import br.com.enginer.domain.system.usercase.page.PageResult;
+import br.com.enginer.domain.system.usercase.tag.TagUserCase;
+import br.com.enginer.domain.system.usercase.utils.ReflectionUtils;
+import br.com.enginer.domain.system.usercase.utils.StringsUtils;
 
-public class EntityFiveUserCase extends AbstractUserCase<EntityFive> {
+public class EntityFiveUserCase extends AbstractUserCase<EntityFive> implements br.com.enginer.domain.example.usercase.port.EntityFiveUserCase {
 	
 	@AutoDependencyInjector
 	private EntityNineUserCase entityNineUserCase;
 	
 	@AutoDependencyInjector
 	private EntityStatusUserCase entityStatusUserCase;
+	
+	@AutoDependencyInjector
+	private TagUserCase tagUserCase;
 	
 	/**
 	 * @param domain
@@ -54,5 +63,29 @@ public class EntityFiveUserCase extends AbstractUserCase<EntityFive> {
 		
 		return result;
 	}
-
+	
+	/**
+	 * @param tags
+	 * @throws Exception 
+	 */
+	@SuppressWarnings("unchecked")
+	@PreAction
+	public void pull(EntityFive entityFive) throws Exception {
+		if(entityFive != null) {
+			List<String> tags = (List<String>) ReflectionUtils.executeMethod(entityFive, StringsUtils.getMethod("tags"));
+			tagUserCase.pull(tags);
+		}
+	}
+	
+	/**
+	 * @param tags
+	 */
+	@PostAction
+	public void push(EntityFive entityFive) {
+		if(entityFive != null) {
+			String domain = entityFive.getClass().getSimpleName();
+			Object domainId = entityFive.getId();
+			tagUserCase.push(domain, domainId);
+		}
+	}
 }

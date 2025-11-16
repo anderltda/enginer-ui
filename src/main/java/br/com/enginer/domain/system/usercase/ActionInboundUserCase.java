@@ -3,6 +3,8 @@ package br.com.enginer.domain.system.usercase;
 import java.util.List;
 import java.util.Map;
 
+import br.com.enginer.domain.system.usercase.annotation.PostAction;
+import br.com.enginer.domain.system.usercase.annotation.PreAction;
 import br.com.enginer.domain.system.usercase.exception.CheckedException;
 import br.com.enginer.domain.system.usercase.logger.ActionLogger;
 import br.com.enginer.domain.system.usercase.page.PageResult;
@@ -185,11 +187,27 @@ public class ActionInboundUserCase<T extends Domain<?>> implements ActionInbound
      */
     @Override
     public Domain<?> methodName(Domain<?> domain) throws CheckedException {
+    	
         try {
-            ActionLogger actionLogger = domain.getActionLogger();
-            logger.info(ActionInboundUserCase.class, "Action -> " + actionLogger.getActionName());
-            Object userCase = injectedDependency(domain);
-            return (Domain<?>) ReflectionUtils.executeMethod(userCase, actionLogger.getActionName(), domain);
+        
+        	ActionLogger actionLogger = domain.getActionLogger();
+            
+        	logger.info(ActionInboundUserCase.class, "Action -> " + actionLogger.getActionName());
+            
+        	/** Injected Dependency */
+        	Object userCase = injectedDependency(domain);
+        	
+        	/** Executa todos @PreAction */
+        	ReflectionUtils.runAnnotatedMethods(userCase, PreAction.class, domain);
+            
+        	/** Executa o método real */
+        	Domain<?> newDomain = (Domain<?>) ReflectionUtils.executeMethod(userCase, actionLogger.getActionName(), domain);
+        	
+        	/** Executa todos @PostAction */
+        	ReflectionUtils.runAnnotatedMethods(userCase, PostAction.class, newDomain);
+            
+        	return newDomain;
+        
         } catch (Exception ex) {
             logger.error(ActionInboundUserCase.class, ex);
             throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);

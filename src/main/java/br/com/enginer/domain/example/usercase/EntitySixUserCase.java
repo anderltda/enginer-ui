@@ -6,7 +6,7 @@ import br.com.enginer.domain.example.dto.entity.EntitySix;
 import br.com.enginer.domain.system.usercase.AbstractUserCase;
 import br.com.enginer.domain.system.usercase.exception.UncheckedException;
 
-public class EntitySixUserCase extends AbstractUserCase<EntitySix> {
+public class EntitySixUserCase extends AbstractUserCase<EntitySix> implements br.com.enginer.domain.example.usercase.port.EntitySixUserCase {
 	
 	@Override
 	public List<EntitySix> salvarLista(List<EntitySix> entities) throws UncheckedException {

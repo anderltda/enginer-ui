@@ -12,7 +12,7 @@ import br.com.enginer.domain.system.usercase.annotation.AutoDependencyInjector;
 import br.com.enginer.domain.system.usercase.exception.UncheckedException;
 import br.com.enginer.domain.system.usercase.page.PageResult;
 
-public class EntityTwoUserCase extends AbstractUserCase<EntityTwo> {
+public class EntityTwoUserCase extends AbstractUserCase<EntityTwo> implements br.com.enginer.domain.example.usercase.port.EntityTwoUserCase {
 	
 	@AutoDependencyInjector
 	private EntityStatusUserCase entityStatusUserCase;

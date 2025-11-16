@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.com.enginer.domain.system.usercase.annotation.PostAction;
+import br.com.enginer.domain.system.usercase.annotation.PreAction;
 import br.com.enginer.domain.system.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usercase.exception.CheckedException;
 import br.com.enginer.domain.system.usercase.exception.UncheckedException;
@@ -315,7 +317,23 @@ public abstract class AbstractUserCase<T extends Domain<?>> implements TemplateU
 	@Override
 	public List<T> buscarFormTodos(T domain, Map<String, Object> filter) throws UncheckedException {
 		return repositoryOutboundPort.findAll(domain, filter);
-	}	
+	}
+	
+	
+	/** 
+	 * --------------------------------------------------------------------------------------------
+	 * Metodos que serao executados antes e depois do metodo real chamado
+	 * --------------------------------------------------------------------------------------------
+     **/	
+	@PreAction
+	public void pre(T domain) {
+		System.out.println("Pré-execução: validando...");
+	}
+
+	@PostAction
+	public void post(T domain) {
+		System.out.println("Pós-execução: auditando...");
+	}
 
 	/** 
 	 * --------------------------------------------------------------------------------------------

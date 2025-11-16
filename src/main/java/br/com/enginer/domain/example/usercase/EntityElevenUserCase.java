@@ -15,7 +15,7 @@ import br.com.enginer.domain.system.usercase.exception.UncheckedException;
 import br.com.enginer.domain.system.usercase.page.PageResult;
 import br.com.enginer.domain.system.usercase.schema.instance.Domain;
 
-public class EntityElevenUserCase extends AbstractUserCase<EntityEleven> {
+public class EntityElevenUserCase extends AbstractUserCase<EntityEleven> implements br.com.enginer.domain.example.usercase.port.EntityElevenUserCase {
 	
 	@AutoDependencyInjector
 	private EntityTenUserCase entityTenUserCase;

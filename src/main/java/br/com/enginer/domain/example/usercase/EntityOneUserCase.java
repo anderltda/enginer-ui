@@ -19,7 +19,7 @@ import br.com.enginer.domain.system.usercase.annotation.AutoDependencyInjector;
 import br.com.enginer.domain.system.usercase.exception.UncheckedException;
 import br.com.enginer.domain.system.usercase.page.PageResult;
 
-public class EntityOneUserCase extends AbstractUserCase<EntityOne> {
+public class EntityOneUserCase extends AbstractUserCase<EntityOne> implements br.com.enginer.domain.example.usercase.port.EntityOneUserCase {
 	
 	@AutoDependencyInjector
 	private EntityStatusUserCase entityStatusUserCase;

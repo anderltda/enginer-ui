@@ -1,4 +1,4 @@
-package br.com.enginer.domain.system.usercase;
+package br.com.enginer.domain.system.usercase.upload;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,13 +13,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import br.com.enginer.domain.system.dto.entity.UploadFile;
+import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
+import br.com.enginer.domain.system.usercase.AbstractUserCase;
 import br.com.enginer.domain.system.usercase.exception.UncheckedException;
 
 /**
  * 
  */
-public class UploadFileUserCase extends AbstractUserCase<UploadFile> implements br.com.enginer.domain.system.usercase.port.UploadFileUserCase {
+public class UploadFileUserCase extends AbstractUserCase<UploadFile> implements br.com.enginer.domain.system.usercase.port.upload.UploadFileUserCase {
 	
     private static final String PATH_DIR_FINAL = "final";
 

@@ -2,7 +2,7 @@ package br.com.enginer.domain.system.usercase.schema.field.behavior;
 
 import java.util.List;
 
-import br.com.enginer.domain.system.dto.entity.UploadFile;
+import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.usercase.enums.TypeDateFormat;
 import br.com.enginer.domain.system.usercase.enums.TypeFileUpload;
 import br.com.enginer.domain.system.usercase.enums.TypeLayoutTarget;
@@ -168,11 +168,11 @@ public class Default {
 		return select;
 	}
 
-	public Tag getTag() {
+	public Tag getTag(List<String> tags) {
 		Tag tag = new Tag();
 		tag.setLabel(label);
 		tag.setField(field);
-		tag.setValue(value);
+		tag.setValue(tags);
 		tag.setPosition(position);
 		tag.setDisable(disable);
 		return tag;

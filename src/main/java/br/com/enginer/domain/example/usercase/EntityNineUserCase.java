@@ -17,7 +17,7 @@ import br.com.enginer.domain.system.usercase.page.PageResult;
 /**
  * 
  */
-public class EntityNineUserCase extends AbstractUserCase<EntityNine> {
+public class EntityNineUserCase extends AbstractUserCase<EntityNine> implements br.com.enginer.domain.example.usercase.port.EntityNineUserCase {
 	
 	@AutoDependencyInjector
 	private EntitySixUserCase entitySixUserCase;

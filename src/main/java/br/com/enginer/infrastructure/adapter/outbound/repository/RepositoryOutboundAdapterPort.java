@@ -209,8 +209,13 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	        logger.info(RepositoryOutboundAdapterPort.class, "[findBySingle] concluído em " + duration + "ms ");
 
 		} catch (CheckedException ex) {
-			logger.error(RepositoryOutboundAdapterPort.class, "[4XX or 5XX ERROR]", ex);
-			throw ex;
+			if (ex.getMessage().contains("Nenhum registro encontrado")) {
+				logger.info(RepositoryOutboundAdapterPort.class, ex.getMessage());
+				return null;
+			} else {
+				logger.error(RepositoryOutboundAdapterPort.class, "[4XX or 5XX ERROR]", ex);
+				throw ex;
+			}
 		} catch (WebClientResponseException ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[WebClientResponseException] - Status: " + ex.getStatusText() + ", Body: " + ex.getResponseBodyAsString(), ex);
 			throw new UncheckedException("[WebClientResponseException]", ex);
@@ -255,8 +260,13 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	        logger.info(RepositoryOutboundAdapterPort.class, "[findBySingle] concluído em " + duration + "ms ");			
 
 		} catch (CheckedException ex) {
-			logger.error(RepositoryOutboundAdapterPort.class, "[4XX or 5XX ERROR]", ex);
-			throw ex;
+			if (ex.getMessage().contains("Nenhum registro encontrado")) {
+				logger.info(RepositoryOutboundAdapterPort.class, ex.getMessage());
+				return null;
+			} else {
+				logger.error(RepositoryOutboundAdapterPort.class, "[4XX or 5XX ERROR]", ex);
+				throw ex;
+			}
 		} catch (WebClientResponseException ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[WebClientResponseException] - Status: " + ex.getStatusText() + ", Body: " + ex.getResponseBodyAsString(), ex);
 			throw new UncheckedException("[WebClientResponseException]", ex);

@@ -1,9 +1,9 @@
-package br.com.enginer.domain.system.usercase.port;
+package br.com.enginer.domain.system.usercase.port.upload;
 
 import java.io.InputStream;
 import java.util.List;
 
-import br.com.enginer.domain.system.dto.entity.UploadFile;
+import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.usercase.ActionUserCase;
 import br.com.enginer.domain.system.usercase.exception.UncheckedException;
 

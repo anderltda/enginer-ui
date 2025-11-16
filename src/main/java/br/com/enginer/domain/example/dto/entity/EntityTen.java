@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 
-import br.com.enginer.domain.system.dto.entity.UploadFile;
+import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.usercase.annotation.field.UIColumn;
 import br.com.enginer.domain.system.usercase.annotation.field.UIFile;
 import br.com.enginer.domain.system.usercase.annotation.field.UIFilter;

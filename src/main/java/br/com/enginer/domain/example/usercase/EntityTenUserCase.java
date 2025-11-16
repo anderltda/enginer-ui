@@ -6,15 +6,15 @@ import java.util.Map;
 
 import br.com.enginer.domain.example.dto.entity.EntityStatus;
 import br.com.enginer.domain.example.dto.entity.EntityTen;
-import br.com.enginer.domain.system.dto.entity.UploadFile;
+import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.usercase.AbstractUserCase;
-import br.com.enginer.domain.system.usercase.UploadFileUserCase;
 import br.com.enginer.domain.system.usercase.annotation.AutoDependencyInjector;
 import br.com.enginer.domain.system.usercase.exception.CheckedException;
 import br.com.enginer.domain.system.usercase.exception.UncheckedException;
 import br.com.enginer.domain.system.usercase.page.PageResult;
+import br.com.enginer.domain.system.usercase.upload.UploadFileUserCase;
 
-public class EntityTenUserCase extends AbstractUserCase<EntityTen> {
+public class EntityTenUserCase extends AbstractUserCase<EntityTen> implements br.com.enginer.domain.example.usercase.port.EntityTenUserCase {
 	
 	@AutoDependencyInjector
 	private UploadFileUserCase uploadFileUserCase;

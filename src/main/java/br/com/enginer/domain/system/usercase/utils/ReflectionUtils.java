@@ -1,5 +1,6 @@
 package br.com.enginer.domain.system.usercase.utils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
@@ -1045,5 +1046,22 @@ public class ReflectionUtils {
 	        }
 	    } catch (Exception ignored) {}
 	    return false;
+	}
+	
+	/**
+	 * @param userCase
+	 * @param annotation
+	 * @param domain
+	 */
+	public static void runAnnotatedMethods(Object userCase, Class<? extends Annotation> annotation, Domain<?> domain) {
+	    for (Method method : userCase.getClass().getMethods()) {
+	        if (method.isAnnotationPresent(annotation)) {
+	            try {
+	                method.invoke(userCase, domain);
+	            } catch (Exception e) {
+	                throw new RuntimeException("Erro ao executar @" + annotation.getSimpleName() + " no UserCase " + userCase.getClass().getSimpleName(), e);
+	            }
+	        }
+	    }
 	}
 }

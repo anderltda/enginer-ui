@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import br.com.enginer.domain.system.dto.entity.UploadFile;
+import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.usercase.TemplateUserCase;
 import br.com.enginer.domain.system.usercase.annotation.field.UICheckbox;
 import br.com.enginer.domain.system.usercase.annotation.field.UIColumn;
@@ -368,7 +368,7 @@ public class FormTemplate {
 							boolean containsTemplate = checkTemplate(uiTag);
 
 							if (containsTemplate) {
-								field.setTag(getTag(f, default_, annotations));
+								field.setTag(getTag(domain, f, default_, annotations));
 								count++;
 							}
 
@@ -907,8 +907,25 @@ public class FormTemplate {
 	 * @param annotations
 	 * @return
 	 */
-	private Tag getTag(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
-		Tag tag = default_.getTag();
+	@SuppressWarnings("unchecked")
+	private Tag getTag(Domain<?> domain, java.lang.reflect.Field f, Default default_, Annotation[] annotations) throws Exception {
+		
+		List<String> tags = new ArrayList<>();
+		
+		if (domain.getId() != null) {
+			
+			Map<String, Object> filter = Map.of("id.domain", domain.getClass().getSimpleName(), "id.domainId", domain.getId().toString());
+		
+			Object object = ReflectionUtils.executeMethod(userCase, TemplateUserCase.buscarTodos, new br.com.enginer.domain.system.dto.entity.tag.Tag(), filter);
+			
+			List<br.com.enginer.domain.system.dto.entity.tag.Tag> entities = (List<br.com.enginer.domain.system.dto.entity.tag.Tag>) object;
+			
+			for (br.com.enginer.domain.system.dto.entity.tag.Tag tag : entities) {
+				tags.add(tag.getName());
+			}
+		}		
+		
+		Tag tag = default_.getTag(tags);
 		addBehaviorAnnotation(tag, f, annotations);
 		return tag;
 	}

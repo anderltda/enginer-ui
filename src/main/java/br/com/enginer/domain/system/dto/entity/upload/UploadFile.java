@@ -1,4 +1,4 @@
-package br.com.enginer.domain.system.dto.entity;
+package br.com.enginer.domain.system.dto.entity.upload;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -27,7 +27,6 @@ public class UploadFile extends DomainAbstract<Long> {
 	private transient String uid;
 	private transient String status;
 	private transient byte[] bytes;
-	private transient UploadResponse response;
 
 	@Override
 	public Long getId() {
@@ -150,14 +149,6 @@ public class UploadFile extends DomainAbstract<Long> {
 		this.bytes = bytes;
 	}
 
-	public UploadResponse getResponse() {
-		return response;
-	}
-
-	public void setResponse(UploadResponse response) {
-		this.response = response;
-	}
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -180,8 +171,7 @@ public class UploadFile extends DomainAbstract<Long> {
 		return "UploadFile [id=" + id + ", name=" + name + ", storageName=" + storageName + ", type=" + type + ", size="
 				+ size + ", path=" + path + ", storageType=" + storageType + ", checksumSha256=" + checksumSha256
 				+ ", domain=" + domain + ", domainId=" + domainId + ", isPublic=" + isPublic + ", createdAt="
-				+ createdAt + ", uid=" + uid + ", status=" + status + ", bytes=" + Arrays.toString(bytes)
-				+ ", response=" + response + "]";
+				+ createdAt + ", uid=" + uid + ", status=" + status + ", bytes=" + Arrays.toString(bytes);
 	}
 
 }

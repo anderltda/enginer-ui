@@ -2,7 +2,7 @@ package br.com.enginer.domain.system.usercase.schema.field.behavior;
 
 import java.util.List;
 
-import br.com.enginer.domain.system.dto.entity.UploadFile;
+import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.usercase.enums.TypeDateFormat;
 import br.com.enginer.domain.system.usercase.enums.TypeFileUpload;
 import br.com.enginer.domain.system.usercase.enums.TypeFormat;

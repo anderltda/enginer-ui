@@ -24,7 +24,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
-import br.com.enginer.domain.system.dto.entity.UploadFile;
+import br.com.enginer.domain.example.dto.entity.EntityOne;
+import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.usercase.annotation.instance.UIDomain;
 import br.com.enginer.domain.system.usercase.exception.CheckedException;
 import br.com.enginer.domain.system.usercase.logger.ActionLogger;
@@ -51,6 +52,14 @@ public class ActionInboundAdapterPort {
 		this.objectMapper = objectMapper;
 		this.logger = logger;
 	}
+	
+	@GetMapping("/pesquisa")
+	public List<EntityOne> search(@RequestParam String q) {
+		
+		List<EntityOne> list = new ArrayList<EntityOne>();
+		
+	    return list;
+	}	
 
 	// ============================================================================================
 	// CHUNKED UPLOAD
@@ -90,6 +99,29 @@ public class ActionInboundAdapterPort {
 	
 	@GetMapping("/download")
 	public ResponseEntity<byte[]> download(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws IOException {
+
+		if(filter != null && filter.isEmpty()) {
+			return ResponseEntity.badRequest().build();
+		}
+		
+		UploadFile file = (UploadFile) actionInboundPort.searchWithBySingleConditions(new UploadFile(), filter);		
+		
+	    Path path = Path.of(file.getPath());
+
+	    byte[] content = Files.readAllBytes(path);
+
+	    return ResponseEntity.ok()
+	            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getName() + "\"")
+	            .header(HttpHeaders.CONTENT_TYPE, file.getType())
+	            .body(content);
+	}	
+	
+	// ============================================================================================
+	// TAGS
+	// ============================================================================================
+	
+	@GetMapping("/tag")
+	public ResponseEntity<byte[]> tag(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws IOException {
 
 		if(filter != null && filter.isEmpty()) {
 			return ResponseEntity.badRequest().build();
