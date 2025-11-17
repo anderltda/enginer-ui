@@ -63,9 +63,14 @@ public class ActionInboundUserCase<T extends Domain<?>> implements ActionInbound
      */
 	@Override
     public Domain<?> searchWithById(Domain<?> domain) throws CheckedException {
+		
         try {
-            Object userCase = injectedDependency(domain);
+        	
+        	/** Injected Dependency */
+        	Object userCase = injectedDependency(domain);
+        	
             return (Domain<?>) ReflectionUtils.executeMethod(userCase, ActionUserCase.buscarPorId, domain);
+            
         } catch (Exception ex) {
             logger.error(ActionInboundUserCase.class, ex);
             throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);
@@ -81,9 +86,14 @@ public class ActionInboundUserCase<T extends Domain<?>> implements ActionInbound
      */
 	@Override
 	public Domain<?> searchWithBySingleConditions(Domain<?> domain, Map<String, Object> filter) throws CheckedException {
+		
 		try {
-			Object userCase = injectedDependency(domain);
+			
+        	/** Injected Dependency */
+        	Object userCase = injectedDependency(domain);
+        	
 			return (Domain<?>) ReflectionUtils.executeMethod(userCase, ActionUserCase.buscarPorRegistroUnico, domain, filter);
+			
 		} catch (Exception ex) {
 			logger.error(ActionInboundUserCase.class, ex);
 			throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);
@@ -100,9 +110,14 @@ public class ActionInboundUserCase<T extends Domain<?>> implements ActionInbound
     @Override
 	@SuppressWarnings("unchecked")
     public List<Domain<?>> searchByConditions(Domain<?> domain, Map<String, Object> filter) throws CheckedException {
+    	
         try {
-            Object userCase = injectedDependency(domain);
+        	
+        	/** Injected Dependency */
+        	Object userCase = injectedDependency(domain);
+        	
             return (List<Domain<?>>) ReflectionUtils.executeMethod(userCase, ActionUserCase.buscarTodos, domain, filter);
+            
         } catch (Exception ex) {
             logger.error(ActionInboundUserCase.class, ex);
             throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);
@@ -119,9 +134,14 @@ public class ActionInboundUserCase<T extends Domain<?>> implements ActionInbound
     @Override
 	@SuppressWarnings("unchecked")
     public PageResult<Domain<?>> searchPaginated(Domain<?> domain, Map<String, Object> filter) throws CheckedException {
+    	
         try {
-            Object userCase = injectedDependency(domain);
+        	
+        	/** Injected Dependency */
+        	Object userCase = injectedDependency(domain);
+            
             return (PageResult<Domain<?>>) ReflectionUtils.executeMethod(userCase, ActionUserCase.buscarTodosPaginado, domain, filter);
+            
         } catch (Exception ex) {
             logger.error(ActionInboundUserCase.class, ex);
             throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);
@@ -139,9 +159,14 @@ public class ActionInboundUserCase<T extends Domain<?>> implements ActionInbound
     @Override
 	@SuppressWarnings("unchecked")
     public PageResult<Domain<?>> searchPaginatedByMethod(Domain<?> domain, Map<String, Object> filter, String method) throws CheckedException {
+    	
         try {
-            Object userCase = injectedDependency(domain);
+        	
+        	/** Injected Dependency */
+        	Object userCase = injectedDependency(domain);
+            
             return (PageResult<Domain<?>>) ReflectionUtils.executeMethod(userCase, ActionUserCase.buscarTodosPaginado, domain, filter, method);
+            
         } catch (Exception ex) {
             logger.error(ActionInboundUserCase.class, ex);
             throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);
@@ -163,7 +188,8 @@ public class ActionInboundUserCase<T extends Domain<?>> implements ActionInbound
 
     	try {
         	
-            Object userCase = injectedDependency(domain);
+        	/** Injected Dependency */
+        	Object userCase = injectedDependency(domain);
             
             if(value != null && value.length > 0) {
             	result = (Object) ReflectionUtils.executeMethod(userCase, methodName, value);
@@ -225,11 +251,17 @@ public class ActionInboundUserCase<T extends Domain<?>> implements ActionInbound
     @Override
 	@SuppressWarnings("unchecked")
     public List<Domain<?>> methodName(Domain<?> domain, List<Domain<?>> domains, ActionLogger actionLogger) throws CheckedException {
-        try {
-            logger.info(ActionInboundUserCase.class, "Action -> " + actionLogger.getActionName());
-            Object userCase = injectedDependency(domain);
-            return (List<Domain<?>>) ReflectionUtils.executeMethod(userCase, actionLogger.getActionName(), domains);
-        } catch (Exception ex) {
+        
+    	try {
+        
+    		logger.info(ActionInboundUserCase.class, "Action -> " + actionLogger.getActionName());
+            
+        	/** Injected Dependency */
+        	Object userCase = injectedDependency(domain);
+        
+    		return (List<Domain<?>>) ReflectionUtils.executeMethod(userCase, actionLogger.getActionName(), domains);
+        
+    	} catch (Exception ex) {
             logger.error(ActionInboundUserCase.class, ex);
             throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);
         }

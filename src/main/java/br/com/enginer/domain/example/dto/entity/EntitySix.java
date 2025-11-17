@@ -19,8 +19,11 @@ import br.com.enginer.domain.system.usercase.annotation.field.behavior.validatio
 import br.com.enginer.domain.system.usercase.annotation.instance.UITitle;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.UIAction;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionMethod;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionRedirect;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionResponse;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionResponseError;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionResponseSuccess;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionTriggerMethod;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.UIButton;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.UIButtonAction;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.filter.UIButtonFilterClear;
@@ -34,10 +37,12 @@ import br.com.enginer.domain.system.usercase.annotation.instance.action.button.f
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.form.UIButtonFormSave;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorSave;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
-import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowAdd;
-import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabBack;
-import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabFinish;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowBack;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowClear;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowDelete;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowEdit;
 import br.com.enginer.domain.system.usercase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.system.usercase.annotation.instance.paginator.UIPaginator;
 import br.com.enginer.domain.system.usercase.annotation.instance.validate.UIValidate;
@@ -65,10 +70,9 @@ import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
 	UIButtonFormEdit.class, 
 	UIButtonFormSave.class,
 	// ROW
-	UIButtonRowAdd.class,
-	// TAB
-	UIButtonTabBack.class, 
-	UIButtonTabFinish.class
+	UIButtonRowClear.class, 
+	UIButtonRowBack.class,
+	//UIButtonRowAdd.class,
 },
 value = {
 	@UIButton(
@@ -82,29 +86,61 @@ value = {
 			response = @UIActionResponse(
 			template = { TypeTemplate.ROW },
 			success = @UIActionResponseSuccess(
-					method = @UIActionMethod(clientMethod = "setDataSetField")
-		)))
+				method = @UIActionMethod(clientMethod = "setDataSetField")
+			)
+		))
 	),
 	@UIButton(
 	    label = Constants.LABEL_BACK,
 	    icon = "undo",
+		needsValidation = false,
+		state = TypeButtonState.BTN_STATE_DEFAULT,
+		template = TypeTemplate.TAB,
+		notDomain = { "entityAll" },
+		action = @UIAction(
+		    method = @UIActionMethod(clientMethod = "onBack")
+		)
+	),
+	@UIButton(
+	    label = Constants.LABEL_BEFORE,
+	    icon = "chevron_left",
+	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    needsValidation = false,
-	    state = TypeButtonState.BTN_STATE_DEFAULT,
-	    template = { TypeTemplate.DISABLED },
+	    template = { TypeTemplate.TAB },
+	    notDomain = { "entitySix" },
 	    action = @UIAction(
-	        method = @UIActionMethod(clientMethod = "onBack")
+	        method = @UIActionMethod(clientMethod = "onPrevious")
 	    )
 	),
 	@UIButton(
-	    label = Constants.LABEL_CLEAR,
-	    icon = "bin_alt",
-	    needsValidation = false,
-	    template = { TypeTemplate.DISABLED },
-	    state = TypeButtonState.BTN_STATE_DEFAULT,
+	    label = Constants.LABEL_NEXT,
+	    icon = "chevron_right",
+	    state = TypeButtonState.BTN_STATE_PRIMARY,
+	    template = { TypeTemplate.TAB, TypeTemplate.MODAL },
+	    notDomain = { "entitySix" },
 	    action = @UIAction(
-	        method = @UIActionMethod(clientMethod = Constants.METHOD_CLEAR_FORM)
+	        method = @UIActionMethod(clientMethod = "onNext")
 	    )
-	)	
+	),	
+	@UIButton(
+		label = Constants.LABEL_FINISH,
+	    icon = "save",
+	    state = TypeButtonState.BTN_STATE_PRIMARY,
+	    template = TypeTemplate.TAB,
+	    notDomain = { "entityAll" },
+	    action = @UIAction(
+			method = @UIActionMethod(
+				clientMethod = "onFinish", 
+				trigger = @UIActionTriggerMethod(serverMethod = "salvar")
+			),
+	        response = @UIActionResponse(
+	        	template = TypeTemplate.TAB,
+	    		error = @UIActionResponseError(method = @UIActionMethod(clientMethod = "onAlertTestError")), 
+	    		success = @UIActionResponseSuccess(redirect = @UIActionRedirect(ui = "tab", value = Constants.PATH_FIND_BY_ID))
+	        )
+	    )
+	)		
+			
 })
 @UIPaginator(
 	config = @UIConfig(expandable = true, multiSelectable = false),
@@ -112,7 +148,10 @@ value = {
 		includes = { 
 			UIButtonPaginatorView.class, 
 			UIButtonPaginatorEdit.class, 
-			UIButtonPaginatorDelete.class
+			UIButtonPaginatorDelete.class,
+			UIButtonPaginatorSave.class,
+			UIButtonRowEdit.class,
+			UIButtonRowDelete.class 
 		}
 ))
 @UIValidate(

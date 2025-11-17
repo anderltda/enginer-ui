@@ -73,7 +73,9 @@ public class EntityFiveUserCase extends AbstractUserCase<EntityFive> implements 
 	public void pull(EntityFive entityFive) throws Exception {
 		if(entityFive != null) {
 			List<String> tags = (List<String>) ReflectionUtils.executeMethod(entityFive, StringsUtils.getMethod("tags"));
-			tagUserCase.pull(tags);
+			String domain = entityFive.getClass().getSimpleName();
+			Object domainId = entityFive.getId();
+			tagUserCase.pull(domain, domainId, tags);
 		}
 	}
 	

@@ -9,6 +9,9 @@ import br.com.enginer.domain.system.usercase.annotation.instance.UITitle;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.UIAction;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionMethod;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionRedirect;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionResponse;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionResponseError;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionResponseSuccess;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionTriggerMethod;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.UIButton;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.UIButtonAction;
@@ -30,8 +33,6 @@ import br.com.enginer.domain.system.usercase.annotation.instance.action.button.r
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowClear;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowDelete;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowEdit;
-import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabBack;
-import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabFinish;
 import br.com.enginer.domain.system.usercase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.system.usercase.annotation.instance.paginator.UIPaginator;
 import br.com.enginer.domain.system.usercase.constants.Constants;
@@ -60,9 +61,58 @@ includes = {
 	UIButtonRowClear.class, 
 	UIButtonRowBack.class,
 	UIButtonRowAdd.class,
-	// TAB
-	UIButtonTabBack.class, 
-	UIButtonTabFinish.class
+},
+value = {
+	@UIButton(
+	    label = Constants.LABEL_BACK,
+	    icon = "undo",
+		needsValidation = false,
+		state = TypeButtonState.BTN_STATE_DEFAULT,
+		template = TypeTemplate.TAB,
+		notDomain = { "entityAll" },
+		action = @UIAction(
+		    method = @UIActionMethod(clientMethod = "onBack")
+		)
+	),
+	@UIButton(
+	    label = Constants.LABEL_BEFORE,
+	    icon = "chevron_left",
+	    state = TypeButtonState.BTN_STATE_PRIMARY,
+	    needsValidation = false,
+	    template = { TypeTemplate.TAB },
+	    notDomain = { "entityNine" },
+	    action = @UIAction(
+	        method = @UIActionMethod(clientMethod = "onPrevious")
+	    )
+	),
+	@UIButton(
+	    label = Constants.LABEL_NEXT,
+	    icon = "chevron_right",
+	    state = TypeButtonState.BTN_STATE_PRIMARY,
+	    template = { TypeTemplate.TAB, TypeTemplate.MODAL },
+	    notDomain = { "entityNine" },
+	    action = @UIAction(
+	        method = @UIActionMethod(clientMethod = "onNext")
+	    )
+	),	
+	@UIButton(
+		label = Constants.LABEL_FINISH,
+	    icon = "save",
+	    state = TypeButtonState.BTN_STATE_PRIMARY,
+	    template = TypeTemplate.TAB,
+	    notDomain = { "entityAll" },
+	    action = @UIAction(
+			method = @UIActionMethod(
+				clientMethod = "onFinish", 
+				trigger = @UIActionTriggerMethod(serverMethod = "salvar")
+			),
+	        response = @UIActionResponse(
+	        	template = TypeTemplate.TAB,
+	    		error = @UIActionResponseError(method = @UIActionMethod(clientMethod = "onAlertTestError")), 
+	    		success = @UIActionResponseSuccess(redirect = @UIActionRedirect(ui = "tab", value = Constants.PATH_FIND_BY_ID))
+	        )
+	    )
+	)		
 })
 @UIPaginator(
 config = @UIConfig(expandable = true), 

@@ -11,9 +11,11 @@ import br.com.enginer.domain.system.usercase.ActionUserCase;
 public interface TagUserCase extends ActionUserCase<Tag> {
 
 	/**
+	 * @param domain
+	 * @param domainId
 	 * @param tags
 	 */
-	public void pull(List<String> tags);
+	public void pull(String domain, Object domainId, List<String> tags);
 	
 	/**
 	 * @param domain

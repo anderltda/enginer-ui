@@ -10,9 +10,7 @@ import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
 public class Tag extends DomainAbstract<TagId> {
 	
 	private TagId id;
-
 	private String name;
-
 	private LocalDateTime createdAt;
 
 	@Override

@@ -854,12 +854,16 @@ public class ReflectionUtils {
 	 * Metodo responsavel por verificar existe valores em value.
 	 * @param value
 	 */
-	public static Boolean hasIdValue(Object value) throws Exception {
+	public static Boolean hasIdValue(Domain<?> domain) throws Exception {
 
 		Boolean isMatch = Boolean.TRUE;
 
-		if (value == null) {
+		if (domain.getId() == null) {
 			return Boolean.FALSE;
+		}
+		
+		if (domain.getId() instanceof DomainId) {
+			return ofNullDomainId(domain.getClass(), domain);
 		}
 
 		return isMatch;
@@ -1029,6 +1033,37 @@ public class ReflectionUtils {
 
 		return false;
 	}
+	
+	/**
+	 * Metodo responsavel por checar se o DomainId (KeyComposited), todos os campos estao nulos
+	 * @param clazzDomain - Classe dominio (DomainId)
+	 * @param domain - Instancia da classe
+	 * @return - Retorna true caso os valores sejam todos nulos dentro do 'domain', mas só será visto 
+	 * classe que implementa DomainId. 
+	 * @throws Exception
+	 */
+	public static Boolean ofNullDomainId(Class<?> clazzDomain, Domain<?> domain) throws Exception {
+
+		if (ReflectionUtils.isIdComposedType(domain.getId().getClass())) {
+
+			Domain<?> domainId = (Domain<?>) newInstance(clazzDomain);
+
+			for (Field field : domainId.getClass().getDeclaredFields()) {
+
+				if (field.getName().startsWith("id")) {
+
+					Object object = ReflectionUtils.executeMethod(domain.getId(),
+							StringsUtils.getMethod(field.getName()));
+
+					if (object != null) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}	
 	
 	/**
 	 * @param target

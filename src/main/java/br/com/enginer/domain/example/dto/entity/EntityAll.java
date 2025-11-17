@@ -3,11 +3,37 @@ package br.com.enginer.domain.example.dto.entity;
 import br.com.enginer.domain.system.usercase.annotation.field.UIFilter;
 import br.com.enginer.domain.system.usercase.annotation.field.UIId;
 import br.com.enginer.domain.system.usercase.annotation.field.UIJoin;
+import br.com.enginer.domain.system.usercase.annotation.field.UIRow;
+import br.com.enginer.domain.system.usercase.annotation.field.behavior.UIPosition;
+import br.com.enginer.domain.system.usercase.annotation.instance.UITitle;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIAction;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIActionMethod;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.UIButton;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.UIButtonAction;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.filter.UIButtonFilterClear;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.filter.UIButtonFilterFormNew;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.filter.UIButtonFilterSearch;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.filter.UIButtonFilterTabNew;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.form.UIButtonFormBack;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.form.UIButtonFormClear;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.form.UIButtonFormDelete;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.form.UIButtonFormEdit;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.form.UIButtonFormSave;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorSave;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowAdd;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowBack;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowClear;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowDelete;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowEdit;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabBack;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabNext;
+import br.com.enginer.domain.system.usercase.annotation.instance.paginator.UIConfig;
+import br.com.enginer.domain.system.usercase.annotation.instance.paginator.UIPaginator;
+import br.com.enginer.domain.system.usercase.constants.Constants;
+import br.com.enginer.domain.system.usercase.enums.TypeButtonState;
 import br.com.enginer.domain.system.usercase.enums.TypeLayoutTarget;
 import br.com.enginer.domain.system.usercase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
@@ -15,60 +41,134 @@ import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
 /**
  * 
  */
+@UITitle("Todos")
 @UIButtonAction(includes = { 
-	UIButtonTabNext.class, 
-	UIButtonFormDelete.class, 
+	// FILTER
+	UIButtonFilterClear.class,
+	UIButtonFilterTabNew.class, 
+	UIButtonFilterFormNew.class, 
 	UIButtonFilterSearch.class, 
-	UIButtonFormSave.class  
-}
-)
+	// FORM
+	UIButtonFormBack.class, 
+	UIButtonFormClear.class, 
+	UIButtonFormDelete.class,
+	UIButtonFormEdit.class, 
+	UIButtonFormSave.class,
+	// ROW
+	UIButtonRowClear.class, 
+	UIButtonRowBack.class,
+	UIButtonRowAdd.class,
+	// TAB
+	UIButtonTabBack.class, 
+	UIButtonTabNext.class
+}, 
+value = {
+	@UIButton(
+	    label = Constants.LABEL_BACK,
+	    icon = "undo",
+	    needsValidation = false,
+	    template = { TypeTemplate.DISABLED },
+	    state = TypeButtonState.BTN_STATE_DEFAULT,
+	    action = @UIAction(
+	        method = @UIActionMethod(clientMethod = "onBack")
+	    )
+	),
+	@UIButton(
+	    label = Constants.LABEL_CLEAR,
+	    icon = "bin_alt",
+	    needsValidation = false,
+	    template = { TypeTemplate.DISABLED },
+	    state = TypeButtonState.BTN_STATE_DEFAULT,
+	    action = @UIAction(
+	        method = @UIActionMethod(clientMethod = Constants.METHOD_CLEAR_FORM)
+	    )
+	)		
+})
+@UIPaginator(config = @UIConfig(expandable = true), 
+actions = @UIButtonAction(
+	includes = { 
+		UIButtonPaginatorView.class, 
+		UIButtonPaginatorEdit.class, 
+		UIButtonPaginatorDelete.class,
+		UIButtonPaginatorSave.class,
+		UIButtonRowEdit.class,
+		UIButtonRowDelete.class
+	}
+))
 public class EntityAll extends DomainAbstract<Long> {
 
 	@UIId(label = "Id")
 	private Long id;
 	
+	@UIPosition(x = 1, y = 1)
 	@UIFilter(label = "Entity Status", field = "name", readonly = false)
+	@UIRow(visible = true, fields = { "name" })
 	private EntityStatus entityStatus;
 	
+	@UIPosition(x = 2, y = 1)
 	@UIJoin(layoutTarget = TypeLayoutTarget.tab, icon = "cloud", template = { TypeTemplate.TAB, TypeTemplate.FORM })
-	@UIFilter(label = "Entity Two", field = "color", readonly = false, template = { TypeTemplate.FILTER })
+	@UIFilter(label = "Entity Two", field = "color", readonly = false, template = { TypeTemplate.FILTER, TypeTemplate.ROW })
+	@UIRow(visible = true, fields = { "color" })
 	private EntityTwo entityTwo;
 	
+	@UIPosition(x = 1, y = 2)
 	@UIJoin(layoutTarget = TypeLayoutTarget.tab, icon = "cloud_success", template = { TypeTemplate.TAB, TypeTemplate.FORM })
-	@UIFilter(label = "Entity Tree", field = "animal", readonly = false, template = { TypeTemplate.FILTER })
+	@UIFilter(label = "Entity Tree", field = "animal", readonly = false, template = { TypeTemplate.FILTER, TypeTemplate.ROW })
+	@UIRow(visible = true, fields = { "animal" })
 	private EntityTree entityTree;
 	
+	@UIPosition(x = 2, y = 2)
 	@UIJoin(layoutTarget = TypeLayoutTarget.tab, icon = "cloud_off", template = { TypeTemplate.TAB, TypeTemplate.FORM })
-	@UIFilter(label = "Entity Four", field = "fruit", readonly = false, template = { TypeTemplate.FILTER })
+	@UIFilter(label = "Entity Four", field = "fruit", readonly = false, template = { TypeTemplate.FILTER, TypeTemplate.ROW })
+	@UIRow(visible = true, fields = { "fruit" })
 	private EntityFour entityFour;
 	
+	@UIPosition(x = 1, y = 3)
 	@UIJoin(layoutTarget = TypeLayoutTarget.tab, icon = "database", template = { TypeTemplate.TAB, TypeTemplate.FORM })
-	@UIFilter(label = "Entity Five", field = "reference", readonly = false, template = { TypeTemplate.FILTER })
+	@UIFilter(label = "Entity Five", field = "reference", readonly = false, template = { TypeTemplate.FILTER, TypeTemplate.ROW })
+	@UIRow(visible = true, fields = { "reference" })
 	private EntityFive entityFive;
 
+	@UIPosition(x = 2, y = 3)
 	@UIJoin(layoutTarget = TypeLayoutTarget.tab, icon = "keyboard", template = { TypeTemplate.TAB, TypeTemplate.FORM })
-	@UIFilter(label = "Entity Six", field = "packageName", readonly = false, template = { TypeTemplate.FILTER })
+	@UIFilter(label = "Entity Six", field = "packageName", readonly = false, template = { TypeTemplate.FILTER, TypeTemplate.ROW })
+	@UIRow(visible = true, fields = { "packageName" })
 	private EntitySix entitySix;
 
+	@UIPosition(x = 1, y = 4)
 	@UIJoin(layoutTarget = TypeLayoutTarget.tab, icon = "alert_warning", template = { TypeTemplate.TAB, TypeTemplate.FORM })
-	@UIFilter(label = "Entity Seven", field = "dado", readonly = false, template = { TypeTemplate.FILTER })
+	@UIFilter(label = "Entity Seven", field = "dado", readonly = false, template = { TypeTemplate.FILTER, TypeTemplate.ROW })
+	@UIRow(visible = true, fields = { "dado" })
 	private EntitySeven entitySeven;
 	
+	@UIPosition(x = 2, y = 4)
 	@UIJoin(layoutTarget = TypeLayoutTarget.tab, icon = "calendar", template = { TypeTemplate.TAB, TypeTemplate.FORM })
-	@UIFilter(label = "Entity Eight", field = "position", readonly = false, template = { TypeTemplate.FILTER })
+	@UIFilter(label = "Entity Eight", field = "position", readonly = false, template = { TypeTemplate.FILTER, TypeTemplate.ROW })
+	@UIRow(visible = true, fields = { "position" })
 	private EntityEight entityEight;
 	
+	@UIPosition(x = 1, y = 5)
 	@UIJoin(layoutTarget = TypeLayoutTarget.tab, icon = "color_palette", template = { TypeTemplate.TAB, TypeTemplate.FORM })
-	@UIFilter(label = "Entity Nine", field = "keyNine", readonly = false, template = { TypeTemplate.FILTER })
+	@UIFilter(label = "Entity Nine", field = "keyNine", readonly = false, template = { TypeTemplate.FILTER, TypeTemplate.ROW })
+	@UIRow(visible = true, fields = { "keyNine" })
 	private EntityNine entityNine;
 
+	@UIPosition(x = 2, y = 5)
 	@UIJoin(layoutTarget = TypeLayoutTarget.tab, icon = "send", template = { TypeTemplate.TAB, TypeTemplate.FORM })
-	@UIFilter(label = "Entity Ten", field = "name", readonly = false, template = { TypeTemplate.FILTER })
+	@UIFilter(label = "Entity Ten", field = "name", readonly = false, template = { TypeTemplate.FILTER, TypeTemplate.ROW })
+	@UIRow(visible = true, fields = { "name" })
 	private EntityTen entityTen;
 
+	@UIPosition(x = 1, y = 6)
 	@UIJoin(layoutTarget = TypeLayoutTarget.tab, icon = "printer", template = { TypeTemplate.TAB, TypeTemplate.FORM })
-	@UIFilter(label = "Entity Eleven", field = "amount", readonly = false, template = { TypeTemplate.FILTER })
+	@UIFilter(label = "Entity Eleven", field = "amount", readonly = false, template = { TypeTemplate.FILTER, TypeTemplate.ROW })
+	@UIRow(visible = true, fields = { "amount" })
 	private EntityEleven entityEleven;
+	
+	@UIPosition(x = 1, y = 6)
+	@UIFilter(label = "Entity One", field = "name", readonly = false, template = { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.ROW })
+	@UIRow(visible = true, fields = { "name" })
+	private EntityOne entityOne;	
 	
 	@Override
 	public Long getId() {
@@ -166,5 +266,13 @@ public class EntityAll extends DomainAbstract<Long> {
 
 	public void setEntityEleven(EntityEleven entityEleven) {
 		this.entityEleven = entityEleven;
+	}
+
+	public EntityOne getEntityOne() {
+		return entityOne;
+	}
+
+	public void setEntityOne(EntityOne entityOne) {
+		this.entityOne = entityOne;
 	}
 }

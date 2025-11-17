@@ -508,8 +508,10 @@ public class FormTemplate {
 	 * @return
 	 */
 	private Tab getTab(Domain<?> domain) {
-		Tab tab = new Tab(false);  // habilitado para cada acao chama o backend
-		//Tab tab = new Tab(true); // nao habilitado para cada acao chama o backend
+		//Tab tab = new Tab(false);  // habilitado para cada acao chama o backend
+		//tab.getConfig().setTabEnabled(true); // habilitado para todas as abas está abertas ao clique (tester)
+		Tab tab = new Tab(true);     // nao habilitado para cada acao chama o backend
+		tab.getConfig().setTabEnabled(false); // funcionamento normal
 		return tab;
 	}
 
