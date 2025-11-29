@@ -222,7 +222,7 @@ public class EntityOne extends DomainAbstract<Long> {
 	@UIColumn(label = "EntityOne ID", initial = false)
 	private Long id;
 
-	@UIText(label = "Name", template = { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.FORM, TypeTemplate.MODAL })
+	@UIText(label = "Name", template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.TAB, TypeTemplate.FORM, TypeTemplate.MODAL })
 	//@UIAutoCompleteSuggestion(suggestions = { "Anderson", "Pedro", "Marcelo", "Michael", "Ramiro", "José" })
 	//@UIAutoComplete(domain = "entityOne", attribute = "name")
 	@UIPosition(x = 1, y = 1)
@@ -244,15 +244,14 @@ public class EntityOne extends DomainAbstract<Long> {
 	
 	@UIPosition(x = 1, y = 2)
 	@UIFieldValidation(required = true)
-	//@UIJoin(layoutTarget = TypeLayoutTarget.tab, icon = "send", template = { TypeTemplate.TAB, TypeTemplate.FORM })
-	//@UIFilter(label = "Entity Nine", field = "keyNine", readonly = false, template = { TypeTemplate.FILTER, TypeTemplate.MODAL })
-	@UIFilter(label = "Entity Nine", field = "keyNine", readonly = false)
+	@UIJoin(layoutTarget = TypeLayoutTarget.tab, icon = "send", template = { TypeTemplate.ROW })
+	@UIFilter(label = "Entity Nine", field = "keyNine", readonly = false, template = { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.FORM, TypeTemplate.MODAL })
 	@UIColumn(label = "Entity Nine", fields = { "keyNine", "id" }, initial = true)
 	private EntityNine entityNine;
 	
 	@UIPosition(x = 2, y = 2)
 	@UIFieldValidation(required = true)
-	@UICheckbox(label = "<b>Code</b>: I hereby certify that the information above is true and accurate", enableSwitch = false, template = { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.FORM, TypeTemplate.MODAL })
+	@UICheckbox(label = "<b>Code</b>: I hereby certify that the information above is true and accurate", enableSwitch = false, template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.TAB, TypeTemplate.FORM, TypeTemplate.MODAL })
 	@UIColumn(label = "Codigo", initial = true)
 	private Boolean code;
 
@@ -296,8 +295,8 @@ public class EntityOne extends DomainAbstract<Long> {
 	@UIRow(visible = true, order = 2)
 	private LocalDateTime prohibitedDateTime;
 
-	@UIJoin(layoutTarget = TypeLayoutTarget.tab, icon = "code", template = { TypeTemplate.TAB, TypeTemplate.FORM })
-	@UIFilter(label = "Entity Two", field = "color", template = { TypeTemplate.FILTER, TypeTemplate.ROW })
+	@UIJoin(layoutTarget = TypeLayoutTarget.tab, icon = "code", template = { TypeTemplate.TAB, TypeTemplate.ROW, TypeTemplate.FORM })
+	//@UIFilter(label = "Entity Two", field = "color", template = { TypeTemplate.FILTER, TypeTemplate.ROW })
 	@UIColumn(label = "Entity Two", fields = { "color", "inclusionDate", "hex", "entityTree" }, initial = true)
 	@UIRow(visible = true, fields = { "color" }, order = 1)
 	private EntityTwo entityTwo;

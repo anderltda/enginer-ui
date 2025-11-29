@@ -863,7 +863,7 @@ public class ReflectionUtils {
 		}
 		
 		if (domain.getId() instanceof DomainId) {
-			return ofNullDomainId(domain.getClass(), domain);
+			return ofNullDomainId(domain.getId().getClass(), domain);
 		}
 
 		return isMatch;
@@ -1050,14 +1050,11 @@ public class ReflectionUtils {
 
 			for (Field field : domainId.getClass().getDeclaredFields()) {
 
-				if (field.getName().startsWith("id")) {
+				Object object = ReflectionUtils.executeMethod(domain.getId(),
+						StringsUtils.getMethod(field.getName()));
 
-					Object object = ReflectionUtils.executeMethod(domain.getId(),
-							StringsUtils.getMethod(field.getName()));
-
-					if (object != null) {
-						return true;
-					}
+				if (object != null) {
+					return true;
 				}
 			}
 		}

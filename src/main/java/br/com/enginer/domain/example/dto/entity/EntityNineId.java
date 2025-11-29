@@ -4,20 +4,20 @@ import java.util.UUID;
 
 import br.com.enginer.domain.system.usercase.annotation.field.UIColumn;
 import br.com.enginer.domain.system.usercase.annotation.field.UIFilter;
-import br.com.enginer.domain.system.usercase.annotation.field.UIIgnore;
+import br.com.enginer.domain.system.usercase.annotation.field.UIHidden;
 import br.com.enginer.domain.system.usercase.annotation.field.UIRow;
 import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
 import br.com.enginer.domain.system.usercase.schema.instance.DomainId;
 
 public class EntityNineId extends DomainAbstract<Object[]> implements DomainId {
 
-	@UIIgnore
+	@UIHidden
 	private Long idEntityEight;
 
-	@UIIgnore
+	@UIHidden
 	private UUID idEntitySeven;
 
-	@UIIgnore
+	@UIHidden
 	private Long idEntitySix;
 	
 	@UIFilter(label = "Entity Seven", field = "dado", readonly = false)

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +27,7 @@ public class NormalizeUtils {
 
 	/**
 	 * Normaliza o objeto Domain populando seus campos a partir do JsonNode.
-	 * 
+	 *
 	 * @param jsonNode O nó JSON contendo os dados.
 	 * @param domain   A instância do Domain a ser populada.
 	 */
@@ -36,16 +35,19 @@ public class NormalizeUtils {
 		List<Field> fields = ReflectionUtils.extractFieldsDomain(domain, false);
 		for (Field field : fields) {
 			if (jsonNode.has(field.getName())) {
-				ReflectionUtils.set(domain, StringsUtils.setMethod(field.getName()),
+				ReflectionUtils.set(
+						domain,
+						StringsUtils.setMethod(field.getName()),
 						new Class<?>[] { identifyFieldClass(field.getType().getName()).getClass() },
-						new Object[] { extractValueFromJson(field, jsonNode) });
+						new Object[] { extractValueFromJson(field, jsonNode) }
+				);
 			}
 		}
 	}
 
 	/**
 	 * Identifica a classe do campo e retorna uma instância padrão.
-	 * 
+	 *
 	 * @param instance Nome completo da classe.
 	 * @return Instância padrão do tipo identificado ou null se não for possível.
 	 */
@@ -54,20 +56,13 @@ public class NormalizeUtils {
 			ClassLoader classLoader = NormalizeUtils.class.getClassLoader();
 			Class<?> main = classLoader.loadClass(instance);
 			// Tratamento para tipos primitivos e wrappers
-			if (main.equals(Integer.class))
-				return 0;
-			if (main.equals(Long.class))
-				return 0L;
-			if (main.equals(Double.class))
-				return 0.0;
-			if (main.equals(Boolean.class))
-				return false;
-			if (main.equals(String.class))
-				return "";
-			if (main.equals(LocalDate.class))
-				return LocalDate.now();
-			if (main.equals(LocalDateTime.class))
-				return LocalDateTime.now();
+			if (main.equals(Integer.class)) return 0;
+			if (main.equals(Long.class))    return 0L;
+			if (main.equals(Double.class))  return 0.0;
+			if (main.equals(Boolean.class)) return false;
+			if (main.equals(String.class))  return "";
+			if (main.equals(LocalDate.class))     return LocalDate.now();
+			if (main.equals(LocalDateTime.class)) return LocalDateTime.now();
 			if (main.equals(Collection.class) || main.equals(List.class) || main.equals(Map.class))
 				return new ArrayList<>();
 
@@ -81,7 +76,7 @@ public class NormalizeUtils {
 
 	/**
 	 * Extrai o valor do JsonNode e converte para o tipo apropriado do campo.
-	 * 
+	 *
 	 * @param field    O campo do Domain.
 	 * @param jsonNode O nó JSON contendo os dados.
 	 * @return O valor convertido ou null se não for possível.
@@ -92,8 +87,7 @@ public class NormalizeUtils {
 		Class<?> fieldType = field.getType();
 
 		JsonNode valueNode = jsonNode.get(fieldName);
-		if (valueNode == null || valueNode.isNull())
-			return null;
+		if (valueNode == null || valueNode.isNull()) return null;
 
 		if (fieldType.equals(String.class)) {
 			return valueNode.asText();
@@ -128,24 +122,15 @@ public class NormalizeUtils {
 
 	/**
 	 * Converte uma string ISO 8601 em LocalDate, ignorando hora/fuso se presente.
-	 * Aceita formatos como: - 2025-04-16 - 2025-04-16T03:00:00 -
-	 * 2025-04-16T03:00:00.000Z
-	 * 
-	 * @param isoDateTime string em formato ISO
-	 * @return LocalDate
-	 * @throws IllegalArgumentException se a string não for parseável
 	 */
 	public static LocalDate parseToLocalDate(String isoDateTime) {
 		try {
-			// Caso seja apenas a data
 			return LocalDate.parse(isoDateTime);
 		} catch (DateTimeParseException e1) {
 			try {
-				// Caso contenha hora, mas sem fuso (ex: 2025-04-16T03:00:00)
 				return LocalDateTime.parse(isoDateTime).toLocalDate();
 			} catch (DateTimeParseException e2) {
 				try {
-					// Caso contenha fuso Z ou offset (ex: 2025-04-16T03:00:00.000Z)
 					return OffsetDateTime.parse(isoDateTime).toLocalDate();
 				} catch (DateTimeParseException e3) {
 					throw new IllegalArgumentException("Data inválida: " + isoDateTime);
@@ -155,21 +140,13 @@ public class NormalizeUtils {
 	}
 
 	/**
-	 * Converte uma string ISO 8601 para LocalDateTime, ignorando fuso horário se
-	 * presente. Aceita formatos como: - 2025-04-16T03:00:00 -
-	 * 2025-04-16T03:00:00.000Z - 2025-04-16T03:00:00.000-03:00
-	 *
-	 * @param isoString string ISO
-	 * @return LocalDateTime correspondente
-	 * @throws IllegalArgumentException se a string não puder ser convertida
+	 * Converte uma string ISO 8601 para LocalDateTime, ignorando fuso horário.
 	 */
 	public static LocalDateTime parseToLocalDateTime(String isoString) {
 		try {
-			// Exato LocalDateTime
 			return LocalDateTime.parse(isoString);
 		} catch (DateTimeParseException e1) {
 			try {
-				// OffsetDateTime com fuso -> extrai o LocalDateTime
 				return OffsetDateTime.parse(isoString).toLocalDateTime();
 			} catch (DateTimeParseException e2) {
 				throw new IllegalArgumentException("Data/hora inválida: " + isoString);
@@ -178,9 +155,12 @@ public class NormalizeUtils {
 	}
 
 	/**
-	 * Ajusta o JSON: localiza o nó que termina com "Id", extrai e normaliza os
-	 * campos de chave composta e move-os para um novo nó chamado "id",
-	 * sobrescrevendo repetições com a última ocorrência.
+	 * Ajusta o JSON: localiza nós cujo nome termina com "Id", extrai/atualiza os
+	 * campos de chave composta e renomeia o nó para "id", mantendo os dados
+	 * internos (entitySeven, entityEight, etc.).
+	 *
+	 * Exemplo:
+	 *  "entityNineId": { ... }  →  "id": { idEntityEight, idEntitySeven, idEntitySix, entitySeven, entityEight, ... }
 	 */
 	public static JsonNode normalizer(JsonNode jsonNode) {
 		if (jsonNode != null && jsonNode.isObject()) {
@@ -190,95 +170,110 @@ public class NormalizeUtils {
 	}
 
 	/**
-	 * Ajusta recursivamente o nó JSON, procurando por campos que terminam com "Id"
-	 * ou que contenham objetos com campos "Id" para normalização.
-	 * 
-	 * @param node O nó JSON a ser ajustado.
+	 * Percorre recursivamente o JSON procurando nós "*Id" e normalizando-os.
 	 */
 	private static void adjustRecursively(ObjectNode node) {
-		List<String> keysToReplace = new ArrayList<>();
-		Map<String, JsonNode> replacementMap = new LinkedHashMap<>();
-		Iterator<Map.Entry<String, JsonNode>> it = node.fields();
-		while (it.hasNext()) {
-			Map.Entry<String, JsonNode> entry = it.next();
-			String key = entry.getKey();
-			JsonNode value = entry.getValue();
-			// Desce primeiro
+		// 1) Desce recursivamente primeiro (para filhos)
+		List<String> fieldNames = new ArrayList<>();
+		node.fieldNames().forEachRemaining(fieldNames::add);
+
+		for (String fieldName : fieldNames) {
+			JsonNode value = node.get(fieldName);
+			if (value == null) continue;
+
 			if (value.isObject()) {
 				adjustRecursively((ObjectNode) value);
 			} else if (value.isArray()) {
 				for (JsonNode child : value) {
-					if (child.isObject())
+					if (child.isObject()) {
 						adjustRecursively((ObjectNode) child);
-				}
-			}
-			// Se o campo termina com "Id" OU o objeto contém outro "*Id" por dentro,
-			// normaliza
-			if (value.isObject() && (key.endsWith("Id") || containsCompositeId(value))) {
-				ObjectNode normalizedIdNode = (ObjectNode) normalizeIdFieldNames(key, value);
-
-				Map<String, Object> compositeKey = new LinkedHashMap<>();
-				findIdFields(normalizedIdNode, compositeKey); // coleta idEntity*, já limpo
-
-				ObjectNode newIdNode = JsonNodeFactory.instance.objectNode();
-				compositeKey.forEach((k, v) -> {
-					if (v == null) {
-						newIdNode.putNull(k);
-					} else if (v instanceof Number) {
-						// mantém número
-						if (v instanceof Integer)
-							newIdNode.put(k, (Integer) v);
-						else if (v instanceof Long)
-							newIdNode.put(k, (Long) v);
-						else if (v instanceof Double)
-							newIdNode.put(k, (Double) v);
-						else
-							newIdNode.putPOJO(k, v);
-					} else if (v instanceof Boolean) {
-						newIdNode.put(k, (Boolean) v);
-					} else {
-						newIdNode.put(k, String.valueOf(v));
 					}
-				});
-				keysToReplace.add(key);
-				replacementMap.put("id", newIdNode); // sempre substitui pelo nome "id"
+				}
 			}
 		}
 
-		// aplica no final
-		for (String k : keysToReplace)
-			node.remove(k);
-		replacementMap.forEach(node::set);
+		// 2) Agora trata os campos que terminam com "Id" neste nível
+		List<String> idFields = new ArrayList<>();
+		node.fieldNames().forEachRemaining(name -> {
+			JsonNode value = node.get(name);
+			if (name.endsWith("Id") && value != null && value.isObject()) {
+				idFields.add(name);
+			}
+		});
+
+		for (String idFieldName : idFields) {
+			ObjectNode compositeIdNode = ((ObjectNode) node.get(idFieldName)).deepCopy();
+
+			// Preenche/atualiza idEntity* a partir dos filhos que possuem "id"
+			enrichCompositeId(compositeIdNode);
+
+			// Remove o campo original "*Id" e adiciona como "id"
+			node.remove(idFieldName);
+			node.set("id", compositeIdNode);
+		}
 	}
 
 	/**
-	 * Verifica se o nó JSON contém um campo que termina com "Id" e cujo valor é um
-	 * objeto (indicando chave composta).
-	 * 
-	 * @param node O nó JSON a ser verificado.
-	 * @return true se contiver tal campo, false caso contrário.
+	 * Enriquecer o nó de chave composta:
+	 *
+	 * - Se houver filhos como "entitySeven", "entityEight" que tenham um campo "id":
+	 *   - Se o "id" for valor simples, copia para "id<EntityNameCamelCase>".
+	 *   - Se o "id" for objeto, copia apenas campos que começam com "id" (idEntitySeven, idEntitySix, etc.)
+	 *
+	 * Mantém os objetos originais (entitySeven, entityEight, etc.) intactos.
 	 */
+	private static void enrichCompositeId(ObjectNode compositeIdNode) {
+		List<String> childNames = new ArrayList<>();
+		compositeIdNode.fieldNames().forEachRemaining(childNames::add);
+
+		for (String childName : childNames) {
+			JsonNode childNode = compositeIdNode.get(childName);
+			if (childNode == null || !childNode.isObject()) continue;
+
+			JsonNode childIdNode = childNode.get("id");
+			if (childIdNode == null || childIdNode.isNull()) continue;
+
+			// Caso 1: id simples (ex: entityEight.id = 2)
+			if (childIdNode.isValueNode()) {
+				String capitalized = StringsUtils.capitalize(childName); // entityEight -> EntityEight
+				String idKey = "id" + capitalized;                        // idEntityEight
+				compositeIdNode.set(idKey, childIdNode);
+
+			// Caso 2: id composto (ex: entitySeven.id = { idEntitySeven, idEntitySix, entitySix{...} })
+			} else if (childIdNode.isObject()) {
+				childIdNode.fields().forEachRemaining(entry -> {
+					String key = entry.getKey();
+					JsonNode value = entry.getValue();
+
+					// Só copia campos que começam com "id" (evita pegar "entitySix", etc.)
+					if (key.startsWith("id")) {
+						compositeIdNode.set(key, value);
+					}
+				});
+			}
+		}
+	}
+
+	/* ===================== MÉTODOS ANTIGOS OPCIONAIS =====================
+	   Se você não usa mais containsCompositeId / normalizeIdFieldNames /
+	   findIdFields em nenhum outro lugar, pode remover tudo abaixo.
+	   Mantive aqui apenas por compatibilidade, mas eles não são mais usados
+	   pelo normalizer atual.
+	*/
+
+	@SuppressWarnings("unused")
 	private static boolean containsCompositeId(JsonNode node) {
-		if (!node.isObject())
-			return false;
+		if (!node.isObject()) return false;
 		Iterator<String> it = node.fieldNames();
 		while (it.hasNext()) {
 			String f = it.next();
 			JsonNode v = node.get(f);
-			if (f.endsWith("Id") && v != null && v.isObject())
-				return true;
+			if (f.endsWith("Id") && v != null && v.isObject()) return true;
 		}
 		return false;
 	}
 
-	/**
-	 * Normaliza os nomes dos campos "id" dentro do nó JSON, renomeando-os para
-	 * evitar conflitos.
-	 * 
-	 * @param parentName   Nome do campo pai (pode ser null).
-	 * @param originalNode O nó JSON original a ser normalizado.
-	 * @return Um novo nó JSON com os campos "id" renomeados.
-	 */
+	@SuppressWarnings("unused")
 	private static JsonNode normalizeIdFieldNames(String parentName, JsonNode originalNode) {
 		ObjectNode result = JsonNodeFactory.instance.objectNode();
 		List<Map.Entry<String, JsonNode>> reversedEntries = new ArrayList<>();
@@ -305,25 +300,16 @@ public class NormalizeUtils {
 				} else {
 					result.set(fieldName, child);
 				}
-
 			} else {
 				result.set(fieldName, value);
 			}
 		}
-
 		return result;
 	}
 
-	/**
-	 * Encontra todos os campos que começam com "id" no nó JSON e os adiciona ao
-	 * mapa de resultados.
-	 * 
-	 * @param node   O nó JSON a ser examinado.
-	 * @param result O mapa onde os campos encontrados serão armazenados.
-	 */
+	@SuppressWarnings("unused")
 	private static void findIdFields(JsonNode node, Map<String, Object> result) {
-		if (!node.isObject())
-			return;
+		if (!node.isObject()) return;
 
 		node.fields().forEachRemaining(entry -> {
 			String key = entry.getKey();

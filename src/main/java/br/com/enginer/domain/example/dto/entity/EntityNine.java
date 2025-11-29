@@ -136,7 +136,25 @@ value = {
 		method = @UIActionMethod(clientMethod = "triggerMethod", 
 		trigger = @UIActionTriggerMethod(clientMethod = Constants.METHOD_CLEAR_FORM)) 
 	)
-),        		
+),
+@UIButton(
+		label = "Add Nine code", 
+		needsValidation = false, 
+		dropdown = true, 
+		template = TypeTemplate.PAGINATOR, 
+		action = @UIAction(
+			redirect = @UIActionRedirect(value = Constants.PATH, ui = "row", domain = "entityNine", param = "{ disable=true, field=code, value=$entityNine.code  }")
+		)
+),
+@UIButton(
+		label = "Add Nine", 
+		needsValidation = false, 
+		dropdown = true, 
+		template = TypeTemplate.PAGINATOR, 
+		action = @UIAction(
+			redirect = @UIActionRedirect(value = Constants.PATH, ui = "row", domain = "entityNine", param = "{ disable=true, field=id, value=$object }")
+		)
+),
 @UIButton(
 	label = "Add EntitySeven in Nine", 
 	needsValidation = false, 
