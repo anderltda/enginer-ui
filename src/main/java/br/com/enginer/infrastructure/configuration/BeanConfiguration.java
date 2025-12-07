@@ -54,6 +54,7 @@ public class BeanConfiguration {
 	@Primary
 	ObjectMapper objectMapper() {
 		ObjectMapper mapper = new ObjectMapper();
+		mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
 		// Módulo de suporte a datas Java 8
 		JavaTimeModule module = new JavaTimeModule();

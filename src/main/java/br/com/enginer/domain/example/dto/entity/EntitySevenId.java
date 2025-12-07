@@ -5,7 +5,6 @@ import java.util.UUID;
 import br.com.enginer.domain.system.usercase.annotation.field.UIColumn;
 import br.com.enginer.domain.system.usercase.annotation.field.UIFilter;
 import br.com.enginer.domain.system.usercase.annotation.field.UIHidden;
-import br.com.enginer.domain.system.usercase.annotation.field.UIIgnore;
 import br.com.enginer.domain.system.usercase.annotation.field.UIRow;
 import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
 import br.com.enginer.domain.system.usercase.schema.instance.DomainId;
@@ -16,7 +15,7 @@ public class EntitySevenId extends DomainAbstract<Object[]> implements DomainId 
 	@UIColumn(label = "Id EntitySeven", initial = false)
 	private UUID idEntitySeven;
 
-	@UIIgnore
+	@UIHidden
 	private Long idEntitySix;
 	
 	@UIFilter(label = "Entity Six", field = "packageName", readonly = false)

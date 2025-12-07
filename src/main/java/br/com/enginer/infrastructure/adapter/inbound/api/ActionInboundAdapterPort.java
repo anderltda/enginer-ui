@@ -189,11 +189,12 @@ public class ActionInboundAdapterPort {
 	// ============================================================================================
 
 	@GetMapping("/search")
-	public ResponseEntity<PageResult<?>> search(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws CheckedException {
+	public ResponseEntity<PageResult<?>> search(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws Exception {
 
 		try {
 			
 			logger.info(ActionInboundAdapterPort.class, "Executando domínio no paginator: " + domain);
+			logger.info(ActionInboundAdapterPort.class, "Valores do filtro no paginator:\n" + objectMapper.writeValueAsString(filter));
 			
 			PageResult<?> pageResult = actionInboundPort.searchPaginated(domain, filter);
 			
