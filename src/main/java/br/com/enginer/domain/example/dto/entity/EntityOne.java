@@ -46,6 +46,7 @@ import br.com.enginer.domain.system.usercase.annotation.instance.action.button.r
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowDelete;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.row.UIButtonRowEdit;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabBack;
+import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabEdit;
 import br.com.enginer.domain.system.usercase.annotation.instance.action.button.tab.UIButtonTabNext;
 import br.com.enginer.domain.system.usercase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.system.usercase.annotation.instance.paginator.UIPaginator;
@@ -88,6 +89,7 @@ import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
 	UIButtonRowAdd.class,
 	// TAB
 	UIButtonTabBack.class, 
+	UIButtonTabEdit.class, 
 	UIButtonTabNext.class, 
 }, 
 value = {	
