@@ -74,19 +74,20 @@ public class EntityFiveUseCase extends AbstractUseCase<EntityFive> implements br
 		if(entityFive != null) {
 			List<String> tags = (List<String>) ReflectionUtils.executeMethod(entityFive, StringsUtils.getMethod("tags"));
 			String domain = entityFive.getClass().getSimpleName();
-			Object domainId = entityFive.getId();
+			Object domainId = ReflectionUtils.createUriIdComposedType(entityFive) ;
 			tagUseCase.pull(domain, domainId, tags);
 		}
 	}
 	
 	/**
 	 * @param tags
+	 * @throws Exception 
 	 */
 	@PostAction
-	public void push(EntityFive entityFive) {
+	public void push(EntityFive entityFive) throws Exception {
 		if(entityFive != null) {
 			String domain = entityFive.getClass().getSimpleName();
-			Object domainId = entityFive.getId();
+			Object domainId = ReflectionUtils.createUriIdComposedType(entityFive) ;
 			tagUseCase.push(domain, domainId);
 		}
 	}

@@ -1,5 +1,6 @@
 package br.com.enginer.domain.example.usecase;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -7,13 +8,21 @@ import br.com.enginer.domain.example.dto.entity.EntitySeven;
 import br.com.enginer.domain.example.dto.entity.EntitySix;
 import br.com.enginer.domain.system.usecase.AbstractUseCase;
 import br.com.enginer.domain.system.usecase.annotation.AutoDependencyInjector;
+import br.com.enginer.domain.system.usecase.annotation.PostAction;
+import br.com.enginer.domain.system.usecase.annotation.PreAction;
 import br.com.enginer.domain.system.usecase.exception.UncheckedException;
 import br.com.enginer.domain.system.usecase.page.PageResult;
+import br.com.enginer.domain.system.usecase.tag.TagUseCase;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
+import br.com.enginer.domain.system.usecase.utils.StringsUtils;
 
 public class EntitySevenUseCase extends AbstractUseCase<EntitySeven> implements br.com.enginer.domain.example.usecase.port.EntitySevenUseCase {
 	
 	@AutoDependencyInjector
 	private EntitySixUseCase entitySixUseCase;
+	
+	@AutoDependencyInjector
+	private TagUseCase tagUseCase;
 
 	@Override
 	public EntitySeven salvar(EntitySeven entitySeven) throws UncheckedException {
@@ -57,6 +66,34 @@ public class EntitySevenUseCase extends AbstractUseCase<EntitySeven> implements 
 			entitySeven.getId().setEntitySix((EntitySix) entitySixUseCase.buscarPorId(new EntitySix(entitySeven.getId().getIdEntitySix())));
 		}
 		return entitySeven;
+	}
+	
+	/**
+	 * @param tags
+	 * @throws Exception 
+	 */
+	@SuppressWarnings("unchecked")
+	@PreAction
+	public void pull(EntitySeven entitySeven) throws Exception {
+		if(entitySeven != null) {
+			List<String> tags = (List<String>) ReflectionUtils.executeMethod(entitySeven, StringsUtils.getMethod("tags"));
+			String domain = entitySeven.getClass().getSimpleName();
+			Object domainId = ReflectionUtils.createUriIdComposedType(entitySeven);
+			tagUseCase.pull(domain, domainId, tags);
+		}
+	}
+	
+	/**
+	 * @param tags
+	 * @throws Exception 
+	 */
+	@PostAction
+	public void push(EntitySeven entitySeven) throws Exception {
+		if(entitySeven != null) {
+			String domain = entitySeven.getClass().getSimpleName();
+			Object domainId = ReflectionUtils.createUriIdComposedType(entitySeven);
+			tagUseCase.push(domain, domainId);
+		}
 	}
 	
 }

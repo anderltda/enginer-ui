@@ -916,7 +916,9 @@ public class FormTemplate {
 		
 		if (domain.getId() != null) {
 			
-			Map<String, Object> filter = Map.of("id.domain", domain.getClass().getSimpleName(), "id.domainId", domain.getId().toString());
+			Object domainId = ReflectionUtils.createUriIdComposedType(domain);
+			
+			Map<String, Object> filter = Map.of("id.domain", domain.getClass().getSimpleName(), "id.domainId", domainId);
 		
 			Object object = ReflectionUtils.executeMethod(useCase, TemplateUseCase.buscarTodos, new br.com.enginer.domain.system.dto.entity.tag.Tag(), filter);
 			

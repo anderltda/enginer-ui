@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
+import br.com.enginer.domain.system.dto.entity.tag.SearchOverlay;
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.usecase.annotation.instance.UIDomain;
 import br.com.enginer.domain.system.usecase.exception.CheckedException;
@@ -61,30 +64,38 @@ public class ActionInboundAdapterPort {
 	// ============================================================================================
 	// SEARCH FOR TAGGING
 	// ============================================================================================
+	// TAGS
+	// ============================================================================================
 	
 	/**
-	 * @param tags
+	 * @param domain
+	 * @param params
 	 * @return
 	 */
 	@GetMapping("/search")
-	public ResponseEntity<List<Domain<?>>> search(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) {
+	public ResponseEntity<SearchOverlay> search(@UIDomain Domain<?> domain, @RequestParam(required = false) String params) {
 	    
 		try {
 			
 			logger.info(ActionInboundAdapterPort.class, "Executando search: " + domain);
-			
-			Map<String, Object> params = new HashMap<>();
-			
-			String resultado = String.join(",", filter.get("tags").toString().split("\\s+"));
-			
-			params.put("id.normalizedName", resultado);
-			params.put("id.normalizedName_op", "in");
-			
-			System.out.println(params);
-			
-			List<Domain<?>> list = actionInboundPort.searchByConditions(domain, params);
-			
-			return ResponseEntity.ok(list);
+
+		    if (params == null || params.trim().isEmpty()) {
+		      return ResponseEntity.ok(new SearchOverlay(List.of(), List.of()));
+		    }
+
+		    String resultado = Arrays.stream(params.trim().split("[,\\s]+"))
+		        .filter(s -> !s.isBlank())
+		        .collect(Collectors.joining(","));
+
+		    Map<String, Object> filters = new HashMap<>();
+		    filters.put("id.normalizedName", resultado);
+		    filters.put("id.normalizedName_op", "in");
+
+		    //List<Domain<?>> users = actionInboundPort.searchByConditions(domain, filters);
+		    
+		    List<Domain<?>> tags = actionInboundPort.searchByConditions(domain, filters);
+		    
+		    return ResponseEntity.ok(new SearchOverlay(tags, tags));
 
 		} catch (Exception ex) {
 			logger.error(ActionInboundAdapterPort.class, ex);
@@ -154,35 +165,6 @@ public class ActionInboundAdapterPort {
 	 */
 	@GetMapping("/download")
 	public ResponseEntity<byte[]> download(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws IOException {
-
-		if(filter != null && filter.isEmpty()) {
-			return ResponseEntity.badRequest().build();
-		}
-		
-		UploadFile file = (UploadFile) actionInboundPort.searchWithBySingleConditions(new UploadFile(), filter);		
-		
-	    Path path = Path.of(file.getPath());
-
-	    byte[] content = Files.readAllBytes(path);
-
-	    return ResponseEntity.ok()
-	            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getName() + "\"")
-	            .header(HttpHeaders.CONTENT_TYPE, file.getType())
-	            .body(content);
-	}	
-	
-	// ============================================================================================
-	// TAGS
-	// ============================================================================================
-	
-	/**
-	 * @param domain
-	 * @param filter
-	 * @return
-	 * @throws IOException
-	 */
-	@GetMapping("/tag")
-	public ResponseEntity<byte[]> tag(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws IOException {
 
 		if(filter != null && filter.isEmpty()) {
 			return ResponseEntity.badRequest().build();

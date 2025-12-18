@@ -1,10 +1,13 @@
 package br.com.enginer.domain.example.dto.entity;
 
+import java.util.List;
+
 import br.com.enginer.domain.system.usecase.annotation.field.UIColumn;
 import br.com.enginer.domain.system.usecase.annotation.field.UIJoin;
 import br.com.enginer.domain.system.usecase.annotation.field.UIRow;
 import br.com.enginer.domain.system.usecase.annotation.field.UIText;
 import br.com.enginer.domain.system.usecase.annotation.field.behavior.UIPosition;
+import br.com.enginer.domain.system.usecase.annotation.field.behavior.UITag;
 import br.com.enginer.domain.system.usecase.annotation.field.behavior.validation.UIFieldValidation;
 import br.com.enginer.domain.system.usecase.annotation.instance.UITitle;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIAction;
@@ -44,7 +47,7 @@ import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
 @UITitle("Setimo")
 @UIButtonAction(
 includes = {
-		// FILTER
+	// FILTER
 	UIButtonFilterClear.class,
 	UIButtonFilterTabNew.class, 
 	UIButtonFilterFormNew.class, 
@@ -152,6 +155,10 @@ public class EntitySeven extends DomainAbstract<EntitySevenId> {
 	@UIColumn(label = "EntitySeven Dado", initial = true)
 	@UIRow(visible = true, editable = true)
 	private String dado;
+	
+	@UIPosition(x = 1, y = 4)
+	@UITag(label = "Tags", disable = false)
+	private transient List<String> tags;
 
 	public EntitySeven() {
 		super();
@@ -177,6 +184,14 @@ public class EntitySeven extends DomainAbstract<EntitySevenId> {
 
 	public void setDado(String dado) {
 		this.dado = dado;
+	}
+	
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
 	}
 
 	@Override

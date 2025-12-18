@@ -221,16 +221,16 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
         	logger.info(ActionInboundUseCase.class, "Action -> " + actionLogger.getActionName());
             
         	/** Injected Dependency */
-        	Object UseCase = injectedDependency(domain);
+        	Object useCase = injectedDependency(domain);
         	
         	/** Executa todos @PreAction */
-        	ReflectionUtils.runAnnotatedMethods(UseCase, PreAction.class, domain);
+        	ReflectionUtils.runAnnotatedMethods(useCase, PreAction.class, domain);
             
         	/** Executa o método real */
-        	Domain<?> newDomain = (Domain<?>) ReflectionUtils.executeMethod(UseCase, actionLogger.getActionName(), domain);
+        	Domain<?> newDomain = (Domain<?>) ReflectionUtils.executeMethod(useCase, actionLogger.getActionName(), domain);
         	
         	/** Executa todos @PostAction */
-        	ReflectionUtils.runAnnotatedMethods(UseCase, PostAction.class, newDomain);
+        	ReflectionUtils.runAnnotatedMethods(useCase, PostAction.class, newDomain);
             
         	return newDomain;
         

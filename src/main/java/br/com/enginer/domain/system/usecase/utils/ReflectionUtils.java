@@ -1036,6 +1036,42 @@ public class ReflectionUtils {
 	}
 	
 	/**
+	 * Cria URI ID para chaves compostas, utilizando o formato de query string, em caso de chaves simples, 
+	 * retorna o ID diretamente.
+	 * @param domain
+	 * @return
+	 * @throws Exception
+	 */
+	public static String createUriIdComposedType(Domain<?> domain) throws Exception {
+		
+		List<String> parts = new ArrayList<>();
+		
+		StringBuilder builder = new StringBuilder();
+		
+		if (ReflectionUtils.isIdComposedType(domain.getId().getClass())) {
+		
+			Domain<?> domainId = (Domain<?>) newInstance(domain.getId().getClass());
+			
+			for (Field field : domainId.getClass().getDeclaredFields()) {
+			
+				if(field.getName().startsWith("id")) {
+					
+					Object value = ReflectionUtils.executeMethod(domain.getId(), StringsUtils.getMethod(field.getName()));
+					
+					parts.add("id." + field.getName() + "=" + value);
+				}
+			}
+			
+			builder.append(String.join("&", parts));
+		
+		} else {
+			builder.append(domain.getId());
+		}
+
+		return builder.toString();
+	}
+	
+	/**
 	 * Metodo responsavel por checar se o DomainId (KeyComposited), todos os campos estao nulos
 	 * @param clazzDomain - Classe dominio (DomainId)
 	 * @param domain - Instancia da classe
