@@ -80,7 +80,7 @@ public class ActionInboundAdapterPort {
 			logger.info(ActionInboundAdapterPort.class, "Executando search: " + domain);
 
 		    if (params == null || params.trim().isEmpty()) {
-		      return ResponseEntity.ok(new SearchOverlay(List.of(), List.of()));
+		      return ResponseEntity.notFound().build();
 		    }
 
 		    String resultado = Arrays.stream(params.trim().split("[,\\s]+"))
@@ -95,6 +95,10 @@ public class ActionInboundAdapterPort {
 		    
 		    List<Domain<?>> tags = actionInboundPort.searchByConditions(domain, filters);
 		    
+		    if(tags == null || tags.isEmpty()) {
+		    	return ResponseEntity.notFound().build();
+		    }
+		    	
 		    return ResponseEntity.ok(new SearchOverlay(tags, tags));
 
 		} catch (Exception ex) {
