@@ -13,9 +13,9 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import br.com.enginer.domain.system.usercase.schema.instance.Domain;
-import br.com.enginer.domain.system.usercase.utils.ReflectionUtils;
-import br.com.enginer.domain.system.usercase.utils.StringsUtils;
+import br.com.enginer.domain.system.usecase.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
+import br.com.enginer.domain.system.usecase.utils.StringsUtils;
 
 /**
  * Utilitários para normalização de dados e JSON.

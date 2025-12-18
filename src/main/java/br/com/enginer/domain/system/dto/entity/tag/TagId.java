@@ -1,7 +1,7 @@
 package br.com.enginer.domain.system.dto.entity.tag;
 
-import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
-import br.com.enginer.domain.system.usercase.schema.instance.DomainId;
+import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.schema.instance.DomainId;
 
 public class TagId extends DomainAbstract<Object[]> implements DomainId {
 

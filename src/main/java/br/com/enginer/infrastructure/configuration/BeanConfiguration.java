@@ -22,18 +22,18 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 
-import br.com.enginer.domain.system.usercase.ActionInboundUserCase;
-import br.com.enginer.domain.system.usercase.SubscriberInboundUserCase;
-import br.com.enginer.domain.system.usercase.UIInboundUserCase;
-import br.com.enginer.domain.system.usercase.port.inbound.api.ActionInboundPort;
-import br.com.enginer.domain.system.usercase.port.inbound.api.UIInboundPort;
-import br.com.enginer.domain.system.usercase.port.inbound.subscriber.SubscriberInboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.logger.LoggerOutboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.publisher.PublisherOutboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.repository.RepositoryOutboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.storage.FileStorageOutboundPort;
-import br.com.enginer.domain.system.usercase.schema.field.type.Id;
-import br.com.enginer.domain.system.usercase.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.ActionInboundUseCase;
+import br.com.enginer.domain.system.usecase.SubscriberInboundUseCase;
+import br.com.enginer.domain.system.usecase.UIInboundUseCase;
+import br.com.enginer.domain.system.usecase.port.inbound.api.ActionInboundPort;
+import br.com.enginer.domain.system.usecase.port.inbound.api.UIInboundPort;
+import br.com.enginer.domain.system.usecase.port.inbound.subscriber.SubscriberInboundPort;
+import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
+import br.com.enginer.domain.system.usecase.port.outbound.publisher.PublisherOutboundPort;
+import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
+import br.com.enginer.domain.system.usecase.schema.field.type.Id;
+import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalDateDeserializer;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalDateTimeDeserializer;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalTimeDeserializer;
@@ -122,7 +122,7 @@ public class BeanConfiguration {
 	 */
 	@Bean
 	UIInboundPort<Domain<?>> uIInboundPort(LoggerOutboundPort logger, RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, PublisherOutboundPort<Domain<?>> publisherOutboundPort) {
-		return new UIInboundUserCase<Domain<?>>(logger, repositoryOutboundPort, publisherOutboundPort);
+		return new UIInboundUseCase<Domain<?>>(logger, repositoryOutboundPort, publisherOutboundPort);
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class BeanConfiguration {
 	 */
 	@Bean
 	ActionInboundPort<Domain<?>> actionInboundPort(LoggerOutboundPort loggerOutboundPort, RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, PublisherOutboundPort<Domain<?>> publisherOutboundPort, FileStorageOutboundPort fileStorageOutboundPort) {
-		return new ActionInboundUserCase<Domain<?>>(loggerOutboundPort, repositoryOutboundPort, publisherOutboundPort, fileStorageOutboundPort);
+		return new ActionInboundUseCase<Domain<?>>(loggerOutboundPort, repositoryOutboundPort, publisherOutboundPort, fileStorageOutboundPort);
 	}
 	
 	/**
@@ -145,6 +145,6 @@ public class BeanConfiguration {
 	 */
 	@Bean
 	SubscriberInboundPort<Domain<?>> subscriberInboundPort(LoggerOutboundPort logger, RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, PublisherOutboundPort<Domain<?>> publisherOutboundPort) {
-		return new SubscriberInboundUserCase<Domain<?>>(logger, repositoryOutboundPort, publisherOutboundPort);
+		return new SubscriberInboundUseCase<Domain<?>>(logger, repositoryOutboundPort, publisherOutboundPort);
 	}
 }

@@ -3,21 +3,21 @@ package br.com.enginer.infrastructure.injector.lazy;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import br.com.enginer.domain.system.usercase.AbstractUserCase;
-import br.com.enginer.domain.system.usercase.port.outbound.OutboundPort;
-import br.com.enginer.domain.system.usercase.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.AbstractUseCase;
+import br.com.enginer.domain.system.usecase.port.outbound.OutboundPort;
+import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 import br.com.enginer.infrastructure.injector.DependencyInjector;
 
 /**
  * LazyProxyHandler
  *
- * Responsável por criar instâncias de UserCases sob demanda,
+ * Responsável por criar instâncias de UseCases sob demanda,
  * injetando automaticamente os OutboundPorts registrados e
  * processando as dependências internas via DependencyInjector.
  *
- * Cada UserCase é instanciado uma única vez (lazy singleton).
+ * Cada UseCase é instanciado uma única vez (lazy singleton).
  */
-public final class LazyProxyHandler<T extends AbstractUserCase<? extends Domain<?>>> {
+public final class LazyProxyHandler<T extends AbstractUseCase<? extends Domain<?>>> {
 
     private final Class<T> targetClass;
     private T instance;
@@ -31,7 +31,7 @@ public final class LazyProxyHandler<T extends AbstractUserCase<? extends Domain<
     private static final String GREEN = "\u001B[32m";
 
     /**
-     * @param targetClass classe concreta do UserCase
+     * @param targetClass classe concreta do UseCase
      */
     public LazyProxyHandler(Class<T> targetClass) {
         this.targetClass = targetClass;
@@ -42,7 +42,7 @@ public final class LazyProxyHandler<T extends AbstractUserCase<? extends Domain<
     // ---------------------------------------------------------------------------------------
 
     /**
-     * Cria ou retorna a instância já inicializada do UserCase.
+     * Cria ou retorna a instância já inicializada do UseCase.
      * Inclui medição de tempo e logs de performance detalhados.
      */
     public synchronized T get() {
@@ -53,7 +53,7 @@ public final class LazyProxyHandler<T extends AbstractUserCase<? extends Domain<
             	
                 long start = System.nanoTime();
 
-                // --- Instancia o UserCase ---
+                // --- Instancia o UseCase ---
                 instance = targetClass.getDeclaredConstructor().newInstance();
 
                 // --- Injeta Outbounds conhecidos ---
@@ -76,7 +76,7 @@ public final class LazyProxyHandler<T extends AbstractUserCase<? extends Domain<
                 initialized = true;
                 
             } catch (Exception e) {
-                throw new RuntimeException("Erro ao inicializar UserCase: " + targetClass.getSimpleName(), e);
+                throw new RuntimeException("Erro ao inicializar UseCase: " + targetClass.getSimpleName(), e);
             }
         }
         
@@ -84,7 +84,7 @@ public final class LazyProxyHandler<T extends AbstractUserCase<? extends Domain<
     }
 
     /**
-     * Reinjeção de todos os OutboundPorts conhecidos no UserCase.
+     * Reinjeção de todos os OutboundPorts conhecidos no UseCase.
      * Esse método é chamado automaticamente sempre que novos Outbounds são registrados.
      */
     public void reinjectOutboundPorts() {

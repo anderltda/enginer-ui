@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -24,20 +25,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
-import br.com.enginer.domain.example.dto.entity.EntityOne;
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
-import br.com.enginer.domain.system.usercase.annotation.instance.UIDomain;
-import br.com.enginer.domain.system.usercase.exception.CheckedException;
-import br.com.enginer.domain.system.usercase.logger.ActionLogger;
-import br.com.enginer.domain.system.usercase.page.PageResult;
-import br.com.enginer.domain.system.usercase.port.inbound.api.ActionInboundPort;
-import br.com.enginer.domain.system.usercase.port.outbound.logger.LoggerOutboundPort;
-import br.com.enginer.domain.system.usercase.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.annotation.instance.UIDomain;
+import br.com.enginer.domain.system.usecase.exception.CheckedException;
+import br.com.enginer.domain.system.usecase.logger.ActionLogger;
+import br.com.enginer.domain.system.usecase.page.PageResult;
+import br.com.enginer.domain.system.usecase.port.inbound.api.ActionInboundPort;
+import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
+import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 import br.com.enginer.infrastructure.utils.NormalizeUtils;
 
 /**
  * Adaptador REST responsável por receber requisições externas
- * e delegar a execução de ações aos casos de uso (UserCases) correspondentes.
+ * e delegar a execução de ações aos casos de uso (UseCases) correspondentes.
  */
 @RestController
 @RequestMapping("/v1/enginer-ui/action")
@@ -47,24 +47,60 @@ public class ActionInboundAdapterPort {
 	private final ObjectMapper objectMapper;
 	private final LoggerOutboundPort logger;
 
+	/**
+	 * @param actionInboundPort
+	 * @param objectMapper
+	 * @param logger
+	 */
 	public ActionInboundAdapterPort(ActionInboundPort<?> actionInboundPort, ObjectMapper objectMapper, LoggerOutboundPort logger) {
 		this.actionInboundPort = actionInboundPort;
 		this.objectMapper = objectMapper;
 		this.logger = logger;
 	}
 	
-	@GetMapping("/pesquisa")
-	public List<EntityOne> search(@RequestParam String q) {
-		
-		List<EntityOne> list = new ArrayList<EntityOne>();
-		
-	    return list;
+	// ============================================================================================
+	// SEARCH FOR TAGGING
+	// ============================================================================================
+	
+	/**
+	 * @param tags
+	 * @return
+	 */
+	@GetMapping("/search")
+	public ResponseEntity<List<Domain<?>>> search(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) {
+	    
+		try {
+			
+			logger.info(ActionInboundAdapterPort.class, "Executando search: " + domain);
+			
+			Map<String, Object> params = new HashMap<>();
+			
+			String resultado = String.join(",", filter.get("tags").toString().split("\\s+"));
+			
+			params.put("id.normalizedName", resultado);
+			params.put("id.normalizedName_op", "in");
+			
+			System.out.println(params);
+			
+			List<Domain<?>> list = actionInboundPort.searchByConditions(domain, params);
+			
+			return ResponseEntity.ok(list);
+
+		} catch (Exception ex) {
+			logger.error(ActionInboundAdapterPort.class, ex);
+			throw ex;
+		}
+	    
 	}	
 
 	// ============================================================================================
 	// CHUNKED UPLOAD
 	// ============================================================================================
 
+	/**
+	 * @return
+	 * @throws CheckedException
+	 */
 	@PostMapping("/session")
     public ResponseEntity<Map<String, String>> startSession() throws CheckedException {
 		
@@ -73,6 +109,13 @@ public class ActionInboundAdapterPort {
         return ResponseEntity.ok(Map.of("uploadId", Objects.toString(uploadId, "")));
     }
 
+    /**
+     * @param uploadId
+     * @param chunkIndex
+     * @param part
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/chunk")
     public ResponseEntity<Void> uploadChunk(@RequestParam String uploadId, @RequestParam int chunkIndex, @RequestParam("file") MultipartFile part) throws Exception {
 
@@ -81,6 +124,12 @@ public class ActionInboundAdapterPort {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * @param uploadId
+     * @param jsonMeta
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/finalize")
     public ResponseEntity<UploadFile> finalizeUpload(@RequestParam String uploadId, @RequestPart("meta") String jsonMeta) throws Exception {
 
@@ -97,6 +146,12 @@ public class ActionInboundAdapterPort {
 	// DOWNLOAD
 	// ============================================================================================
 	
+	/**
+	 * @param domain
+	 * @param filter
+	 * @return
+	 * @throws IOException
+	 */
 	@GetMapping("/download")
 	public ResponseEntity<byte[]> download(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws IOException {
 
@@ -120,6 +175,12 @@ public class ActionInboundAdapterPort {
 	// TAGS
 	// ============================================================================================
 	
+	/**
+	 * @param domain
+	 * @param filter
+	 * @return
+	 * @throws IOException
+	 */
 	@GetMapping("/tag")
 	public ResponseEntity<byte[]> tag(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws IOException {
 
@@ -143,6 +204,13 @@ public class ActionInboundAdapterPort {
 	// VALIDATE ASYNC
 	// ============================================================================================
 
+	/**
+	 * @param domain
+	 * @param method
+	 * @param value
+	 * @return
+	 * @throws CheckedException
+	 */
 	@PostMapping("/validate/{method}/async")
 	public ResponseEntity<Map<String, Boolean>> validate(@UIDomain Domain<?> domain, @PathVariable String method, @RequestBody String value) throws CheckedException {
 
@@ -167,6 +235,12 @@ public class ActionInboundAdapterPort {
 	// AUTOCOMPLETE
 	// ============================================================================================
 
+	/**
+	 * @param domain
+	 * @param filter
+	 * @return
+	 * @throws CheckedException
+	 */
 	@GetMapping("/autocomplete")
 	public ResponseEntity<List<Domain<?>>> autocomplete(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws CheckedException {
 
@@ -185,11 +259,17 @@ public class ActionInboundAdapterPort {
 	}
 
 	// ============================================================================================
-	// SEARCH PAGINADO
+	// RESEARCH PAGINADO
 	// ============================================================================================
 
-	@GetMapping("/search")
-	public ResponseEntity<PageResult<?>> search(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws Exception {
+	/**
+	 * @param domain
+	 * @param filter
+	 * @return
+	 * @throws Exception
+	 */
+	@GetMapping("/research")
+	public ResponseEntity<PageResult<?>> research(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws Exception {
 
 		try {
 			
@@ -210,6 +290,12 @@ public class ActionInboundAdapterPort {
 	// ACTION (CREATE / UPDATE / DELETE)
 	// ============================================================================================
 
+	/**
+	 * @param domain
+	 * @param json
+	 * @return
+	 * @throws CheckedException
+	 */
 	@PostMapping
 	public ResponseEntity<?> action(@UIDomain Domain<?> domain, @RequestBody JsonNode json) throws CheckedException {
 

@@ -2,7 +2,7 @@ package br.com.enginer.domain.system.dto.entity;
 
 import java.time.LocalDateTime;
 
-import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
 
 public class Log extends DomainAbstract<Long> {
 

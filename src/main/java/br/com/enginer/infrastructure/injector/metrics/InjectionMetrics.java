@@ -6,7 +6,7 @@ package br.com.enginer.infrastructure.injector.metrics;
  */
 public final class InjectionMetrics {
 
-    private static int totalUserCases;
+    private static int totalUseCases;
     private static int totalOutboundPorts;
     private static double totalTimeMs;
 
@@ -18,20 +18,20 @@ public final class InjectionMetrics {
     /** 
      * Atualiza o estado atual e registra histórico cumulativo 
      */
-    public static synchronized void update(int userCases, int outbounds, double timeMs) {
-        totalUserCases = userCases;
+    public static synchronized void update(int UseCases, int outbounds, double timeMs) {
+        totalUseCases = UseCases;
         totalOutboundPorts = outbounds;
         totalTimeMs = timeMs;
 
         // adiciona também ao histórico cumulativo
-        InjectionMetricsHistory.addSnapshot(userCases, outbounds, timeMs);
+        InjectionMetricsHistory.addSnapshot(UseCases, outbounds, timeMs);
     }
 
     /**
      * 
      */
     public static synchronized void reset() {
-        totalUserCases = 0;
+        totalUseCases = 0;
         totalOutboundPorts = 0;
         totalTimeMs = 0.0;
         InjectionMetricsHistory.reset();
@@ -40,8 +40,8 @@ public final class InjectionMetrics {
     /**
      * @return
      */
-    public static int getTotalUserCases() {
-        return totalUserCases;
+    public static int getTotalUseCases() {
+        return totalUseCases;
     }
 
     /**
@@ -63,8 +63,8 @@ public final class InjectionMetrics {
      */
     public static String getSummary() {
         return String.format(
-            "UserCases: %d | Outbounds: %d | Tempo total: %.2f ms | Injeções: %d | Média: %.2f ms",
-            totalUserCases,
+            "UseCases: %d | Outbounds: %d | Tempo total: %.2f ms | Injeções: %d | Média: %.2f ms",
+            totalUseCases,
             totalOutboundPorts,
             totalTimeMs,
             InjectionMetricsHistory.getTotalExecutions(),

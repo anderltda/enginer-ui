@@ -2,7 +2,7 @@ package br.com.enginer.infrastructure.configuration;
 
 import org.springframework.core.convert.converter.Converter;
 
-import br.com.enginer.domain.system.usercase.schema.field.type.Id;
+import br.com.enginer.domain.system.usecase.schema.field.type.Id;
 
 /**
  * 

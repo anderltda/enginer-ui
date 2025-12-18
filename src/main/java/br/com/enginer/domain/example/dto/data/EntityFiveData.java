@@ -2,7 +2,7 @@ package br.com.enginer.domain.example.dto.data;
 
 import java.util.Objects;
 
-import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
 
 public class EntityFiveData extends DomainAbstract<String> {
 

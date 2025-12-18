@@ -10,7 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import br.com.enginer.domain.system.usercase.exception.CheckedException;
+import br.com.enginer.domain.system.usecase.exception.CheckedException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice

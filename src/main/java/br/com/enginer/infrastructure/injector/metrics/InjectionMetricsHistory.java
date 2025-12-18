@@ -22,8 +22,8 @@ public final class InjectionMetricsHistory {
     /** 
      * Adiciona uma nova entrada e atualiza estatísticas acumuladas 
      */
-    public static synchronized void addSnapshot(int userCases, int outbounds, double timeMs) {
-        InjectionSnapshot snapshot = new InjectionSnapshot(LocalDateTime.now(), userCases, outbounds, timeMs);
+    public static synchronized void addSnapshot(int UseCases, int outbounds, double timeMs) {
+        InjectionSnapshot snapshot = new InjectionSnapshot(LocalDateTime.now(), UseCases, outbounds, timeMs);
 
         if (HISTORY.size() >= MAX_HISTORY) {
             HISTORY.remove(0); // remove o mais antigo
@@ -70,19 +70,19 @@ public final class InjectionMetricsHistory {
     public static final class InjectionSnapshot {
     	
         private final LocalDateTime timestamp;
-        private final int userCases;
+        private final int usecases;
         private final int outbounds;
         private final double timeMs;
 
         /**
          * @param timestamp
-         * @param userCases
+         * @param usecases
          * @param outbounds
          * @param timeMs
          */
-        public InjectionSnapshot(LocalDateTime timestamp, int userCases, int outbounds, double timeMs) {
+        public InjectionSnapshot(LocalDateTime timestamp, int usecases, int outbounds, double timeMs) {
             this.timestamp = timestamp;
-            this.userCases = userCases;
+            this.usecases = usecases;
             this.outbounds = outbounds;
             this.timeMs = timeMs;
         }
@@ -97,8 +97,8 @@ public final class InjectionMetricsHistory {
         /**
          * @return
          */
-        public int getUserCases() {
-            return userCases;
+        public int getUseCases() {
+            return usecases;
         }
 
         /**
@@ -121,8 +121,8 @@ public final class InjectionMetricsHistory {
         @Override
         public String toString() {
             String formatted = timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            return String.format("[%s] UserCases: %d | Outbounds: %d | Tempo: %.2f ms",
-                    formatted, userCases, outbounds, timeMs);
+            return String.format("[%s] UseCases: %d | Outbounds: %d | Tempo: %.2f ms",
+                    formatted, usecases, outbounds, timeMs);
         }
     }
 }

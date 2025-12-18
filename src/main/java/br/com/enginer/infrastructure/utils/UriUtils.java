@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 import org.springframework.web.util.UriBuilder;
 
-import br.com.enginer.domain.system.usercase.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 
 /**
  * 

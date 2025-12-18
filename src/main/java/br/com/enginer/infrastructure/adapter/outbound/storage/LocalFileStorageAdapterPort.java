@@ -14,7 +14,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import br.com.enginer.domain.system.usercase.port.outbound.storage.FileStorageOutboundPort;
+import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
 
 
 /**

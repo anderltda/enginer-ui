@@ -1,0 +1,54 @@
+package br.com.enginer.domain.system.usecase.schema.instance;
+
+/**
+ * 
+ */
+public class ActionResponseError {
+
+	private String redirect;
+	private String ui;
+	private String param;
+	private String clientMethod;
+	private String serverMethod;
+
+	public String getRedirect() {
+		return redirect;
+	}
+
+	public void setRedirect(String redirect) {
+		this.redirect = redirect;
+	}
+
+	public String getUi() {
+		return ui;
+	}
+
+	public void setUi(String ui) {
+		this.ui = ui;
+	}
+
+	public String getParam() {
+		return param;
+	}
+
+	public void setParam(String param) {
+		this.param = param;
+	}
+
+	public String getClientMethod() {
+		return clientMethod;
+	}
+
+	public void setClientMethod(String clientMethod) {
+		this.clientMethod = clientMethod;
+	}
+
+	public String getServerMethod() {
+		return serverMethod;
+	}
+
+	public void setServerMethod(String serverMethod) {
+		this.serverMethod = serverMethod;
+	}
+
+}

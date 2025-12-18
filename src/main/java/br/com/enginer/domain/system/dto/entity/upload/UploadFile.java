@@ -4,12 +4,66 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 
-import br.com.enginer.domain.system.usercase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.annotation.instance.UITitle;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.UIButtonAction;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterClear;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterFormNew;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterSearch;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterTabNew;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormBack;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormClear;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormDelete;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormEdit;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormSave;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorSave;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowAdd;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowBack;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowClear;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowDelete;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowEdit;
+import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIConfig;
+import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIPaginator;
+import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
 
 /**
  * Representa um arquivo enviado ao sistema, incluindo seus metadados e
  * informações de armazenamento.
  */
+@UITitle("Tag")
+@UIButtonAction(
+includes = {
+	// FILTER
+	UIButtonFilterClear.class,
+	UIButtonFilterTabNew.class, 
+	UIButtonFilterFormNew.class, 
+	UIButtonFilterSearch.class, 
+	// FORM
+	UIButtonFormClear.class, 
+	UIButtonFormBack.class, 
+	UIButtonFormDelete.class,
+	UIButtonFormEdit.class, 
+	UIButtonFormSave.class,
+	// ROW
+	UIButtonRowClear.class, 
+	UIButtonRowBack.class,
+	UIButtonRowAdd.class
+} 
+)
+@UIPaginator(
+	config = @UIConfig(expandable = false, multiSelectable = false),
+	actions = @UIButtonAction(
+	includes = { 
+		UIButtonPaginatorView.class, 
+		UIButtonPaginatorEdit.class, 
+		UIButtonPaginatorDelete.class,
+		UIButtonPaginatorSave.class,
+		UIButtonRowEdit.class,
+		UIButtonRowDelete.class
+	}
+))
 public class UploadFile extends DomainAbstract<Long> {
 
 	private Long id;

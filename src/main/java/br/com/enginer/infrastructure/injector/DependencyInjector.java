@@ -7,20 +7,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import br.com.enginer.domain.system.usercase.AbstractUserCase;
-import br.com.enginer.domain.system.usercase.annotation.AutoDependencyInjector;
-import br.com.enginer.domain.system.usercase.port.outbound.DependencyInjectorPort;
-import br.com.enginer.domain.system.usercase.port.outbound.OutboundPort;
-import br.com.enginer.domain.system.usercase.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.AbstractUseCase;
+import br.com.enginer.domain.system.usecase.annotation.AutoDependencyInjector;
+import br.com.enginer.domain.system.usecase.port.outbound.DependencyInjectorPort;
+import br.com.enginer.domain.system.usecase.port.outbound.OutboundPort;
+import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 import br.com.enginer.infrastructure.injector.lazy.LazyProxyHandler;
 import br.com.enginer.infrastructure.injector.metrics.InjectionMetrics;
 import br.com.enginer.infrastructure.injector.metrics.InjectionMetricsHistory;
 
 /**
- * Gerencia o registro e injeção de dependências entre UserCases e OutboundPorts.
+ * Gerencia o registro e injeção de dependências entre UseCases e OutboundPorts.
  * 
  * Localizado na camada de INFRAESTRUTURA, este componente:
- *  - mantém caches globais de UserCases e OutboundPorts,
+ *  - mantém caches globais de UseCases e OutboundPorts,
  *  - executa injeção reflexiva hierárquica (@AutoDependencyInjector),
  *  - coleta métricas de performance,
  *  - registra histórico cumulativo de injeções.
@@ -57,10 +57,10 @@ public final class DependencyInjector implements DependencyInjectorPort {
     }
 
     /** 
-     * Retorna (ou cria) um LazyProxyHandler para o UserCase informado 
+     * Retorna (ou cria) um LazyProxyHandler para o UseCase informado 
      */
     @SuppressWarnings("unchecked")
-    public static <T extends AbstractUserCase<? extends Domain<?>>> LazyProxyHandler<T> getLazyHandler(Class<T> clazz) {
+    public static <T extends AbstractUseCase<? extends Domain<?>>> LazyProxyHandler<T> getLazyHandler(Class<T> clazz) {
         return (LazyProxyHandler<T>) LAZY_CACHE.computeIfAbsent(clazz, c -> new LazyProxyHandler<>(clazz));
     }
 
@@ -71,7 +71,7 @@ public final class DependencyInjector implements DependencyInjectorPort {
     /**
      * {@inheritDoc}
      * 
-     * Registra OutboundPorts no cache global e reinjeta em todos os UserCases ativos,
+     * Registra OutboundPorts no cache global e reinjeta em todos os UseCases ativos,
      * medindo o tempo total da operação e atualizando métricas globais.
      */
     @Override
@@ -104,13 +104,13 @@ public final class DependencyInjector implements DependencyInjectorPort {
             }
         }
 
-        int totalUserCases = LAZY_CACHE.size();
+        int totalUseCases = LAZY_CACHE.size();
 
-        // --- Reinjeção de dependências em UserCases já carregados ---
-        if (totalUserCases > 0) {
+        // --- Reinjeção de dependências em UseCases já carregados ---
+        if (totalUseCases > 0) {
         	
             if (LOG_VERBOSE && !LOG_PERFORMANCE_ONLY) {
-                System.out.printf(BLUE + "   [Injector] " + RESET + "Reaplicando dependências em %d UserCases...%n", totalUserCases);
+                System.out.printf(BLUE + "   [Injector] " + RESET + "Reaplicando dependências em %d UseCases...%n", totalUseCases);
             }
 
             long reinjectStart = System.nanoTime();
@@ -133,16 +133,16 @@ public final class DependencyInjector implements DependencyInjectorPort {
         
         double totalMs = (end - start) / 1_000_000.0;
 
-        InjectionMetrics.update(totalUserCases, count, totalMs);
+        InjectionMetrics.update(totalUseCases, count, totalMs);
         
-        printSummary(totalMs, count, totalUserCases);
+        printSummary(totalMs, count, totalUseCases);
         
     }
 
     /** 
      * Exibe um resumo da injeção 
      */
-    private static void printSummary(double totalMs, int outbounds, int userCases) {
+    private static void printSummary(double totalMs, int outbounds, int UseCases) {
     	
         int totalExecutions = InjectionMetricsHistory.getTotalExecutions();
         
@@ -150,14 +150,14 @@ public final class DependencyInjector implements DependencyInjectorPort {
 
         if (LOG_PERFORMANCE_ONLY) {
         	
-            System.out.printf(MAGENTA + " → Injeção concluída | UserCases: %d | Outbounds: %d | Tempo: %.2f ms | Execuções: %d | Média: %.2f ms%n" + RESET, userCases, outbounds, totalMs, totalExecutions, avgTime);
+            System.out.printf(MAGENTA + " → Injeção concluída | UseCases: %d | Outbounds: %d | Tempo: %.2f ms | Execuções: %d | Média: %.2f ms%n" + RESET, UseCases, outbounds, totalMs, totalExecutions, avgTime);
             
             return;
         }
 
         // Modo detalhado (DEV)
         System.out.printf("%n" + BOLD + MAGENTA + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━%n" + "   → Injeção concluída com sucesso%n" + RESET);
-        System.out.printf(BOLD + CYAN + "   → UserCases ativos:  %-4d%n", userCases);
+        System.out.printf(BOLD + CYAN + "   → UseCases ativos:  %-4d%n", UseCases);
         System.out.printf(BOLD + CYAN + "   → OutboundPorts:     %-4d%n", outbounds);
         System.out.printf(BOLD + CYAN + "   → Tempo total:       %.2f ms%n", totalMs);
         System.out.printf(MAGENTA + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━%n" + RESET);
@@ -173,15 +173,15 @@ public final class DependencyInjector implements DependencyInjectorPort {
      * {@inheritDoc} 
      */
     @Override
-    public void processDependencies(AbstractUserCase<?> root) {
+    public void processDependencies(AbstractUseCase<?> root) {
         if (root == null) return;
         processDependenciesInternal(root, new HashSet<>(), 0);
     }
 
     /** 
-     * Injeção recursiva de UserCases dependentes 
+     * Injeção recursiva de UseCases dependentes 
      */
-    private static void processDependenciesInternal(AbstractUserCase<?> root, Set<Class<?>> visited, int depth) {
+    private static void processDependenciesInternal(AbstractUseCase<?> root, Set<Class<?>> visited, int depth) {
     	
         if (!visited.add(root.getClass())) return;
 
@@ -191,12 +191,12 @@ public final class DependencyInjector implements DependencyInjectorPort {
             
             Class<?> type = field.getType();
             
-            if (!AbstractUserCase.class.isAssignableFrom(type)) continue;
+            if (!AbstractUseCase.class.isAssignableFrom(type)) continue;
 
             @SuppressWarnings("unchecked")
-            Class<? extends AbstractUserCase<?>> userCaseImplClass = (Class<? extends AbstractUserCase<?>>) resolveImplementationClass(type);
+            Class<? extends AbstractUseCase<?>> UseCaseImplClass = (Class<? extends AbstractUseCase<?>>) resolveImplementationClass(type);
 
-            AbstractUserCase<?> dependency = getLazyHandler(userCaseImplClass).get();
+            AbstractUseCase<?> dependency = getLazyHandler(UseCaseImplClass).get();
             
             field.setAccessible(true);
             
@@ -205,7 +205,7 @@ public final class DependencyInjector implements DependencyInjectorPort {
                 field.set(root, dependency);
                 
             } catch (IllegalAccessException ex) {
-                throw new RuntimeException("Erro ao injetar " + userCaseImplClass.getSimpleName() + " em " + root.getClass().getSimpleName(), ex);
+                throw new RuntimeException("Erro ao injetar " + UseCaseImplClass.getSimpleName() + " em " + root.getClass().getSimpleName(), ex);
             }
 
             processDependenciesInternal(dependency, visited, depth + 1);
@@ -217,7 +217,7 @@ public final class DependencyInjector implements DependencyInjectorPort {
     // ---------------------------------------------------------------------------------------
 
     /** 
-     * Resolve automaticamente a classe concreta de uma interface de UserCase. 
+     * Resolve automaticamente a classe concreta de uma interface de UseCase. 
      */
     private static Class<?> resolveImplementationClass(Class<?> iface) {
     	
@@ -272,7 +272,7 @@ public final class DependencyInjector implements DependencyInjectorPort {
     /** 
      * Método público para injetar Outbounds e processar dependências em um domínio raiz 
      */
-    public static void addOutboundPort(AbstractUserCase<?> domain, OutboundPort... outboundPorts) {
+    public static void addOutboundPort(AbstractUseCase<?> domain, OutboundPort... outboundPorts) {
     	
         if (domain == null || outboundPorts == null) return;
         

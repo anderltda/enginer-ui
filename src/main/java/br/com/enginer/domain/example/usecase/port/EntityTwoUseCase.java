@@ -1,0 +1,11 @@
+package br.com.enginer.domain.example.usecase.port;
+
+import br.com.enginer.domain.example.dto.entity.EntityTwo;
+import br.com.enginer.domain.system.usecase.ActionUseCase;
+
+/**
+ * 
+ */
+public interface EntityTwoUseCase extends ActionUseCase<EntityTwo> {
+
+}
