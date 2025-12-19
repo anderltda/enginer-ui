@@ -31,6 +31,7 @@ import br.com.enginer.domain.system.usecase.port.inbound.subscriber.SubscriberIn
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.publisher.PublisherOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usecase.port.outbound.repository.TagRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
 import br.com.enginer.domain.system.usecase.schema.field.type.Id;
 import br.com.enginer.domain.system.usecase.schema.instance.Domain;
@@ -127,14 +128,15 @@ public class BeanConfiguration {
 
 	/**
 	 * @param loggerOutboundPort
+	 * @param tagRepositoryOutboundPort
 	 * @param repositoryOutboundPort
 	 * @param publisherOutboundPort
 	 * @param fileStorageOutboundPort
 	 * @return
 	 */
 	@Bean
-	ActionInboundPort<Domain<?>> actionInboundPort(LoggerOutboundPort loggerOutboundPort, RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, PublisherOutboundPort<Domain<?>> publisherOutboundPort, FileStorageOutboundPort fileStorageOutboundPort) {
-		return new ActionInboundUseCase<Domain<?>>(loggerOutboundPort, repositoryOutboundPort, publisherOutboundPort, fileStorageOutboundPort);
+	ActionInboundPort<Domain<?>> actionInboundPort(LoggerOutboundPort loggerOutboundPort, TagRepositoryOutboundPort tagRepositoryOutboundPort, RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, PublisherOutboundPort<Domain<?>> publisherOutboundPort, FileStorageOutboundPort fileStorageOutboundPort) {
+		return new ActionInboundUseCase<Domain<?>>(loggerOutboundPort, tagRepositoryOutboundPort, repositoryOutboundPort, publisherOutboundPort, fileStorageOutboundPort);
 	}
 	
 	/**

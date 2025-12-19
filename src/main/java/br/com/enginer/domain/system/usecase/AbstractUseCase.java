@@ -1,9 +1,16 @@
 package br.com.enginer.domain.system.usecase;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
+import br.com.enginer.domain.system.dto.entity.tag.Tag;
+import br.com.enginer.domain.system.dto.entity.tag.TagId;
 import br.com.enginer.domain.system.usecase.annotation.PostAction;
 import br.com.enginer.domain.system.usecase.annotation.PreAction;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
@@ -14,12 +21,14 @@ import br.com.enginer.domain.system.usecase.port.outbound.OutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.publisher.PublisherOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usecase.port.outbound.repository.TagRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
 import br.com.enginer.domain.system.usecase.schema.Form;
 import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainId;
 import br.com.enginer.domain.system.usecase.template.FormTemplate;
 import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
+import br.com.enginer.domain.system.usecase.utils.StringsUtils;
 import br.com.enginer.infrastructure.adapter.outbound.repository.TypeRepository;
 import br.com.enginer.infrastructure.injector.DependencyInjector;
 
@@ -28,6 +37,11 @@ import br.com.enginer.infrastructure.injector.DependencyInjector;
  * Agora totalmente tipada com <T extends Domain<?>>.
  */
 public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUseCase<T>, ActionUseCase<T> {
+	
+	/** 
+	 * Lista de Tags para o domínio atual.
+	 */
+	private List<Tag> entities;
 
 	/** 
 	 * Port de log.
@@ -48,6 +62,11 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 	 * Port de publicação de eventos (também pode ser genérico).
 	 */
     protected FileStorageOutboundPort fileStorageOutboundPort;
+    
+    /** 
+	 * Port de acesso a dados para Tags.
+	 */
+    protected TagRepositoryOutboundPort tagRepositoryOutboundPort;
 
     /** 
 	 * 
@@ -102,6 +121,16 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 	public LoggerOutboundPort getLoggerOutboundPort() {
 		return loggerOutboundPort;
 	}
+	
+	@Override
+    public void setTagRepositoryOutboundPort(TagRepositoryOutboundPort tagRepositoryOutboundPort) {
+        this.tagRepositoryOutboundPort = tagRepositoryOutboundPort;
+    }
+
+	@Override
+    public TagRepositoryOutboundPort getTagRepositoryOutboundPort() {
+        return tagRepositoryOutboundPort;
+    }
 
 	/** 
 	 * --------------------------------------------------------------------------------------------
@@ -319,7 +348,6 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 		return repositoryOutboundPort.findAll(domain, filter);
 	}
 	
-	
 	/** 
 	 * --------------------------------------------------------------------------------------------
 	 * Metodos que serao executados antes e depois do metodo real chamado
@@ -328,11 +356,94 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 	@PreAction
 	public void pre(T domain) {
 		System.out.println("Pré-execução: validando...");
+		pull(domain);
 	}
 
 	@PostAction
 	public void post(T domain) {
 		System.out.println("Pós-execução: auditando...");
+		push(domain);
+	}
+	
+	/** 
+	 * --------------------------------------------------------------------------------------------
+	 * Metodos para manipulação de Tags
+	 * --------------------------------------------------------------------------------------------
+     **/
+	@SuppressWarnings("unchecked")
+	public void pull(T t) {
+		
+		try {
+			
+			if(t == null) return;
+		
+			List<String> tags = (List<String>) ReflectionUtils.executeMethod(t, StringsUtils.getMethod("tags"));
+			String domain = t.getClass().getSimpleName();
+			Object domainId = ReflectionUtils.createUriIdComposedType(t);
+
+			entities = new ArrayList<Tag>();
+
+			Optional.ofNullable(tags)
+					.orElse(List.of())
+					.stream()
+					.filter(Objects::nonNull)
+					.map(String::trim)
+					.filter(s -> !s.isEmpty())
+					.forEach(name -> {
+						TagId tagId = new TagId();
+						tagId.setNormalizedName(name.toLowerCase());
+						tagId.setDomain(null);
+						tagId.setDomainId(null);
+
+						Tag tag = new Tag();
+						tag.setId(tagId);
+						tag.setName(name);
+						tag.setCreatedAt(LocalDateTime.now());
+
+						entities.add(tag);
+					});
+
+			if (domainId != null) {
+				
+				Map<String, Object> filter = new HashMap<String, Object>();
+				filter.put("id.domain", domain);
+				filter.put("id.domainId", domainId);
+				
+				List<Tag> tagzz = tagRepositoryOutboundPort.findAll(new Tag(), filter);
+				
+				tagzz.forEach(tag -> {
+					filter.clear();
+					filter.put("normalizedName", tag.getId().getNormalizedName());
+					filter.put("domain", tag.getId().getDomain());
+					filter.put("domainId", tag.getId().getDomainId());
+					tagRepositoryOutboundPort.delete(new Tag(), filter);
+				});
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	public void push(T t) {
+
+		try {
+
+			if (t == null) return;
+			
+			String domain = t.getClass().getSimpleName();
+			
+			Object domainId = ReflectionUtils.createUriIdComposedType(t);
+			
+			entities.forEach(tag -> {
+				tag.getId().setDomain(domain);
+				tag.getId().setDomainId(domainId.toString());
+				tagRepositoryOutboundPort.save(tag);
+			});
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	/** 

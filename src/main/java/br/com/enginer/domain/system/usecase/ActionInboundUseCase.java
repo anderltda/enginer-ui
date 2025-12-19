@@ -12,6 +12,7 @@ import br.com.enginer.domain.system.usecase.port.inbound.api.ActionInboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.publisher.PublisherOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usecase.port.outbound.repository.TagRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
 import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
@@ -23,22 +24,22 @@ import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundPort<T> {
 
     private final LoggerOutboundPort logger;
+    private final TagRepositoryOutboundPort tagRepositoryOutboundPort;
     private final RepositoryOutboundPort<Domain<?>> repositoryOutboundPort;
     private final PublisherOutboundPort<Domain<?>> publisherOutboundPort;
     private final FileStorageOutboundPort fileStorageOutboundPort;
 
-    /**
-     * @param logger
-     * @param repositoryOutboundPort
-     * @param publisherOutboundPort
-     * @param fileStorageOutboundPort
-     */
-    public ActionInboundUseCase(LoggerOutboundPort logger, 
-    		RepositoryOutboundPort<Domain<?>> repositoryOutboundPort,
-			PublisherOutboundPort<Domain<?>> publisherOutboundPort, 
+	/**
+	 * Construtor com injeção de dependências.
+	 */
+    public ActionInboundUseCase(
+			LoggerOutboundPort logger,
+			TagRepositoryOutboundPort tagRepositoryOutboundPort,
+			RepositoryOutboundPort<Domain<?>> repositoryOutboundPort,
+			PublisherOutboundPort<Domain<?>> publisherOutboundPort,
 			FileStorageOutboundPort fileStorageOutboundPort) {
-		super();
 		this.logger = logger;
+		this.tagRepositoryOutboundPort = tagRepositoryOutboundPort;
 		this.repositoryOutboundPort = repositoryOutboundPort;
 		this.publisherOutboundPort = publisherOutboundPort;
 		this.fileStorageOutboundPort = fileStorageOutboundPort;
@@ -50,6 +51,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
     private Object injectedDependency(Domain<?> domain) throws Exception {
         return ReflectionUtils.executeInjectedDependencyUseCaseCached(domain.getClass(), 
         		logger,
+        		tagRepositoryOutboundPort,
         		repositoryOutboundPort, 
         		publisherOutboundPort, 
         		fileStorageOutboundPort);
