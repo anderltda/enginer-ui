@@ -74,7 +74,7 @@ import br.com.enginer.domain.system.usecase.utils.StringsUtils;
 		UIButtonTabFinish.class
 	}
 )
-@UIPaginator(config = @UIConfig(expandable = true, editableAll = true, multiSelectable = false), 
+@UIPaginator(config = @UIConfig(editableAll = true), 
 actions = @UIButtonAction(
 	includes = {
 		UIButtonPaginatorView.class, 

@@ -63,14 +63,15 @@ public class EntityOneUseCase extends AbstractUseCase<EntityOne> implements br.c
 				EntityFive entityFive = (EntityFive) entityFiveUseCase.buscarPorId(entityFour.getEntityFive());
 				
 				EntityNine entityNine = (EntityNine) entityNineUseCase.buscarPorId(entityOne.getEntityNine());
-				EntityEight entityEight = (EntityEight) entityEightUseCase.buscarPorId(new EntityEight(entityNine.getId().getIdEntityEight()));
 				
-				EntitySeven entitySeven = (EntitySeven) entitySevenUseCase.buscarPorId(new EntitySeven(new EntitySevenId(entityNine.getId().getIdEntitySeven(), entityNine.getId().getIdEntitySix())));
-				EntitySix entitySix = (EntitySix) entitySixUseCase.buscarPorId(new EntitySix(entityNine.getId().getIdEntitySix()));
-				entitySeven.getId().setEntitySix(entitySix);
-				
-				entityNine.getId().setEntityEight(entityEight);
-				entityNine.getId().setEntitySeven(entitySeven);
+				if(entityNine != null) {
+					EntityEight entityEight = (EntityEight) entityEightUseCase.buscarPorId(new EntityEight(entityNine.getId().getIdEntityEight()));
+					EntitySeven entitySeven = (EntitySeven) entitySevenUseCase.buscarPorId(new EntitySeven(new EntitySevenId(entityNine.getId().getIdEntitySeven(), entityNine.getId().getIdEntitySix())));
+					EntitySix entitySix = (EntitySix) entitySixUseCase.buscarPorId(new EntitySix(entityNine.getId().getIdEntitySix()));
+					entitySeven.getId().setEntitySix(entitySix);
+					entityNine.getId().setEntityEight(entityEight);
+					entityNine.getId().setEntitySeven(entitySeven);
+				}
 				
 				entityOne.setEntityNine(entityNine);
 
