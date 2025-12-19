@@ -371,15 +371,15 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 	 * --------------------------------------------------------------------------------------------
      **/
 	@SuppressWarnings("unchecked")
-	public void pull(T t) {
+	public void pull(T type) {
 		
 		try {
 			
-			if(t == null) return;
+			if(type == null) return;
 		
-			List<String> tags = (List<String>) ReflectionUtils.executeMethod(t, StringsUtils.getMethod("tags"));
-			String domain = t.getClass().getSimpleName();
-			Object domainId = ReflectionUtils.createUriIdComposedType(t);
+			List<String> tags = (List<String>) ReflectionUtils.executeMethod(type, StringsUtils.getMethod("tags"));
+			String domain = type.getClass().getSimpleName();
+			Object domainId = ReflectionUtils.createUriIdComposedType(type);
 
 			entities = new ArrayList<Tag>();
 
@@ -409,9 +409,9 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 				filter.put("id.domain", domain);
 				filter.put("id.domainId", domainId);
 				
-				List<Tag> tagzz = tagRepositoryOutboundPort.findAll(new Tag(), filter);
+				List<Tag> tagsFindAll = tagRepositoryOutboundPort.findAll(new Tag(), filter);
 				
-				tagzz.forEach(tag -> {
+				tagsFindAll.forEach(tag -> {
 					filter.clear();
 					filter.put("normalizedName", tag.getId().getNormalizedName());
 					filter.put("domain", tag.getId().getDomain());
@@ -425,15 +425,15 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 		}
 	}
 	
-	public void push(T t) {
+	public void push(T type) {
 
 		try {
 
-			if (t == null) return;
+			if (type == null) return;
 			
-			String domain = t.getClass().getSimpleName();
+			String domain = type.getClass().getSimpleName();
 			
-			Object domainId = ReflectionUtils.createUriIdComposedType(t);
+			Object domainId = ReflectionUtils.createUriIdComposedType(type);
 			
 			entities.forEach(tag -> {
 				tag.getId().setDomain(domain);
