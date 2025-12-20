@@ -7,4 +7,4 @@ import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 /**
  * 
  */
-public record SearchOverlay(List<Domain<?>> users, List<Domain<?>> tags) {}
+public record SearchOverlay(List<Domain<?>> globais, List<Domain<?>> system) {}

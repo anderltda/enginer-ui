@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -325,17 +326,30 @@ public class ReflectionUtils {
 	 * @param pattern
 	 */
 	private static void extractFields(Class<?> clazz, Class<?> classLimit, List<Field> visited, String pattern) {
-		if (clazz != null && !clazz.equals(classLimit)) {
-			for (Field field : clazz.getDeclaredFields()) {
-				if (!visited.contains(field) && field.getName().matches(pattern)) {
-					visited.add(field);
-				}
-			}
-			Class<?> superClass = clazz.getSuperclass();
-			if (superClass != null && !Modifier.isAbstract(superClass.getModifiers())) {
-				extractFields(superClass, classLimit, visited, pattern);
-			}
-		}
+	    if (clazz == null || clazz.equals(classLimit) || clazz.equals(Object.class)) return;
+
+	    for (Field field : clazz.getDeclaredFields()) {
+	        int mod = field.getModifiers();
+	        if (Modifier.isStatic(mod) || field.isSynthetic()) continue;
+
+	        if (field.getName().matches(pattern) && !containsByName(visited, field.getName())) {
+	            visited.add(field);
+	        }
+	    }
+
+	    extractFields(clazz.getSuperclass(), classLimit, visited, pattern);
+	}
+
+	/**
+	 * @param fields
+	 * @param name
+	 * @return
+	 */
+	private static boolean containsByName(List<Field> fields, String name) {
+	    for (Field f : fields) {
+	        if (f.getName().equals(name)) return true;
+	    }
+	    return false;
 	}
 
 	/**
@@ -358,31 +372,55 @@ public class ReflectionUtils {
 		}
 	}
 
+	private static void extractFieldsRecursively(
+	        Class<?> clazz,
+	        Class<?> classLimit,
+	        Set<Class<?>> visited,
+	        List<Field> result) {
+
+	    if (clazz == null || clazz.equals(classLimit) || clazz.equals(Object.class)) return;
+
+	    // Evita loop/duplicidade por classe
+	    if (!visited.add(clazz)) return;
+
+	    // 1) Coleta fields da classe + de TODAS as superclasses (incluindo abstract)
+	    for (Class<?> c = clazz; c != null && !c.equals(classLimit) && !c.equals(Object.class); c = c.getSuperclass()) {
+
+	        for (Field field : c.getDeclaredFields()) {
+
+	            // (opcional) ignore static / synthetic
+	            int mod = field.getModifiers();
+	            if (java.lang.reflect.Modifier.isStatic(mod) || field.isSynthetic()) continue;
+
+	            // evita duplicar mesmo nome (caso tenha shadowing)
+	            // se você quiser permitir shadowing, remova esse if
+	            if (containsField(result, field)) continue;
+
+	            result.add(field);
+
+	            Class<?> fieldType = field.getType();
+
+	            // 2) Só recursa para tipos “complexos” (não primitives/java.lang/UUID etc.)
+	            if (!isTypeId(fieldType)) {
+	                extractFieldsRecursively(fieldType, classLimit, visited, result);
+	            }
+	        }
+	    }
+	}
+
 	/**
-	 * @param clazz
-	 * @param classLimit
-	 * @param visited
 	 * @param result
+	 * @param candidate
+	 * @return
 	 */
-	private static void extractFieldsRecursively(Class<?> clazz, Class<?> classLimit, Set<Class<?>> visited,
-			List<Field> result) {
-
-		if (clazz == null || clazz.equals(classLimit) || visited.contains(clazz))
-			return;
-
-		visited.add(clazz);
-
-		for (Field field : clazz.getDeclaredFields()) {
-			Class<?> fieldType = field.getType();
-			if (isTypeId(fieldType)) {
-				result.add(field);
-			} else {
-				result.add(field);
-				extractFieldsRecursively(fieldType, classLimit, visited, result);
-			}
-		}
-		extractFieldsRecursively(clazz.getSuperclass(), classLimit, visited, result);
-
+	private static boolean containsField(List<Field> result, Field candidate) {
+	    for (Field f : result) {
+	        if (f.getName().equals(candidate.getName())
+	                && f.getDeclaringClass().equals(candidate.getDeclaringClass())) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 
 	/**
@@ -1133,4 +1171,37 @@ public class ReflectionUtils {
 	        }
 	    }
 	}
+	
+	/**
+     * Normaliza um texto mantendo apenas letras e números,
+     * removendo espaços, acentos e caracteres especiais,
+     * e convertendo para lowercase.
+     * @param input texto de entrada
+     */
+    public static String normalizeAlphaNumeric(String input) {
+        if (input == null) return null;
+        // Remove acentos (Unicode normalization)
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
+        // Mantém somente letras e números
+        normalized = normalized.replaceAll("[^a-zA-Z0-9]", "");
+        // Lowercase
+        return normalized.toLowerCase();
+    }
+    
+
+    /**
+     * Normaliza mantendo espaços internos.
+     * Ex: "Carlos Antônio" -> "carlos antonio"
+     */
+    public static String normalizeKeepingSpaces(String input) {
+        if (input == null) return null;
+
+        String normalized = java.text.Normalizer.normalize(input, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
+
+        // mantém letras, números e espaço
+        normalized = normalized.replaceAll("[^a-zA-Z0-9 ]", "");
+
+        return normalized.toLowerCase().trim().replaceAll("\\s+", " ");
+    }
 }

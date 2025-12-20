@@ -131,6 +131,7 @@ public class Tag extends DomainAbstract<TagId> {
 	private TagId id;
 	
 	private String name;
+	private TagType type;
 	private LocalDateTime createdAt;
 
 	@Override
@@ -156,6 +157,14 @@ public class Tag extends DomainAbstract<TagId> {
 
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
+	}
+	
+	public TagType getType() {
+		return type;
+	}
+	
+	public void setType(TagType type) {
+		this.type = type;
 	}
 
 	@Override

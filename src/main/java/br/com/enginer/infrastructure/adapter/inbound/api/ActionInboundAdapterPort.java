@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import br.com.enginer.domain.system.dto.entity.tag.SearchOverlay;
+import br.com.enginer.domain.system.dto.entity.tag.TagType;
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.usecase.annotation.instance.UIDomain;
 import br.com.enginer.domain.system.usecase.exception.CheckedException;
@@ -36,6 +37,7 @@ import br.com.enginer.domain.system.usecase.page.PageResult;
 import br.com.enginer.domain.system.usecase.port.inbound.api.ActionInboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
 import br.com.enginer.domain.system.usecase.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 import br.com.enginer.infrastructure.utils.NormalizeUtils;
 
 /**
@@ -82,24 +84,33 @@ public class ActionInboundAdapterPort {
 		    if (params == null || params.trim().isEmpty()) {
 		      return ResponseEntity.notFound().build();
 		    }
+		    
+			boolean hasComma = params.contains(";");
 
-		    String resultado = Arrays.stream(params.trim().split("[,\\s]+"))
-		        .filter(s -> !s.isBlank())
-		        .collect(Collectors.joining(","));
+			List<String> parts = hasComma
+					? Arrays.stream(params.split(";")).map(String::trim)
+					.filter(s -> !s.isBlank())
+					.toList()
+					: Arrays.stream(params.trim().split("\\s+")).map(String::trim)
+					.filter(s -> !s.isBlank())
+					.toList();
 
+			String result = parts.stream()
+					.map(s -> ReflectionUtils.normalizeAlphaNumeric(s))
+					.distinct()
+					.collect(Collectors.joining(","));
+		    
 		    Map<String, Object> filters = new HashMap<>();
-		    filters.put("id.normalizedName", resultado);
+		    filters.put("id.normalizedName", result);
 		    filters.put("id.normalizedName_op", "in");
-
-		    //List<Domain<?>> users = actionInboundPort.searchByConditions(domain, filters);
 		    
-		    List<Domain<?>> tags = actionInboundPort.searchByConditions(domain, filters);
+		    filters.put("type", TagType.GLOBAL);
+		    List<Domain<?>> globais = actionInboundPort.searchByConditions(domain, filters);
 		    
-		    if(tags == null || tags.isEmpty()) {
-		    	return ResponseEntity.notFound().build();
-		    }
-		    	
-		    return ResponseEntity.ok(new SearchOverlay(tags, tags));
+		    filters.put("type", TagType.SYSTEM);
+		    List<Domain<?>> system = actionInboundPort.searchByConditions(domain, filters);
+		    
+		    return ResponseEntity.ok(new SearchOverlay(globais, system));
 
 		} catch (Exception ex) {
 			logger.error(ActionInboundAdapterPort.class, ex);

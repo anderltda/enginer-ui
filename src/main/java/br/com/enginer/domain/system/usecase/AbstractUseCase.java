@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import br.com.enginer.domain.system.dto.entity.tag.Tag;
 import br.com.enginer.domain.system.dto.entity.tag.TagId;
+import br.com.enginer.domain.system.dto.entity.tag.TagType;
 import br.com.enginer.domain.system.usecase.annotation.PostAction;
 import br.com.enginer.domain.system.usecase.annotation.PreAction;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
@@ -391,13 +392,14 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 					.filter(s -> !s.isEmpty())
 					.forEach(name -> {
 						TagId tagId = new TagId();
-						tagId.setNormalizedName(name.toLowerCase());
+						tagId.setNormalizedName(ReflectionUtils.normalizeAlphaNumeric(name));
 						tagId.setDomain(null);
 						tagId.setDomainId(null);
 
 						Tag tag = new Tag();
 						tag.setId(tagId);
 						tag.setName(name);
+						tag.setType(TagType.GLOBAL);
 						tag.setCreatedAt(LocalDateTime.now());
 
 						entities.add(tag);
