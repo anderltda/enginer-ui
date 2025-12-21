@@ -1,23 +1,16 @@
 package br.com.enginer.domain.example.usecase;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 import br.com.enginer.domain.example.dto.entity.EntityStatus;
 import br.com.enginer.domain.example.dto.entity.EntityTen;
-import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.usecase.AbstractUseCase;
 import br.com.enginer.domain.system.usecase.annotation.AutoDependencyInjector;
-import br.com.enginer.domain.system.usecase.exception.CheckedException;
 import br.com.enginer.domain.system.usecase.exception.UncheckedException;
 import br.com.enginer.domain.system.usecase.page.PageResult;
-import br.com.enginer.domain.system.usecase.upload.UploadFileUseCase;
 
 public class EntityTenUseCase extends AbstractUseCase<EntityTen> implements br.com.enginer.domain.example.usecase.port.EntityTenUseCase {
-	
-	@AutoDependencyInjector
-	private UploadFileUseCase uploadFileUseCase;
 	
 	@AutoDependencyInjector
 	private EntityStatusUseCase entityStatusUseCase;
@@ -47,25 +40,6 @@ public class EntityTenUseCase extends AbstractUseCase<EntityTen> implements br.c
 			entityTen.setDateUpdate(LocalDateTime.now());
 		}
 		
-		EntityTen entityTenNew = (EntityTen) super.salvar(entityTen);
-		
-		entityTen.getFiles().forEach(file -> {
-			uploadFileUseCase.salvarEntityId(file, entityTenNew.getId());
-		});
-		
-		return entityTenNew;
+		return super.salvar(entityTen);
 	}
-	
-	@Override
-	public EntityTen buscarPorId(EntityTen domain) throws CheckedException {
-		
-		EntityTen entityTen = (EntityTen) super.buscarPorId(domain);
-		
-		List<UploadFile> files = (List<UploadFile>) uploadFileUseCase.buscarPorDomainAndDomainId(EntityTen.class.getSimpleName(), entityTen.getId());
-		
-		entityTen.setFiles(files);
-		
-		return entityTen;
-	}
-	
 }

@@ -9,7 +9,6 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.time.LocalDateTime;
 import java.util.HexFormat;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,8 +21,6 @@ import br.com.enginer.domain.system.usecase.exception.UncheckedException;
  */
 public class UploadFileUseCase extends AbstractUseCase<UploadFile> implements br.com.enginer.domain.system.usecase.port.upload.UploadFileUseCase {
 	
-    private static final String PATH_DIR_FINAL = "final";
-
 	/** 
 	 * Inicia uma sessão de upload (idempotente). 
 	 */
@@ -139,68 +136,6 @@ public class UploadFileUseCase extends AbstractUseCase<UploadFile> implements br
 			loggerOutboundPort.error(getClass(), "Erro ao excluir arquivo: " + uploadFile.getName(), e);
 			throw new UncheckedException("Erro ao excluir o arquivo: " + e.getMessage(), e);
 		}
-	}
-
-	/**
-	 * Associa um arquivo a uma entidade de domínio existente, movendo-o
-	 * para o diretório definitivo e atualizando seu metadado.
-	 *
-	 * @param uploadFile o arquivo previamente salvo (com domainId nulo)
-	 * @param id identificador da entidade à qual o arquivo será associado
-	 * @return UploadFile atualizado e persistido
-	 * @throws UncheckedException caso ocorra erro de I/O ou persistência
-	 */
-    @Override
-	public UploadFile salvarEntityId(UploadFile uploadFile, Object id) throws UncheckedException {
-		
-	    try {
-	    
-	    	// Busca o metadado atual
-	        UploadFile file = (UploadFile) buscarPorId(uploadFile);
-
-	        if (file == null) {
-	            throw new UncheckedException("Arquivo não encontrado para associação.");
-	        }
-
-	        // Define o novo domainId
-	        file.setDomainId(id.toString());
-
-	        // Define o diretório final: /uploads/<domain>/<domainId>/
-	        //String finalDirectory = String.format("%s/%s/", file.getDomain(), id);
-	        String finalDirectory = String.format("%s/", PATH_DIR_FINAL);
-
-	        // Move fisicamente o arquivo via FileStorageOutboundPort
-	        Path newPath = fileStorageOutboundPort.moveFile(Path.of(file.getPath()), finalDirectory);
-
-	        // Atualiza o metadado com o novo path
-	        file.setPath(newPath.toString());
-
-	        // Persiste a atualização
-	        file = super.salvar(file);
-
-	        loggerOutboundPort.info(getClass(), String.format("Arquivo [%s] movido para [%s]", file.getName(), newPath));
-
-	        return file;
-
-	    } catch (IOException e) {
-	        throw new UncheckedException("Erro ao mover o arquivo após associação: " + e.getMessage(), e);
-	    }
-	}
-
-	/**
-	 * @param domain
-	 * @param domainId
-	 * @return List<UploadFile>
-	 * @throws UncheckedException
-	 */
-    @Override
-	public List<UploadFile> buscarPorDomainAndDomainId(String domain, Object domainId) throws UncheckedException {
-
-		Map<String, Object> filter = Map.of("domain", domain.toUpperCase(), "domainId", domainId.toString());
-
-		List<UploadFile> files = super.buscarTodos(new UploadFile(), filter);
-		
-		return files;
 	}
 
 	/**

@@ -27,6 +27,8 @@ import br.com.enginer.domain.system.usecase.page.PageResult;
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.schema.instance.DomainId;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 import br.com.enginer.infrastructure.exception.GlobalWebClientErrorHandler;
 import br.com.enginer.infrastructure.utils.UriUtils;
 import reactor.core.publisher.Flux;
@@ -857,5 +859,85 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		}
 		
 		return savedList;
+	}
+	
+	/**
+	 *
+	 */
+	@Override
+	public void delete(T domain) throws UncheckedException {
+		
+		if (domain.getId() == null) return;
+
+		try {
+		
+			if (ReflectionUtils.isTypeId(domain.getId().getClass())) {
+				delete(domain, domain.getId());
+			} else {
+				Map<String, Object> ids = ReflectionUtils.getIdDomainId((DomainId) domain.getId());
+				delete(domain, ids);
+			}
+		
+		} catch (Exception ex) {
+			throw new UncheckedException(ex.getMessage(), ex);
+		}
+	}	
+	
+	/**
+	 * 
+	 */
+	@Override
+	public T formId(T domain) throws UncheckedException {
+		
+		try {
+
+			if (!(DomainId.class.isAssignableFrom(domain.getClass()))) {
+				
+				Boolean hasValueId = ReflectionUtils.hasIdValue(domain);
+				
+				T loadedDomain = hasValueId ? findById(domain) : null;
+				
+				if(hasValueId && loadedDomain == null) {
+					throw new UncheckedException("Nenhum registro encontrado");
+				}
+				
+				if (loadedDomain != null) {
+					domain = loadedDomain;
+				}
+			}
+			
+			return domain;
+			
+		} catch (Exception ex) {
+			throw new UncheckedException(ex.getMessage(), ex);
+		}
+
+	}	
+
+	/**
+	 *
+	 */
+	@Override
+	public T findById(T domain) throws UncheckedException {
+		
+		if (domain.getId() == null) return null;
+
+		try {
+			
+			if (ReflectionUtils.isTypeId(domain.getId().getClass())) {
+				return findById(domain, domain.getId());
+			}
+			
+			if (ReflectionUtils.isIdNullKeyCompositedByDomain(domain.getId().getClass(), domain)) {
+				return null;
+			}
+			
+			Map<String, Object> ids = ReflectionUtils.getCompositedKeyFields(domain);
+			
+			return findByIdComposite(domain, ids);
+			
+		} catch (Exception ex) {
+			throw new UncheckedException(ex.getMessage(), ex);
+		}
 	}
 }

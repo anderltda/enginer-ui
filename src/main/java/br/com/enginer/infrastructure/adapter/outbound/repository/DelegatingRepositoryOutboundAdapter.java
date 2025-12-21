@@ -3,8 +3,11 @@ package br.com.enginer.infrastructure.adapter.outbound.repository;
 import java.util.List;
 import java.util.Map;
 
+import br.com.enginer.domain.system.usecase.exception.UncheckedException;
 import br.com.enginer.domain.system.usecase.page.PageResult;
+import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryOutboundPort;
+import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
 import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 
 /**
@@ -35,12 +38,18 @@ public abstract class DelegatingRepositoryOutboundAdapter<T extends Domain<?>> i
 	 * 
 	 */
 	protected final RepositoryOutboundPort<Domain<?>> delegate;
+	protected final LoggerOutboundPort loggerOutboundPort;
+	protected final FileStorageOutboundPort fileStorageOutboundPort;
 
 	/**
 	 * @param delegate
+	 * @param loggerOutboundPort
+	 * @param fileStorageOutboundPort
 	 */
-	protected DelegatingRepositoryOutboundAdapter(RepositoryOutboundPort<Domain<?>> delegate) {
+	protected DelegatingRepositoryOutboundAdapter(RepositoryOutboundPort<Domain<?>> delegate, LoggerOutboundPort loggerOutboundPort, FileStorageOutboundPort fileStorageOutboundPort) {
 		this.delegate = delegate;
+		this.loggerOutboundPort = loggerOutboundPort;
+		this.fileStorageOutboundPort = fileStorageOutboundPort;
 	}
 
 	// ------------------------------------------------------------
@@ -50,6 +59,16 @@ public abstract class DelegatingRepositoryOutboundAdapter<T extends Domain<?>> i
 	public T findById(T domain, Object id) {
 		return cast(delegate.findById(domain, id));
 	}
+	
+	@Override
+	public T findById(T domain) throws UncheckedException {
+		return cast(delegate.findById(domain));
+	}
+
+	@Override
+	public T formId(T domain) throws Exception {
+		return cast(delegate.formId(domain));
+	}	
 
 	@Override
 	public T findByIdComposite(T domain, Map<String, Object> ids) {
@@ -129,6 +148,11 @@ public abstract class DelegatingRepositoryOutboundAdapter<T extends Domain<?>> i
 	@Override
 	public void delete(T domain, Map<String, Object> ids) {
 		delegate.delete(domain, ids);
+	}
+	
+	@Override
+	public void delete(T domain) {
+		delegate.delete(domain);
 	}
 
 	// ------------------------------------------------------------

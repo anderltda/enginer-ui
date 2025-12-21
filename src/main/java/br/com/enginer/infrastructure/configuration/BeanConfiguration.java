@@ -32,6 +32,7 @@ import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundP
 import br.com.enginer.domain.system.usecase.port.outbound.publisher.PublisherOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.TagRepositoryOutboundPort;
+import br.com.enginer.domain.system.usecase.port.outbound.repository.UploadFileRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
 import br.com.enginer.domain.system.usecase.schema.field.type.Id;
 import br.com.enginer.domain.system.usecase.schema.instance.Domain;
@@ -128,6 +129,7 @@ public class BeanConfiguration {
 
 	/**
 	 * @param loggerOutboundPort
+	 * @param uploadFileRepositoryOutboundPort
 	 * @param tagRepositoryOutboundPort
 	 * @param repositoryOutboundPort
 	 * @param publisherOutboundPort
@@ -135,8 +137,8 @@ public class BeanConfiguration {
 	 * @return
 	 */
 	@Bean
-	ActionInboundPort<Domain<?>> actionInboundPort(LoggerOutboundPort loggerOutboundPort, TagRepositoryOutboundPort tagRepositoryOutboundPort, RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, PublisherOutboundPort<Domain<?>> publisherOutboundPort, FileStorageOutboundPort fileStorageOutboundPort) {
-		return new ActionInboundUseCase<Domain<?>>(loggerOutboundPort, tagRepositoryOutboundPort, repositoryOutboundPort, publisherOutboundPort, fileStorageOutboundPort);
+	ActionInboundPort<Domain<?>> actionInboundPort(LoggerOutboundPort loggerOutboundPort, UploadFileRepositoryOutboundPort uploadFileRepositoryOutboundPort, TagRepositoryOutboundPort tagRepositoryOutboundPort, RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, PublisherOutboundPort<Domain<?>> publisherOutboundPort, FileStorageOutboundPort fileStorageOutboundPort) {
+		return new ActionInboundUseCase<Domain<?>>(loggerOutboundPort, uploadFileRepositoryOutboundPort, tagRepositoryOutboundPort, repositoryOutboundPort, publisherOutboundPort, fileStorageOutboundPort);
 	}
 	
 	/**

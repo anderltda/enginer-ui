@@ -1082,6 +1082,8 @@ public class ReflectionUtils {
 	 */
 	public static String createUriIdComposedType(Domain<?> domain) throws Exception {
 		
+		if(domain.getId() == null) return null;
+
 		List<String> parts = new ArrayList<>();
 		
 		StringBuilder builder = new StringBuilder();

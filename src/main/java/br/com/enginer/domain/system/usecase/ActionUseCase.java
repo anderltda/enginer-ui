@@ -11,6 +11,7 @@ import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundP
 import br.com.enginer.domain.system.usecase.port.outbound.publisher.PublisherOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.TagRepositoryOutboundPort;
+import br.com.enginer.domain.system.usecase.port.outbound.repository.UploadFileRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
 import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 import br.com.enginer.infrastructure.adapter.outbound.repository.TypeRepository;
@@ -41,6 +42,9 @@ public interface ActionUseCase<T extends Domain<?>> {
 	
 	FileStorageOutboundPort getFileStorageOutboundPort();
 	void setFileStorageOutboundPort(FileStorageOutboundPort fileStorageOutboundPort);
+	
+    UploadFileRepositoryOutboundPort getUploadFileRepositoryOutboundPort();
+    void setUploadFileRepositoryOutboundPort(UploadFileRepositoryOutboundPort uploadFileRepositoryOutboundPort);
 	
 	TagRepositoryOutboundPort getTagRepositoryOutboundPort();
     void setTagRepositoryOutboundPort(TagRepositoryOutboundPort tagRepositoryOutboundPort);

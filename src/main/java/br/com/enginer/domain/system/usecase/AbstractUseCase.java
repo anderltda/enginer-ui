@@ -1,17 +1,9 @@
 package br.com.enginer.domain.system.usecase;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
-import br.com.enginer.domain.system.dto.entity.tag.Tag;
-import br.com.enginer.domain.system.dto.entity.tag.TagId;
-import br.com.enginer.domain.system.dto.entity.tag.TagType;
 import br.com.enginer.domain.system.usecase.annotation.PostAction;
 import br.com.enginer.domain.system.usecase.annotation.PreAction;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
@@ -23,13 +15,11 @@ import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundP
 import br.com.enginer.domain.system.usecase.port.outbound.publisher.PublisherOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.TagRepositoryOutboundPort;
+import br.com.enginer.domain.system.usecase.port.outbound.repository.UploadFileRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
 import br.com.enginer.domain.system.usecase.schema.Form;
 import br.com.enginer.domain.system.usecase.schema.instance.Domain;
-import br.com.enginer.domain.system.usecase.schema.instance.DomainId;
 import br.com.enginer.domain.system.usecase.template.FormTemplate;
-import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
-import br.com.enginer.domain.system.usecase.utils.StringsUtils;
 import br.com.enginer.infrastructure.adapter.outbound.repository.TypeRepository;
 import br.com.enginer.infrastructure.injector.DependencyInjector;
 
@@ -39,11 +29,6 @@ import br.com.enginer.infrastructure.injector.DependencyInjector;
  */
 public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUseCase<T>, ActionUseCase<T> {
 	
-	/** 
-	 * Lista de Tags para o domínio atual.
-	 */
-	private List<Tag> entities;
-
 	/** 
 	 * Port de log.
 	 */
@@ -63,6 +48,11 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 	 * Port de publicação de eventos (também pode ser genérico).
 	 */
     protected FileStorageOutboundPort fileStorageOutboundPort;
+
+    /**
+     * Port de acesso a dados para UploadFile.
+     */
+    protected UploadFileRepositoryOutboundPort uploadFileRepositoryOutboundPort;
     
     /** 
 	 * Port de acesso a dados para Tags.
@@ -124,6 +114,16 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 	}
 	
 	@Override
+	public UploadFileRepositoryOutboundPort getUploadFileRepositoryOutboundPort() {
+		return uploadFileRepositoryOutboundPort;
+	}
+
+	@Override
+	public void setUploadFileRepositoryOutboundPort(UploadFileRepositoryOutboundPort uploadFileRepositoryOutboundPort) {
+		this.uploadFileRepositoryOutboundPort = uploadFileRepositoryOutboundPort;
+	}
+
+	@Override
     public void setTagRepositoryOutboundPort(TagRepositoryOutboundPort tagRepositoryOutboundPort) {
         this.tagRepositoryOutboundPort = tagRepositoryOutboundPort;
     }
@@ -169,7 +169,7 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 			map.put(TypeTemplate.DISABLED, domain.isDisabled());
 			map.put(TypeTemplate.MAIN_DOMAIN, domain.getMainDomain());
 
-			domain = formId(domain);
+			domain = repositoryOutboundPort.formId(domain);
 
 			return form.create(domain, this, map);
 
@@ -185,7 +185,7 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
      **/    
 	@Override
 	public T buscarPorId(T domain) throws UncheckedException {
-		return findById(domain);
+		return repositoryOutboundPort.findById(domain);
 	}
 
 	@Override
@@ -267,22 +267,6 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 	}
 
 	@Override
-	public void excluir(T domain) throws UncheckedException {
-		if (domain.getId() == null) return;
-
-		try {
-			if (ReflectionUtils.isTypeId(domain.getId().getClass())) {
-				repositoryOutboundPort.delete(domain, domain.getId());
-			} else {
-				Map<String, Object> ids = ReflectionUtils.getIdDomainId((DomainId) domain.getId());
-				repositoryOutboundPort.delete(domain, ids);
-			}
-		} catch (Exception ex) {
-			throw new UncheckedException(ex.getMessage(), ex);
-		}
-	}
-
-	@Override
 	public void excluir(T domain, Object id) throws UncheckedException {
 		repositoryOutboundPort.delete(domain, id);
 	}
@@ -291,6 +275,11 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 	public void excluir(T domain, List<?> ids) throws UncheckedException {
 		repositoryOutboundPort.delete(domain, ids);
 	}
+	
+	@Override
+	public void excluir(T domain) throws UncheckedException {
+		repositoryOutboundPort.delete(domain);
+	}	
 
 	@Override
 	public void excluirLista(List<T> entities) throws UncheckedException {
@@ -333,21 +322,6 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 	public T next(T domain) throws UncheckedException {
 		return domain;
 	}
-
-	/** 
-	 * --------------------------------------------------------------------------------------------
-	 * Metodos utilizados em formulários TemplateUseCase<T>
-	 * --------------------------------------------------------------------------------------------
-     **/	
-	@Override
-	public T buscarFormPorId(T domain) throws CheckedException {
-		return this.findById(domain);
-	}
-	
-	@Override
-	public List<T> buscarFormTodos(T domain, Map<String, Object> filter) throws UncheckedException {
-		return repositoryOutboundPort.findAll(domain, filter);
-	}
 	
 	/** 
 	 * --------------------------------------------------------------------------------------------
@@ -357,147 +331,30 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 	@PreAction
 	public void pre(T domain) {
 		System.out.println("Pré-execução: validando...");
-		pull(domain);
+		tagRepositoryOutboundPort.pull(domain);
+		uploadFileRepositoryOutboundPort.pull(domain);
 	}
 
 	@PostAction
 	public void post(T domain) {
 		System.out.println("Pós-execução: auditando...");
-		push(domain);
-	}
-	
-	/** 
-	 * --------------------------------------------------------------------------------------------
-	 * Metodos para manipulação de Tags
-	 * --------------------------------------------------------------------------------------------
-     **/
-	@SuppressWarnings("unchecked")
-	public void pull(T type) {
-		
-		try {
-			
-			if(type == null) return;
-		
-			List<String> tags = (List<String>) ReflectionUtils.executeMethod(type, StringsUtils.getMethod("tags"));
-			String domain = type.getClass().getSimpleName();
-			Object domainId = ReflectionUtils.createUriIdComposedType(type);
-
-			entities = new ArrayList<Tag>();
-
-			Optional.ofNullable(tags)
-					.orElse(List.of())
-					.stream()
-					.filter(Objects::nonNull)
-					.map(String::trim)
-					.filter(s -> !s.isEmpty())
-					.forEach(name -> {
-						TagId tagId = new TagId();
-						tagId.setNormalizedName(ReflectionUtils.normalizeAlphaNumeric(name));
-						tagId.setDomain(null);
-						tagId.setDomainId(null);
-
-						Tag tag = new Tag();
-						tag.setId(tagId);
-						tag.setName(name);
-						tag.setType(TagType.GLOBAL);
-						tag.setCreatedAt(LocalDateTime.now());
-
-						entities.add(tag);
-					});
-
-			if (domainId != null) {
-				
-				Map<String, Object> filter = new HashMap<String, Object>();
-				filter.put("id.domain", domain);
-				filter.put("id.domainId", domainId);
-				
-				List<Tag> tagsFindAll = tagRepositoryOutboundPort.findAll(new Tag(), filter);
-				
-				tagsFindAll.forEach(tag -> {
-					filter.clear();
-					filter.put("normalizedName", tag.getId().getNormalizedName());
-					filter.put("domain", tag.getId().getDomain());
-					filter.put("domainId", tag.getId().getDomainId());
-					tagRepositoryOutboundPort.delete(new Tag(), filter);
-				});
-			}
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-	
-	public void push(T type) {
-
-		try {
-
-			if (type == null) return;
-			
-			String domain = type.getClass().getSimpleName();
-			
-			Object domainId = ReflectionUtils.createUriIdComposedType(type);
-			
-			entities.forEach(tag -> {
-				tag.getId().setDomain(domain);
-				tag.getId().setDomainId(domainId.toString());
-				tagRepositoryOutboundPort.save(tag);
-			});
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
+		tagRepositoryOutboundPort.push(domain);
+		uploadFileRepositoryOutboundPort.push(domain);
+	}	
 
 	/** 
 	 * --------------------------------------------------------------------------------------------
-	 * Utilitários privados
+	 * Metodos utilizados em formulários TemplateUseCase<T>
 	 * --------------------------------------------------------------------------------------------
      **/	
-	private T formId(T domain) throws Exception {
-
-		if (!(DomainId.class.isAssignableFrom(domain.getClass()))) {
-			
-			Boolean hasValueId = ReflectionUtils.hasIdValue(domain);
-			
-			T loadedDomain = hasValueId ? buscarPorId(domain) : null;
-			
-			if(hasValueId && loadedDomain == null) {
-				throw new CheckedException("Nenhum registro encontrado");
-			}
-			
-			if (loadedDomain != null) {
-				domain = loadedDomain;
-			}
-		}
-		
-		return domain;
+	@Override
+	public T buscarFormPorId(T domain) throws CheckedException {
+		return repositoryOutboundPort.findById(domain);
+	}
+	
+	@Override
+	public List<T> buscarFormTodos(T domain, Map<String, Object> filter) throws UncheckedException {
+		return repositoryOutboundPort.findAll(domain, filter);
 	}
 
-	/**
-	 * @param domain
-	 * @return
-	 * @throws UncheckedException
-	 */
-	private T findById(T domain) throws UncheckedException {
-		
-		if (domain.getId() == null) return null;
-
-		try {
-			
-			if (ReflectionUtils.isTypeId(domain.getId().getClass())) {
-				return repositoryOutboundPort.findById(domain, domain.getId());
-			}
-			
-			if (ReflectionUtils.isIdNullKeyCompositedByDomain(domain.getId().getClass(), domain)) {
-				return null;
-			}
-			
-			Map<String, Object> ids = ReflectionUtils.getCompositedKeyFields(domain);
-			
-			return repositoryOutboundPort.findByIdComposite(domain, ids);
-			
-		} catch (Exception ex) {
-			throw new UncheckedException(ex.getMessage(), ex);
-		}
-	}
 }

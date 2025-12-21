@@ -24,6 +24,10 @@ public interface RepositoryOutboundPort<T extends Domain<?>> extends OutboundPor
 	// ------------------------------------------------------------
 	T findById(T domain, Object id) throws UncheckedException;
 	
+	T findById(T domain) throws UncheckedException;
+	
+	T formId(T domain) throws Exception;
+
 	T findByIdComposite(T domain, Map<String, Object> ids) throws UncheckedException;
 	
 	T findBySingle(T domain, Map<String, Object> filter, String... method) throws UncheckedException;
@@ -60,6 +64,8 @@ public interface RepositoryOutboundPort<T extends Domain<?>> extends OutboundPor
 	void delete(T domain, Object id) throws UncheckedException;
 	
 	void delete(T domain, Map<String, Object> ids) throws UncheckedException;
+	
+	void delete(T domain) throws UncheckedException;
 	
 	// ------------------------------------------------------------
 	// Persistência

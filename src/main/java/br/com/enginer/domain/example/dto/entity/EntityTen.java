@@ -3,12 +3,9 @@ package br.com.enginer.domain.example.dto.entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Objects;
 
-import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.usecase.annotation.field.UIColumn;
-import br.com.enginer.domain.system.usecase.annotation.field.UIFile;
 import br.com.enginer.domain.system.usecase.annotation.field.UIFilter;
 import br.com.enginer.domain.system.usecase.annotation.field.UIHidden;
 import br.com.enginer.domain.system.usecase.annotation.field.UIId;
@@ -52,7 +49,6 @@ import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditi
 import br.com.enginer.domain.system.usecase.constants.Constants;
 import br.com.enginer.domain.system.usecase.enums.TypeButtonState;
 import br.com.enginer.domain.system.usecase.enums.TypeDateFormat;
-import br.com.enginer.domain.system.usecase.enums.TypeFileUpload;
 import br.com.enginer.domain.system.usecase.enums.TypeOperator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
@@ -218,14 +214,6 @@ public class EntityTen extends DomainAbstract<Long> {
 	@UITextArea(label = "Descrição", editor = false)
 	private String description;
 	
-	@UIPosition(x = 2, y = 2)
-	@UIFieldValidation(required = true, template = { TypeTemplate.FORM, TypeTemplate.TAB })
-	//@UIFile(label = "Imagem", mode = TypeFileUpload.WALL_PICKER, listType = "picture-card", limit = 5)
-	@UIFile(label = "Arquivos", mode = TypeFileUpload.LIST, listType = "picture", limit = 8)
-	//@UIFile(label = "Arquivos", mode = TypeFileUpload.SIMPLE, listType = "text", limit = 3)
-	//@UIFile(label = "Arquivos", mode = TypeFileUpload.DRAG_DROP, listType = "text", limit = 2)
-	private transient List<UploadFile> files;
-
 	@UIHidden
 	@UIColumn(label = "Data de Criacao", initial = false)
 	private LocalDateTime dateCreate;
@@ -295,14 +283,6 @@ public class EntityTen extends DomainAbstract<Long> {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public List<UploadFile> getFiles() {
-		return files;
-	}
-
-	public void setFiles(List<UploadFile> files) {
-		this.files = files;
 	}
 
 	public LocalDateTime getDateCreate() {

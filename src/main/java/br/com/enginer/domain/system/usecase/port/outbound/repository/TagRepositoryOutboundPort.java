@@ -1,6 +1,7 @@
 package br.com.enginer.domain.system.usecase.port.outbound.repository;
 
 import br.com.enginer.domain.system.dto.entity.tag.Tag;
+import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 
 /**
  * Port outbound responsável por acesso a dados (camada repositório apenas de Tag).
@@ -8,4 +9,13 @@ import br.com.enginer.domain.system.dto.entity.tag.Tag;
  */
 public interface TagRepositoryOutboundPort extends RepositoryOutboundPort<Tag> {
 	
+	/**
+	 * @param type
+	 */
+	void pull(Domain<?> type);
+	
+	/**
+	 * @param type
+	 */
+	void push(Domain<?> type);
 }

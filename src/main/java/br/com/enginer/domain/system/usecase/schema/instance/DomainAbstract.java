@@ -2,8 +2,13 @@ package br.com.enginer.domain.system.usecase.schema.instance;
 
 import java.util.List;
 
+import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
+import br.com.enginer.domain.system.usecase.annotation.field.UIFile;
 import br.com.enginer.domain.system.usecase.annotation.field.UIIgnore;
 import br.com.enginer.domain.system.usecase.annotation.field.behavior.UITag;
+import br.com.enginer.domain.system.usecase.annotation.field.behavior.validation.UIFieldValidation;
+import br.com.enginer.domain.system.usecase.enums.TypeFileUpload;
+import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.logger.ActionLogger;
 
 /**
@@ -25,6 +30,13 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 	
 	@UITag(label = "Tags", disable = false)
 	private transient List<String> tags;
+	
+	@UIFieldValidation(required = false, template = { TypeTemplate.FORM, TypeTemplate.TAB })
+	//@UIFile(label = "Imagem", mode = TypeFileUpload.WALL_PICKER, listType = "picture-card", limit = 5)
+	@UIFile(label = "Arquivos", mode = TypeFileUpload.LIST, listType = "picture", limit = 8)
+	//@UIFile(label = "Arquivos", mode = TypeFileUpload.SIMPLE, listType = "text", limit = 3)
+	//@UIFile(label = "Arquivos", mode = TypeFileUpload.DRAG_DROP, listType = "text", limit = 2)
+	private transient List<UploadFile> files;
 	
 	/**
 	 * @return
@@ -89,11 +101,31 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 		return this.mainDomain;
 	}
 
+	/**
+	 * @return the tags
+	 */
 	public List<String> getTags() {
 		return tags;
 	}
 
+	/**
+	 * @param tags the tags to set
+	 */
 	public void setTags(List<String> tags) {
 		this.tags = tags;
+	}
+	
+	/**
+	 * @return the files
+	 */
+	public List<UploadFile> getFiles() {
+		return files;
+	}
+	
+	/**
+	 * @param files the files to set
+	 */
+	public void setFiles(List<UploadFile> files) {
+		this.files = files;
 	}
 }

@@ -13,6 +13,7 @@ import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundP
 import br.com.enginer.domain.system.usecase.port.outbound.publisher.PublisherOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.TagRepositoryOutboundPort;
+import br.com.enginer.domain.system.usecase.port.outbound.repository.UploadFileRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
 import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
@@ -23,7 +24,8 @@ import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
  */
 public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundPort<T> {
 
-    private final LoggerOutboundPort logger;
+    private final LoggerOutboundPort loggerOutboundPort;
+    private final UploadFileRepositoryOutboundPort uploadFileRepositoryOutboundPort;
     private final TagRepositoryOutboundPort tagRepositoryOutboundPort;
     private final RepositoryOutboundPort<Domain<?>> repositoryOutboundPort;
     private final PublisherOutboundPort<Domain<?>> publisherOutboundPort;
@@ -32,25 +34,28 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
 	/**
 	 * Construtor com injeção de dependências.
 	 */
-    public ActionInboundUseCase(
-			LoggerOutboundPort logger,
-			TagRepositoryOutboundPort tagRepositoryOutboundPort,
-			RepositoryOutboundPort<Domain<?>> repositoryOutboundPort,
-			PublisherOutboundPort<Domain<?>> publisherOutboundPort,
-			FileStorageOutboundPort fileStorageOutboundPort) {
-		this.logger = logger;
-		this.tagRepositoryOutboundPort = tagRepositoryOutboundPort;
-		this.repositoryOutboundPort = repositoryOutboundPort;
-		this.publisherOutboundPort = publisherOutboundPort;
-		this.fileStorageOutboundPort = fileStorageOutboundPort;
-	}
+    public ActionInboundUseCase(LoggerOutboundPort loggerOutboundPort,
+    		UploadFileRepositoryOutboundPort uploadFileRepositoryOutboundPort,
+    		TagRepositoryOutboundPort tagRepositoryOutboundPort,
+    		RepositoryOutboundPort<Domain<?>> repositoryOutboundPort,
+    		PublisherOutboundPort<Domain<?>> publisherOutboundPort, 
+    		FileStorageOutboundPort fileStorageOutboundPort) {
+    	this.loggerOutboundPort = loggerOutboundPort;
+    	this.uploadFileRepositoryOutboundPort = uploadFileRepositoryOutboundPort;
+    	this.tagRepositoryOutboundPort = tagRepositoryOutboundPort;
+    	this.repositoryOutboundPort = repositoryOutboundPort;
+    	this.publisherOutboundPort = publisherOutboundPort;
+    	this.fileStorageOutboundPort = fileStorageOutboundPort;
+    }
+
 
 	/**
      * Injeta as dependências e instancia o UseCase correto para o domínio.
      */
     private Object injectedDependency(Domain<?> domain) throws Exception {
         return ReflectionUtils.executeInjectedDependencyUseCaseCached(domain.getClass(), 
-        		logger,
+        		loggerOutboundPort,
+        		uploadFileRepositoryOutboundPort,
         		tagRepositoryOutboundPort,
         		repositoryOutboundPort, 
         		publisherOutboundPort, 
@@ -74,7 +79,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
             return (Domain<?>) ReflectionUtils.executeMethod(UseCase, ActionUseCase.buscarPorId, domain);
             
         } catch (Exception ex) {
-            logger.error(ActionInboundUseCase.class, ex);
+            loggerOutboundPort.error(ActionInboundUseCase.class, ex);
             throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);
         }
     }
@@ -97,7 +102,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
 			return (Domain<?>) ReflectionUtils.executeMethod(UseCase, ActionUseCase.buscarPorRegistroUnico, domain, filter);
 			
 		} catch (Exception ex) {
-			logger.error(ActionInboundUseCase.class, ex);
+			loggerOutboundPort.error(ActionInboundUseCase.class, ex);
 			throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);
 		}
 	}
@@ -121,7 +126,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
             return (List<Domain<?>>) ReflectionUtils.executeMethod(UseCase, ActionUseCase.buscarTodos, domain, filter);
             
         } catch (Exception ex) {
-            logger.error(ActionInboundUseCase.class, ex);
+            loggerOutboundPort.error(ActionInboundUseCase.class, ex);
             throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);
         }
     }
@@ -145,7 +150,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
             return (PageResult<Domain<?>>) ReflectionUtils.executeMethod(UseCase, ActionUseCase.buscarTodosPaginado, domain, filter);
             
         } catch (Exception ex) {
-            logger.error(ActionInboundUseCase.class, ex);
+            loggerOutboundPort.error(ActionInboundUseCase.class, ex);
             throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);
         }
     }
@@ -170,7 +175,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
             return (PageResult<Domain<?>>) ReflectionUtils.executeMethod(UseCase, ActionUseCase.buscarTodosPaginado, domain, filter, method);
             
         } catch (Exception ex) {
-            logger.error(ActionInboundUseCase.class, ex);
+            loggerOutboundPort.error(ActionInboundUseCase.class, ex);
             throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);
         }
     }
@@ -200,7 +205,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
             }
 
         } catch (Exception ex) {
-            logger.error(ActionInboundUseCase.class, ex);
+            loggerOutboundPort.error(ActionInboundUseCase.class, ex);
             throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);
         }
 
@@ -220,7 +225,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
         
         	ActionLogger actionLogger = domain.getActionLogger();
             
-        	logger.info(ActionInboundUseCase.class, "Action -> " + actionLogger.getActionName());
+        	loggerOutboundPort.info(ActionInboundUseCase.class, "Action -> " + actionLogger.getActionName());
             
         	/** Injected Dependency */
         	Object useCase = injectedDependency(domain);
@@ -237,7 +242,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
         	return newDomain;
         
         } catch (Exception ex) {
-            logger.error(ActionInboundUseCase.class, ex);
+            loggerOutboundPort.error(ActionInboundUseCase.class, ex);
             throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);
         }
     }
@@ -256,7 +261,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
         
     	try {
         
-    		logger.info(ActionInboundUseCase.class, "Action -> " + actionLogger.getActionName());
+    		loggerOutboundPort.info(ActionInboundUseCase.class, "Action -> " + actionLogger.getActionName());
             
         	/** Injected Dependency */
         	Object UseCase = injectedDependency(domain);
@@ -264,7 +269,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
     		return (List<Domain<?>>) ReflectionUtils.executeMethod(UseCase, actionLogger.getActionName(), domains);
         
     	} catch (Exception ex) {
-            logger.error(ActionInboundUseCase.class, ex);
+            loggerOutboundPort.error(ActionInboundUseCase.class, ex);
             throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);
         }
     }
