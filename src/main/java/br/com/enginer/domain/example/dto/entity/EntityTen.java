@@ -52,6 +52,7 @@ import br.com.enginer.domain.system.usecase.enums.TypeDateFormat;
 import br.com.enginer.domain.system.usecase.enums.TypeOperator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 
 /**
  * 
@@ -94,7 +95,9 @@ value = {
 		needsValidation = false,
 		state = TypeButtonState.BTN_STATE_DEFAULT,
 		template = TypeTemplate.TAB,
-		notDomain = { "entityAll" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+		}),
 		action = @UIAction(
 		    method = @UIActionMethod(clientMethod = "onBack")
 		)
@@ -105,7 +108,9 @@ value = {
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    needsValidation = false,
 	    template = { TypeTemplate.TAB },
-	    notDomain = { "entityTen" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityTen" }),
+		}),
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onPrevious")
 	    )
@@ -115,7 +120,9 @@ value = {
 	    icon = "chevron_right",
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    template = { TypeTemplate.TAB, TypeTemplate.MODAL },
-	    notDomain = { "entityTen" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityTen" }),
+		}),	    
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onNext")
 	    )
@@ -125,7 +132,9 @@ value = {
 	    icon = "save",
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    template = TypeTemplate.TAB,
-	    notDomain = { "entityAll" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+		}),
 	    action = @UIAction(
 			method = @UIActionMethod(
 				clientMethod = "onFinish", 
@@ -222,14 +231,26 @@ public class EntityTen extends DomainAbstract<Long> {
 	@UIColumn(label = "Data de Atualizacao", initial = false)
 	private LocalDateTime dateUpdate;
 
-	public void setIdEntityStatus(Long idEntityStatus) {
-		this.entityStatus = new EntityStatus();
-		this.entityStatus.setId(idEntityStatus);
+	public EntityTen() {
+		super();
+	}
+
+	public EntityTen(Long id) {
+		super();
+		this.id = id;
 	}
 
 	@Override
 	public Long getId() {
-		return id;
+		try {
+			Boolean existId = (Boolean) ReflectionUtils.isIdNull(this);
+			if (!existId) {
+				this.id = null;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return this.id;
 	}
 
 	@Override
@@ -299,6 +320,11 @@ public class EntityTen extends DomainAbstract<Long> {
 
 	public void setDateUpdate(LocalDateTime dateUpdate) {
 		this.dateUpdate = dateUpdate;
+	}
+	
+	public void setIdEntityStatus(Long idEntityStatus) {
+		this.entityStatus = new EntityStatus();
+		this.entityStatus.setId(idEntityStatus);
 	}
 
 	@Override

@@ -165,8 +165,8 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 			FormTemplate form = new FormTemplate();
 			Map<TypeTemplate, Object> map = new LinkedHashMap<>();
 			map.put(TypeTemplate.TYPE_TEMPLATE, templateType);
-			map.put(TypeTemplate.MODAL, domain.isModal());
-			map.put(TypeTemplate.DISABLED, domain.isDisabled());
+			map.put(TypeTemplate.MODAL, domain.getModal());
+			map.put(TypeTemplate.DISABLED, domain.getDisabled());
 			map.put(TypeTemplate.MAIN_DOMAIN, domain.getMainDomain());
 
 			domain = repositoryOutboundPort.formId(domain);

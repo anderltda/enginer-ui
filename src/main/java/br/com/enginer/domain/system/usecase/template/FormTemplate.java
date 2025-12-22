@@ -70,6 +70,7 @@ import br.com.enginer.domain.system.usecase.annotation.instance.validate.global.
 import br.com.enginer.domain.system.usecase.constants.Constants;
 import br.com.enginer.domain.system.usecase.enums.TypeButton;
 import br.com.enginer.domain.system.usecase.enums.TypeFormat;
+import br.com.enginer.domain.system.usecase.enums.TypeOperator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.helper.ComboHelper;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryOutboundPort;
@@ -91,7 +92,6 @@ import br.com.enginer.domain.system.usecase.schema.field.type.Email;
 import br.com.enginer.domain.system.usecase.schema.field.type.File;
 import br.com.enginer.domain.system.usecase.schema.field.type.Filter;
 import br.com.enginer.domain.system.usecase.schema.field.type.Hidden;
-import br.com.enginer.domain.system.usecase.schema.field.type.Id;
 import br.com.enginer.domain.system.usecase.schema.field.type.Join;
 import br.com.enginer.domain.system.usecase.schema.field.type.Number;
 import br.com.enginer.domain.system.usecase.schema.field.type.Password;
@@ -113,6 +113,7 @@ import br.com.enginer.domain.system.usecase.schema.paginator.Paginator;
 import br.com.enginer.domain.system.usecase.schema.paginator.column.Column;
 import br.com.enginer.domain.system.usecase.schema.paginator.config.Config;
 import br.com.enginer.domain.system.usecase.schema.tab.Tab;
+import br.com.enginer.domain.system.usecase.schema.validate.TypeOperatorEvaluator;
 import br.com.enginer.domain.system.usecase.schema.validate.Validate;
 import br.com.enginer.domain.system.usecase.schema.validate.conditional.Conditional;
 import br.com.enginer.domain.system.usecase.schema.validate.custom.Custom;
@@ -129,11 +130,12 @@ public class FormTemplate {
 
 	private static final Map<Class<? extends Annotation>, Class<? extends Annotation>> annotationMap = new HashMap<>();
 	private static TypeTemplate typeTemplate;
-	private static Boolean modal = Boolean.FALSE;
-	private static Boolean disabled = Boolean.FALSE;
-	private static Map<TypeTemplate, Object> mapTypeTemplates;
 	private static TemplateUseCase<?> useCase;
-	private static String mainDomain;
+	private static Map<TypeTemplate, Object> mapTypeTemplates;
+
+	//private static Boolean modal = Boolean.FALSE;
+	//private static Boolean disabled = Boolean.FALSE;
+	//private static String mainDomain;
 
 	static {
 
@@ -182,9 +184,14 @@ public class FormTemplate {
 			mapTypeTemplates = maps;
 			useCase = templateUseCase;
 			typeTemplate = (TypeTemplate) mapTypeTemplates.get(TypeTemplate.TYPE_TEMPLATE);
-			modal = (Boolean) mapTypeTemplates.get(TypeTemplate.MODAL);
-			disabled = (Boolean) mapTypeTemplates.get(TypeTemplate.DISABLED);
-			mainDomain = (String) mapTypeTemplates.get(TypeTemplate.MAIN_DOMAIN);
+			
+			Boolean modal = (Boolean) mapTypeTemplates.get(TypeTemplate.MODAL);
+			Boolean disabled = (Boolean) mapTypeTemplates.get(TypeTemplate.DISABLED);
+			String mainDomain = (String) mapTypeTemplates.get(TypeTemplate.MAIN_DOMAIN);
+			
+			domain.setModal(modal);
+			domain.setDisabled(disabled);
+			domain.setMainDomain(mainDomain);
 
 			Paginator paginator = !(typeTemplate.equals(TypeTemplate.FORM) || typeTemplate.equals(TypeTemplate.TAB)) ? getPaginator(domain) : null;
 			Tab tab = (typeTemplate.equals(TypeTemplate.TAB)) ? getTab(domain) : null;
@@ -416,13 +423,7 @@ public class FormTemplate {
 				if (identity)
 					continue;
 
-				if (f.getType() == Id.class) {
-
-					field.setHidden(getHidden(f, default_, annotations));
-
-					count--;
-
-				} else if (!ReflectionUtils.isClassTypeCustom(f.getType())) {
+				if (!ReflectionUtils.isClassTypeCustom(f.getType())) {
 
 					field.setJoin(getJoin(domain, f, default_, annotations));
 
@@ -508,10 +509,10 @@ public class FormTemplate {
 	 * @return
 	 */
 	private Tab getTab(Domain<?> domain) {
-		//Tab tab = new Tab(false);  // habilitado para cada acao chama o backend
-		//tab.getConfig().setTabEnabled(true); // habilitado para todas as abas está abertas ao clique (tester)
-		Tab tab = new Tab(true);     // nao habilitado para cada acao chama o backend
-		tab.getConfig().setTabEnabled(false); // funcionamento normal
+		Tab tab = new Tab(false);  // habilitado para cada acao chama o backend
+		tab.getConfig().setTabEnabled(true); // habilitado para todas as abas está abertas ao clique (tester)
+		//Tab tab = new Tab(true);     // nao habilitado para cada acao chama o backend
+		//tab.getConfig().setTabEnabled(false); // funcionamento normal
 		return tab;
 	}
 
@@ -1289,46 +1290,31 @@ public class FormTemplate {
 				outer:
 				for (UIButton uiButton : uiListButtons) {
 					
-					for (String value : uiButton.notDomain()) {
-						if(mainDomain.equals(value)) {
-				            continue outer;
-						}
+					UIConditional conditional = uiButton.conditional();
+					UIConditionalOn[] uiConditionalOns = conditional.value();
+
+					for (UIConditionalOn uiConditionalOn : uiConditionalOns) {
+						Object object = ReflectionUtils.executeMethod(domain, StringsUtils.getMethod(uiConditionalOn.field()));
+						TypeOperator operator = uiConditionalOn.operator();
+				        List<String> matchs = List.of(uiConditionalOn.matchs());
+						boolean ok = TypeOperatorEvaluator.test(object, operator, matchs);
+						if (ok) continue;
+						continue outer;
 					}
-					
-					if (uiButton.label().equals(Constants.LABEL_EDIT) && !disabled) {
+
+					if (!(uiButton.label().equals(Constants.LABEL_BACK) || uiButton.label().equals(Constants.LABEL_EDIT)) && domain.getDisabled()) {
 						continue;
 					}
 
-					if (!(uiButton.label().equals(Constants.LABEL_BACK) || uiButton.label().equals(Constants.LABEL_EDIT)) && disabled) {
-						continue;
-					}
+					if (uiButton.label().equals(Constants.LABEL_DELETE) || uiButton.label().equals(Constants.LABEL_CLEAR)) {
 
-					if (uiButton.label().equals(Constants.LABEL_DELETE)) {
-
-						if (domain.getId() != null) {
-							Class<?> type = domain.getId().getClass();
-							if (ReflectionUtils.isIdNullKeyCompositedByDomain(type, domain)) {
-								continue;
-							}
-						} else if (domain.getId() == null) {
+						if (domain.getId() == null) {
 							continue;
 						}
 					}
 
-					if (uiButton.label().equals(Constants.LABEL_CLEAR) && domain.getId() != null) {
-
-						Class<?> type = domain.getId().getClass();
-
-						Boolean idNull = ReflectionUtils.isIdNullKeyCompositedByDomain(type, domain);
-
-						if (!idNull) {
-							continue;
-						}
-					}
-
-					if (modal) {
-						if (uiButton.label().equals(Constants.LABEL_DELETE)
-								|| uiButton.label().equals(Constants.LABEL_BACK))
+					if (domain.getModal()) {
+						if (uiButton.label().equals(Constants.LABEL_DELETE) || uiButton.label().equals(Constants.LABEL_BACK))
 							continue;
 					}
 
@@ -1345,7 +1331,7 @@ public class FormTemplate {
 							Object buttonObject = ReflectionUtils.get(method.getName(), uiButton);
 
 							if (buttonObject instanceof UIAction) {
-								if (uiButton.label().equals(Constants.LABEL_NEW) && modal) {
+								if (uiButton.label().equals(Constants.LABEL_NEW) && domain.getModal()) {
 									Action action = getButtonAction(uiButton);
 									action.setClientMethod(Constants.METHOD_OPEN_MODAL_CREATE);
 									action.setRedirect(null);

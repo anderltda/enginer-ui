@@ -34,7 +34,6 @@ import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryO
 import br.com.enginer.domain.system.usecase.port.outbound.repository.TagRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.UploadFileRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
-import br.com.enginer.domain.system.usecase.schema.field.type.Id;
 import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalDateDeserializer;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalDateTimeDeserializer;
@@ -90,9 +89,6 @@ public class BeanConfiguration {
 		// Ignora campos nulos ou vazios
 		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 		mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-
-		// MixIn personalizado (se necessário para Id)
-		mapper.addMixIn(Id.class, IdAbstractMixIn.class);
 
 		return mapper;
 	}

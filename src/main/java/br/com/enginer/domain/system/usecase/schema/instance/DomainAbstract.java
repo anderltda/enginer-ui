@@ -57,7 +57,7 @@ public abstract class DomainAbstract<I> implements Domain<I> {
      * Indica se o domínio é um modal.
      */
 	@Override
-	public Boolean isModal() {
+	public Boolean getModal() {
 		return modal;
 	}
 
@@ -73,7 +73,7 @@ public abstract class DomainAbstract<I> implements Domain<I> {
      * Informa se os campos estao disabled, porém apenas visualmente.
      */
 	@Override
-	public Boolean isDisabled() {
+	public Boolean getDisabled() {
 		return disabled;
 	}
 

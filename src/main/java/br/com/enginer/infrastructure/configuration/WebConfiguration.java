@@ -3,7 +3,6 @@ package br.com.enginer.infrastructure.configuration;
 import java.util.List;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -22,11 +21,6 @@ public class WebConfiguration implements WebMvcConfigurer {
 		resolvers.add(domainResolver);
 	}
 	
-    @Override
-    public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new StringToIdConverter());
-    }
-
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**") // Define as rotas que serão liberadas

@@ -55,6 +55,7 @@ import br.com.enginer.domain.system.usecase.enums.TypeFormat;
 import br.com.enginer.domain.system.usecase.enums.TypeOperator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 
 @UITitle("Sexto")
 @UIButtonAction(includes = { 
@@ -96,7 +97,9 @@ value = {
 		needsValidation = false,
 		state = TypeButtonState.BTN_STATE_DEFAULT,
 		template = TypeTemplate.TAB,
-		notDomain = { "entityAll" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+		}),
 		action = @UIAction(
 		    method = @UIActionMethod(clientMethod = "onBack")
 		)
@@ -107,7 +110,9 @@ value = {
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    needsValidation = false,
 	    template = { TypeTemplate.TAB },
-	    notDomain = { "entitySix" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entitySix" }),
+		}),
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onPrevious")
 	    )
@@ -117,7 +122,9 @@ value = {
 	    icon = "chevron_right",
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    template = { TypeTemplate.TAB, TypeTemplate.MODAL },
-	    notDomain = { "entitySix" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entitySix" }),
+		}),	    
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onNext")
 	    )
@@ -127,7 +134,9 @@ value = {
 	    icon = "save",
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    template = TypeTemplate.TAB,
-	    notDomain = { "entityAll" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+		}),
 	    action = @UIAction(
 			method = @UIActionMethod(
 				clientMethod = "onFinish", 
@@ -269,6 +278,14 @@ public class EntitySix extends DomainAbstract<Long> {
 
 	@Override
 	public Long getId() {
+		try {
+			Boolean existId = (Boolean) ReflectionUtils.isIdNull(this);
+			if (!existId) {
+				this.id = null;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		return this.id;
 	}
 

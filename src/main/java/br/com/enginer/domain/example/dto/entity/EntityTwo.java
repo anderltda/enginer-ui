@@ -59,6 +59,7 @@ import br.com.enginer.domain.system.usecase.enums.TypeOperator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.helper.ComboHelper;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 
 /**
  * 
@@ -83,6 +84,14 @@ import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
 }, 
 value = {
 	@UIButton(
+		label = "Go entityTree", 
+		template = TypeTemplate.FORM,
+		icon = "google_plus", 
+		needsValidation = true,
+		confirm = false, 
+		action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH, ui = "form", domain = "entityTree", param = "{ disable=false, field=entityTree, value=$object }"))
+	),
+	@UIButton(
 		template = { TypeTemplate.DISABLED }, 
 		label = "Filtro EntityOne",  
 		icon = "send", 
@@ -97,7 +106,9 @@ value = {
 	    needsValidation = false,
 	    state = TypeButtonState.BTN_STATE_DEFAULT,
 	    template = TypeTemplate.TAB,
-	    notDomain = { "entityOne", "entityAll" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityOne", "entityAll" }),
+		}),	    
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onBack")
 	    )
@@ -108,7 +119,9 @@ value = {
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    needsValidation = false,
 	    template = { TypeTemplate.TAB },
-	    notDomain = { "entityTwo" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityTwo" }),
+		}),		    
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onPrevious")
 	    )
@@ -118,7 +131,9 @@ value = {
 	    icon = "chevron_right",
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    template = { TypeTemplate.TAB, TypeTemplate.MODAL },
-	    notDomain = { "entityOne", "entityTwo" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityOne", "entityTwo" }),
+		}),	    
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onNext")
 	    )
@@ -128,7 +143,9 @@ value = {
 	    icon = "save",
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    template = TypeTemplate.TAB,
-	    notDomain = { "entityAll" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+		}),	    
 	    action = @UIAction(
 			method = @UIActionMethod(
 				clientMethod = "onFinish", 
@@ -268,9 +285,26 @@ public class EntityTwo extends DomainAbstract<UUID> {
 		this.entityTree.setId(idEntityTree);
 	}
 	
+	public EntityTwo(UUID id) {
+		super();
+		this.id = id;
+	}
+
+	public EntityTwo() {
+		super();
+	}
+
 	@Override
 	public UUID getId() {
-		return id;
+		try {
+			Boolean existId = (Boolean) ReflectionUtils.isIdNull(this);
+			if (!existId) {
+				this.id = null;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return this.id;
 	}
 
 	@Override

@@ -19,11 +19,6 @@ import br.com.enginer.domain.system.usecase.annotation.instance.action.button.pa
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorSave;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowAdd;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowBack;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowClear;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowDelete;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowEdit;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIPaginator;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
@@ -46,10 +41,6 @@ includes = {
 	UIButtonFormDelete.class,
 	UIButtonFormEdit.class, 
 	UIButtonFormSave.class,
-	// ROW
-	UIButtonRowClear.class, 
-	UIButtonRowBack.class,
-	UIButtonRowAdd.class
 } 
 )
 @UIPaginator(
@@ -60,8 +51,6 @@ includes = {
 		UIButtonPaginatorEdit.class, 
 		UIButtonPaginatorDelete.class,
 		UIButtonPaginatorSave.class,
-		UIButtonRowEdit.class,
-		UIButtonRowDelete.class
 	}
 ))
 public class UploadFile extends DomainAbstract<Long> {

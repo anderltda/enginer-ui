@@ -3,6 +3,7 @@ package br.com.enginer.domain.example.dto.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import br.com.enginer.domain.system.usecase.annotation.field.UICheckbox;
 import br.com.enginer.domain.system.usecase.annotation.field.UIColumn;
@@ -46,6 +47,7 @@ import br.com.enginer.domain.system.usecase.enums.TypeFormat;
 import br.com.enginer.domain.system.usecase.enums.TypeOperator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 import br.com.enginer.domain.system.usecase.utils.StringsUtils;
 
 /**
@@ -172,14 +174,26 @@ public class EntityRow extends DomainAbstract<Long> {
 	@UIRow(visible = true, editable = true, order = 9)
 	private Boolean ativo;
 
-	public void setIdEntityTen(Long idEntityTen) {
-		this.entityTen = new EntityTen();
-		this.entityTen.setId(idEntityTen);
+	public EntityRow() {
+		super();
+	}
+
+	public EntityRow(Long id) {
+		super();
+		this.id = id;
 	}
 
 	@Override
 	public Long getId() {
-		return id;
+		try {
+			Boolean existId = (Boolean) ReflectionUtils.isIdNull(this);
+			if (!existId) {
+				this.id = null;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return this.id;
 	}
 
 	@Override
@@ -273,5 +287,35 @@ public class EntityRow extends DomainAbstract<Long> {
 
 	public void setDataProcessamento(LocalDateTime dataProcessamento) {
 		this.dataProcessamento = dataProcessamento;
+	}
+	
+	public void setIdEntityTen(Long idEntityTen) {
+		this.entityTen = new EntityTen();
+		this.entityTen.setId(idEntityTen);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EntityRow other = (EntityRow) obj;
+		return Objects.equals(id, other.id);
+	}
+
+	@Override
+	public String toString() {
+		return "EntityRow [id=" + id + ", entityTen=" + entityTen + ", cpf=" + cpf + ", cnpj=" + cnpj + ", phone="
+				+ phone + ", cep=" + cep + ", custo=" + custo + ", valueDouble=" + valueDouble + ", valueLong="
+				+ valueLong + ", dataNascimento=" + dataNascimento + ", dataProcessamento=" + dataProcessamento
+				+ ", ativo=" + ativo + "]";
 	}
 }

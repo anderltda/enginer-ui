@@ -38,10 +38,14 @@ import br.com.enginer.domain.system.usecase.annotation.instance.action.button.ro
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowEdit;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIPaginator;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditional;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditionalOn;
 import br.com.enginer.domain.system.usecase.constants.Constants;
 import br.com.enginer.domain.system.usecase.enums.TypeButtonState;
+import br.com.enginer.domain.system.usecase.enums.TypeOperator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 
 @UITitle("Oitavo")
 @UIButtonAction(includes = { 
@@ -68,7 +72,9 @@ value = {
 		needsValidation = false,
 		state = TypeButtonState.BTN_STATE_DEFAULT,
 		template = TypeTemplate.TAB,
-		notDomain = { "entityAll" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+		}),
 		action = @UIAction(
 		    method = @UIActionMethod(clientMethod = "onBack")
 		)
@@ -79,7 +85,9 @@ value = {
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    needsValidation = false,
 	    template = { TypeTemplate.TAB },
-	    notDomain = { "entityEight" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityEight" }),
+		}),    
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onPrevious")
 	    )
@@ -89,7 +97,9 @@ value = {
 	    icon = "chevron_right",
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    template = { TypeTemplate.TAB, TypeTemplate.MODAL },
-	    notDomain = { "entityEight" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityEight" }),
+		}),
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onNext")
 	    )
@@ -99,7 +109,9 @@ value = {
 	    icon = "save",
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    template = TypeTemplate.TAB,
-	    notDomain = { "entityAll" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+		}),
 	    action = @UIAction(
 			method = @UIActionMethod(
 				clientMethod = "onFinish", 
@@ -169,28 +181,16 @@ public class EntityEight extends DomainAbstract<Long> {
 		this.id = id;
 	}
 
-	public void setIdEntitySeven(UUID idEntitySeven) {
-		if (this.entitySeven == null) {
-			this.entitySeven = new EntitySeven();
-			this.entitySeven.setId(new EntitySevenId());
-			this.entitySeven.getId().setIdEntitySeven(idEntitySeven);
-		} else {
-			this.entitySeven.getId().setIdEntitySeven(idEntitySeven);
-		}
-	}
-
-	public void setIdEntitySix(Long idEntitySix) {
-		if (this.entitySeven == null) {
-			this.entitySeven = new EntitySeven();
-			this.entitySeven.setId(new EntitySevenId());
-			this.entitySeven.getId().setIdEntitySix(idEntitySix);
-		} else {
-			this.entitySeven.getId().setIdEntitySix(idEntitySix);
-		}
-	}
-
 	@Override
 	public Long getId() {
+		try {
+			Boolean existId = (Boolean) ReflectionUtils.isIdNull(this);
+			if (!existId) {
+				this.id = null;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		return this.id;
 	}
 
@@ -220,6 +220,26 @@ public class EntityEight extends DomainAbstract<Long> {
 
 	public void setEntitySeven(EntitySeven entitySeven) {
 		this.entitySeven = entitySeven;
+	}
+	
+	public void setIdEntitySeven(UUID idEntitySeven) {
+		if (this.entitySeven == null) {
+			this.entitySeven = new EntitySeven();
+			this.entitySeven.setId(new EntitySevenId());
+			this.entitySeven.getId().setIdEntitySeven(idEntitySeven);
+		} else {
+			this.entitySeven.getId().setIdEntitySeven(idEntitySeven);
+		}
+	}
+
+	public void setIdEntitySix(Long idEntitySix) {
+		if (this.entitySeven == null) {
+			this.entitySeven = new EntitySeven();
+			this.entitySeven.setId(new EntitySevenId());
+			this.entitySeven.getId().setIdEntitySix(idEntitySix);
+		} else {
+			this.entitySeven.getId().setIdEntitySix(idEntitySix);
+		}
 	}
 
 	@Override

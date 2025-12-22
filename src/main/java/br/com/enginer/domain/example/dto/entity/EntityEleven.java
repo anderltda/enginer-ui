@@ -41,11 +41,15 @@ import br.com.enginer.domain.system.usecase.annotation.instance.action.button.ro
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowEdit;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIPaginator;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditional;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditionalOn;
 import br.com.enginer.domain.system.usecase.constants.Constants;
 import br.com.enginer.domain.system.usecase.enums.TypeButtonState;
 import br.com.enginer.domain.system.usecase.enums.TypeFormat;
+import br.com.enginer.domain.system.usecase.enums.TypeOperator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 
 /**
  * 
@@ -76,7 +80,9 @@ value = {
 		needsValidation = false,
 		state = TypeButtonState.BTN_STATE_DEFAULT,
 		template = TypeTemplate.TAB,
-		notDomain = { "entityAll" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+		}),
 		action = @UIAction(
 		    method = @UIActionMethod(clientMethod = "onBack")
 		)
@@ -87,7 +93,9 @@ value = {
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    needsValidation = false,
 	    template = { TypeTemplate.TAB },
-	    notDomain = { "entityEleven" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityEleven" }),
+		}),	    
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onPrevious")
 	    )
@@ -168,19 +176,26 @@ public class EntityEleven extends DomainAbstract<Long> {
 	@UIRow(calculation = "amount * value", totalizer = true, label = "Custo total" , visible = true)
 	private BigDecimal amountTotal;
 
-	public void setIdEntityTen(Long idEntityTen) {
-		this.entityTen = new EntityTen();
-		this.entityTen.setId(idEntityTen);
+	public EntityEleven() {
+		super();
 	}
 
-	public void setIdEntitySix(Long idEntitySix) {
-		this.entitySix = new EntitySix();
-		this.entitySix.setId(idEntitySix);
+	public EntityEleven(Long id) {
+		super();
+		this.id = id;
 	}
 
 	@Override
 	public Long getId() {
-		return id;
+		try {
+			Boolean existId = (Boolean) ReflectionUtils.isIdNull(this);
+			if (!existId) {
+				this.id = null;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return this.id;
 	}
 
 	@Override
@@ -242,6 +257,16 @@ public class EntityEleven extends DomainAbstract<Long> {
 
 	public void setAmountTotal(BigDecimal amountTotal) {
 		this.amountTotal = amountTotal;
+	}
+	
+	public void setIdEntityTen(Long idEntityTen) {
+		this.entityTen = new EntityTen();
+		this.entityTen.setId(idEntityTen);
+	}
+
+	public void setIdEntitySix(Long idEntitySix) {
+		this.entitySix = new EntitySix();
+		this.entitySix.setId(idEntitySix);
 	}
 
 	@Override

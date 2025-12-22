@@ -35,10 +35,14 @@ import br.com.enginer.domain.system.usecase.annotation.instance.action.button.ro
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowEdit;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIPaginator;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditional;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditionalOn;
 import br.com.enginer.domain.system.usecase.constants.Constants;
 import br.com.enginer.domain.system.usecase.enums.TypeButtonState;
+import br.com.enginer.domain.system.usecase.enums.TypeOperator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 
 /**
  * 
@@ -69,7 +73,9 @@ value = {
 		needsValidation = false,
 		state = TypeButtonState.BTN_STATE_DEFAULT,
 		template = TypeTemplate.TAB,
-		notDomain = { "entityAll" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+		}),
 		action = @UIAction(
 		    method = @UIActionMethod(clientMethod = "onBack")
 		)
@@ -80,7 +86,9 @@ value = {
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    needsValidation = false,
 	    template = { TypeTemplate.TAB },
-	    notDomain = { "entityNine" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityNine" }),
+		}),	    
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onPrevious")
 	    )
@@ -90,7 +98,9 @@ value = {
 	    icon = "chevron_right",
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    template = { TypeTemplate.TAB, TypeTemplate.MODAL },
-	    notDomain = { "entityNine" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityNine" }),
+		}),	    
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onNext")
 	    )
@@ -100,7 +110,9 @@ value = {
 	    icon = "save",
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    template = TypeTemplate.TAB,
-	    notDomain = { "entityAll" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+		}),
 	    action = @UIAction(
 			method = @UIActionMethod(
 				clientMethod = "onFinish", 
@@ -197,9 +209,26 @@ public class EntityNine extends DomainAbstract<EntityNineId> {
 	@UIColumn(label = "EntityNine Variable", initial = true)
 	@UIRow(visible = true)
 	private String variable;
+	
+	public EntityNine() {
+		super();
+	}
+	
+	public EntityNine(EntityNineId id) {
+		super();
+		this.id = id;
+	}
 
 	@Override
 	public EntityNineId getId() {
+		try {
+			Boolean existId = (Boolean) ReflectionUtils.isIdNull(this);
+			if (!existId) {
+				this.id = null;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		return this.id;
 	}
 

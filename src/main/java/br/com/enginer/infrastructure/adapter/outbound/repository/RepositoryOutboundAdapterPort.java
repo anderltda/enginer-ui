@@ -874,7 +874,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 			if (ReflectionUtils.isTypeId(domain.getId().getClass())) {
 				delete(domain, domain.getId());
 			} else {
-				Map<String, Object> ids = ReflectionUtils.getIdDomainId((DomainId) domain.getId());
+				Map<String, Object> ids = ReflectionUtils.extractCompositeIdValues((DomainId) domain.getId());
 				delete(domain, ids);
 			}
 		
@@ -893,17 +893,13 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 
 			if (!(DomainId.class.isAssignableFrom(domain.getClass()))) {
 				
-				Boolean hasValueId = ReflectionUtils.hasIdValue(domain);
+				T loadedDomain = findById(domain);
 				
-				T loadedDomain = hasValueId ? findById(domain) : null;
-				
-				if(hasValueId && loadedDomain == null) {
+				if(loadedDomain == null) {
 					throw new UncheckedException("Nenhum registro encontrado");
 				}
 				
-				if (loadedDomain != null) {
-					domain = loadedDomain;
-				}
+				domain = loadedDomain;
 			}
 			
 			return domain;
@@ -924,17 +920,12 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 
 		try {
 			
-			if (ReflectionUtils.isTypeId(domain.getId().getClass())) {
-				return findById(domain, domain.getId());
+			if (domain.getId() instanceof DomainId) {
+				Map<String, Object> ids = ReflectionUtils.getCompositedKeyFields(domain);
+				return findByIdComposite(domain, ids);
 			}
 			
-			if (ReflectionUtils.isIdNullKeyCompositedByDomain(domain.getId().getClass(), domain)) {
-				return null;
-			}
-			
-			Map<String, Object> ids = ReflectionUtils.getCompositedKeyFields(domain);
-			
-			return findByIdComposite(domain, ids);
+			return findById(domain, domain.getId());
 			
 		} catch (Exception ex) {
 			throw new UncheckedException(ex.getMessage(), ex);

@@ -6,6 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditional;
 import br.com.enginer.domain.system.usecase.enums.TypeButtonState;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 
@@ -21,7 +22,7 @@ public @interface UIButton {
 	boolean rowInlineButton() default false;
 	boolean confirm() default false;
 	boolean needsValidation() default true;
-	String[] notDomain() default {};
+	UIConditional conditional() default @UIConditional;
 	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.MODAL };
 	TypeButtonState state() default TypeButtonState.BTN_STATE_DEFAULT; 
 	UIAction action() default @UIAction;

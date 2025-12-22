@@ -37,6 +37,7 @@ import br.com.enginer.domain.system.usecase.enums.TypeButtonState;
 import br.com.enginer.domain.system.usecase.enums.TypeLayoutTarget;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 
 /**
  * 
@@ -168,10 +169,27 @@ public class EntityAll extends DomainAbstract<Long> {
 	@UIPosition(x = 1, y = 6)
 	@UIFilter(label = "Entity One", field = "name", readonly = false, template = { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.ROW })
 	@UIRow(visible = true, fields = { "name" })
-	private EntityOne entityOne;	
+	private EntityOne entityOne;
 	
+	public EntityAll() {
+		super();
+	}
+
+	public EntityAll(Long id) {
+		super();
+		this.id = id;
+	}
+
 	@Override
 	public Long getId() {
+		try {
+			Boolean existId = (Boolean) ReflectionUtils.isIdNull(this);
+			if (!existId) {
+				this.id = null;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		return id;
 	}
 

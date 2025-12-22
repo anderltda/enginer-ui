@@ -1,5 +1,6 @@
 package br.com.enginer.domain.example.dto.entity;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import br.com.enginer.domain.system.usecase.annotation.field.UIColumn;
@@ -40,10 +41,14 @@ import br.com.enginer.domain.system.usecase.annotation.instance.action.button.ro
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowEdit;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIPaginator;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditional;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditionalOn;
 import br.com.enginer.domain.system.usecase.constants.Constants;
 import br.com.enginer.domain.system.usecase.enums.TypeButtonState;
+import br.com.enginer.domain.system.usecase.enums.TypeOperator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 
 /**
  * 
@@ -73,7 +78,9 @@ value = {
 		needsValidation = false,
 		state = TypeButtonState.BTN_STATE_DEFAULT,
 		template = TypeTemplate.TAB,
-		notDomain = { "entityAll" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+		}),		
 		action = @UIAction(
 		    method = @UIActionMethod(clientMethod = "onBack")
 		)
@@ -84,7 +91,9 @@ value = {
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    needsValidation = false,
 	    template = { TypeTemplate.TAB },
-	    notDomain = { "entityFive" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityFive" }),
+		}),	    
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onPrevious")
 	    )
@@ -94,7 +103,9 @@ value = {
 	    icon = "chevron_right",
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    template = { TypeTemplate.TAB, TypeTemplate.MODAL },
-	    notDomain = { "entityFive" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityFive" }),
+		}),
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onNext")
 	    )
@@ -104,7 +115,9 @@ value = {
 	    icon = "save",
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    template = TypeTemplate.TAB,
-	    notDomain = { "entityAll" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+		}),	    
 	    action = @UIAction(
 			method = @UIActionMethod(
 				clientMethod = "onFinish", 
@@ -171,14 +184,26 @@ public class EntityFive extends DomainAbstract<UUID> {
 	@UIColumn(label = "Entity Status", fields = { "name", "status" }, initial = false)
 	private EntityStatus entityStatus;
 	
-	public void setIdEntityStatus(Long idEntityStatus) {
-		this.entityStatus = new EntityStatus();
-		this.entityStatus.setId(idEntityStatus);
+	public EntityFive() {
+		super();
+	}
+
+	public EntityFive(UUID id) {
+		super();
+		this.id = id;
 	}
 
 	@Override
 	public UUID getId() {
-		return id;
+		try {
+			Boolean existId = (Boolean) ReflectionUtils.isIdNull(this);
+			if (!existId) {
+				this.id = null;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return this.id;
 	}
 	
 	@Override
@@ -209,4 +234,34 @@ public class EntityFive extends DomainAbstract<UUID> {
 	public void setEntityStatus(EntityStatus entityStatus) {
 		this.entityStatus = entityStatus;
 	}
+	
+	public void setIdEntityStatus(Long idEntityStatus) {
+		this.entityStatus = new EntityStatus();
+		this.entityStatus.setId(idEntityStatus);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EntityFive other = (EntityFive) obj;
+		return Objects.equals(id, other.id);
+	}
+
+	@Override
+	public String toString() {
+		return "EntityFive [id=" + id + ", reference=" + reference + ", factor=" + factor + ", entityStatus="
+				+ entityStatus + "]";
+	}
+	
+	
 }

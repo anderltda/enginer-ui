@@ -29,7 +29,6 @@ import br.com.enginer.domain.system.usecase.exception.CheckedException;
 import br.com.enginer.domain.system.usecase.port.outbound.DependencyInjectorPort;
 import br.com.enginer.domain.system.usecase.port.outbound.OutboundPort;
 import br.com.enginer.domain.system.usecase.registry.DependencyInjectorRegistry;
-import br.com.enginer.domain.system.usecase.schema.field.type.Id;
 import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainId;
 import br.com.enginer.infrastructure.injector.DependencyInjector;
@@ -436,8 +435,7 @@ public class ReflectionUtils {
 	 * @return
 	 */
 	public static boolean isClassTypeCustom(Class<?> clazz) {
-		return (!clazz.equals(LocalDate.class) || !clazz.equals(LocalDateTime.class)) || !clazz.equals(Id.class)
-				|| !classIsIdType(clazz);
+		return (!clazz.equals(LocalDate.class) || !clazz.equals(LocalDateTime.class)) || !classIsIdType(clazz);
 	}
 
 	/**
@@ -553,45 +551,6 @@ public class ReflectionUtils {
 	/**
 	 * CONVERTE ID<T>
 	 */
-
-	/**
-	 * @param <T>
-	 * @param inputId
-	 * @param expectedType
-	 * @return
-	 */
-	public static <T> Id<T> convertIdToExpectedType(Id<?> inputId, Class<T> expectedType) {
-
-		Object rawValue = inputId.getValue();
-
-		if (rawValue == null) {
-			return Id.of(null);
-		}
-
-		if (expectedType.isInstance(rawValue)) {
-			return Id.of(expectedType.cast(rawValue));
-		}
-
-		// Conversão comum
-		try {
-
-			if (expectedType.equals(Long.class)) {
-				return Id.of(expectedType.cast(Long.valueOf(rawValue.toString())));
-			} else if (expectedType.equals(Integer.class)) {
-				return Id.of(expectedType.cast(Integer.valueOf(rawValue.toString())));
-			} else if (expectedType.equals(UUID.class)) {
-				return Id.of(expectedType.cast(UUID.fromString(rawValue.toString())));
-			} else if (expectedType.equals(String.class)) {
-				return Id.of(expectedType.cast(rawValue.toString()));
-			}
-
-		} catch (Exception e) {
-			throw new IllegalArgumentException(
-					"Falha ao converter Id para tipo esperado: " + expectedType.getSimpleName(), e);
-		}
-
-		return Id.of(expectedType.cast(rawValue));
-	}
 
 	/**
 	 * SET REFLECTION
@@ -888,25 +847,6 @@ public class ReflectionUtils {
 
 		return isMatch;
 	}
-	
-	/**
-	 * Metodo responsavel por verificar existe valores em value.
-	 * @param value
-	 */
-	public static Boolean hasIdValue(Domain<?> domain) throws Exception {
-
-		Boolean isMatch = Boolean.TRUE;
-
-		if (domain.getId() == null) {
-			return Boolean.FALSE;
-		}
-		
-		if (domain.getId() instanceof DomainId) {
-			return ofNullDomainId(domain.getId().getClass(), domain);
-		}
-
-		return isMatch;
-	}	
 
 	/**
 	 * Metodo responsavel por trazer a TYPE('Class') do FIELD informado da clazz
@@ -1013,25 +953,57 @@ public class ReflectionUtils {
 	}
 
 	/**
-	 * @param domainId
-	 * @return
-	 * @throws Exception
+	 * Extrai os valores de um identificador composto ({@link DomainId})
+	 * e os converte em um {@link Map}, onde:
+	 *
+	 * <ul>
+	 *   <li>a chave representa o nome do campo do ID composto</li>
+	 *   <li>o valor representa o valor atual desse campo</li>
+	 * </ul>
+	 *
+	 * <p>
+	 * Apenas campos com valor diferente de {@code null} são incluídos no mapa.
+	 * Este método é utilizado para:
+	 * </p>
+	 *
+	 * <ul>
+	 *   <li>executar operações de busca, exclusão ou verificação por chave composta</li>
+	 *   <li>montar filtros dinâmicos para repositórios</li>
+	 *   <li>mapear corretamente IDs compostos em consultas genéricas</li>
+	 * </ul>
+	 *
+	 * <p>
+	 * Exemplo:
+	 * </p>
+	 *
+	 * <pre>
+	 * DomainId id = new EntityNineId();
+	 * id.setIdEntitySeven(UUID.fromString("..."));
+	 * id.setIdEntityEight(10L);
+	 *
+	 * Map&lt;String, Object&gt; result = getIdDomainId(id);
+	 *
+	 * // resultado:
+	 * // { "idEntitySeven" = UUID, "idEntityEight" = 10L }
+	 * </pre>
+	 *
+	 * @param domainId instância do identificador composto a ser processada
+	 * @return mapa contendo os campos do ID composto e seus respectivos valores
+	 * @throws Exception em caso de erro ao acessar métodos via reflexão
 	 */
-	public static Map<String, Object> getIdDomainId(DomainId domainId) throws Exception {
+	public static Map<String, Object> extractCompositeIdValues(DomainId domainId) throws Exception {
 
 		Map<String, Object> ids = new HashMap<>();
 
 		for (Field field : domainId.getClass().getDeclaredFields()) {
 
-			if (field.getName().startsWith("id")) {
+			Object object = executeMethod(domainId, StringsUtils.getMethod(field.getName()));
 
-				Object object = executeMethod(domainId, StringsUtils.getMethod(field.getName()));
-
-				if (object != null) {
-					ids.put(field.getName(), object);
-				}
+			if (object != null) {
+				ids.put(field.getName(), object);
 			}
 		}
+		
 		return ids;
 	}
 
@@ -1045,32 +1017,82 @@ public class ReflectionUtils {
 	}
 
 	/**
-	 * @param clazzDomain
-	 * @param domain
-	 * @return
-	 * @throws Exception
+	 * Verifica se o identificador (ID) de um {@link Domain} é nulo ou está incompleto.
+	 *
+	 * <p>
+	 * Suporta IDs simples ({@link String}, {@link Long}, {@link java.util.UUID}, etc.)
+	 * e IDs compostos que implementam {@link DomainId}.
+	 * </p>
+	 *
+	 * @param domain domínio a ser validado
+	 * @return {@code true} se o ID for nulo ou inválido; {@code false} caso contrário
+	 * @throws Exception em caso de erro ao acessar campos do ID via reflexão
 	 */
-	public static Boolean isIdNullKeyCompositedByDomain(Class<?> clazzDomain, Domain<?> domain) throws Exception {
+	public static boolean isIdNull(Domain<?> domain) throws Exception {
 
-		if (ReflectionUtils.isIdComposedType(domain.getId().getClass())) {
+	    if (domain == null) return true;
 
-			Domain<?> domainId = (Domain<?>) newInstance(clazzDomain);
+	    Object idObj = domain.getId();
+	    if (idObj == null) return true;
 
-			for (Field field : domainId.getClass().getDeclaredFields()) {
+	    Class<?> idClass = idObj.getClass();
 
-				if (field.getName().startsWith("id")) {
+	    // ID simples (UUID, Long, Integer, String, etc.)
+	    if (!ReflectionUtils.isIdComposedType(idClass)) {
+	        return isNullOrEmptyGeneric(idObj);
+	    }
 
-					Object object = ReflectionUtils.executeMethod(domain.getId(),
-							StringsUtils.getMethod(field.getName()));
+	    // ID composto (DomainId)
+	    for (Field field : idClass.getDeclaredFields()) {
+	        field.setAccessible(true);
+	        Object value = field.get(idObj);
 
-					if (object == null) {
-						return true;
-					}
-				}
-			}
-		}
+	        // Campo Domain dentro do ID (ex: entitySeven, entityEight)
+	        if (value instanceof Domain<?> d) {
+	            if (d.getId() == null) return true;
+	            continue;
+	        }
 
-		return false;
+	        if (isNullOrEmptyGeneric(value)) {
+	            return true;
+	        }
+	    }
+
+	    return false;
+	}
+
+	/**
+	 * Verifica se um valor genérico deve ser considerado "nulo" ou "vazio"
+	 * no contexto de validação de identificadores e chaves compostas.
+	 *
+	 * <p>Regras aplicadas:</p>
+	 * <ul>
+	 *   <li>{@code null} é sempre considerado inválido.</li>
+	 *   <li>{@link String}: inválida quando vazia ou contendo apenas espaços.</li>
+	 *   <li>{@link java.util.Optional}: inválido quando {@code empty}.</li>
+	 *   <li>{@link java.util.Collection}: inválida quando vazia.</li>
+	 *   <li>{@link java.util.Map}: inválido quando vazio.</li>
+	 *   <li>Tipos escalares como {@link Number}, {@link java.util.UUID}, {@link Boolean}
+	 *       não possuem conceito de "vazio"; se não forem {@code null}, são considerados válidos.</li>
+	 * </ul>
+	 *
+	 * <p>
+	 * Este método é utilizado principalmente na validação de IDs simples e compostos,
+	 * garantindo que qualquer campo obrigatório do identificador esteja devidamente preenchido
+	 * antes de operações de persistência, busca ou composição de URI.
+	 * </p>
+	 *
+	 * @param value valor a ser validado
+	 * @return {@code true} se o valor for {@code null} ou semanticamente vazio;
+	 *         {@code false} caso contrário
+	 */
+	private static boolean isNullOrEmptyGeneric(Object value) {
+	    if (value == null) return true;
+	    if (value instanceof String s) return s.trim().isEmpty();
+	    if (value instanceof java.util.Optional<?> opt) return opt.isEmpty();
+	    if (value instanceof java.util.Collection<?> c) return c.isEmpty();
+	    if (value instanceof java.util.Map<?, ?> m) return m.isEmpty();
+	    return false;
 	}
 	
 	/**

@@ -3,6 +3,7 @@ package br.com.enginer.domain.example.dto.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 import br.com.enginer.domain.system.usecase.annotation.field.UIColumn;
@@ -47,12 +48,16 @@ import br.com.enginer.domain.system.usecase.annotation.instance.action.button.ro
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowEdit;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIPaginator;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditional;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditionalOn;
 import br.com.enginer.domain.system.usecase.constants.Constants;
 import br.com.enginer.domain.system.usecase.enums.TypeButtonState;
 import br.com.enginer.domain.system.usecase.enums.TypeDateFormat;
+import br.com.enginer.domain.system.usecase.enums.TypeOperator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.helper.ComboHelper;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 
 /**
  * 
@@ -77,12 +82,22 @@ import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
 }, 
 value = {
 	@UIButton(
+		label = "Go entityFour", 
+		template = TypeTemplate.FORM,
+		icon = "google_plus", 
+		needsValidation = true,
+		confirm = false, 
+		action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH, ui = "form", domain = "entityFour", param = "{ disable=false, field=entityFour, value=$object }"))
+	),		
+	@UIButton(
 	    label = Constants.LABEL_BACK,
 	    icon = "undo",
 	    needsValidation = false,
 	    state = TypeButtonState.BTN_STATE_DEFAULT,
 	    template = TypeTemplate.TAB,
-	    notDomain = { "entityAll" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+		}),	    
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onBack")
 	    )
@@ -93,7 +108,9 @@ value = {
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    needsValidation = false,
 	    template = { TypeTemplate.TAB },
-	    notDomain = { "entityTree" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityTree" }),
+		}),	    
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onPrevious")
 	    )
@@ -103,7 +120,9 @@ value = {
 	    icon = "chevron_right",
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    template = { TypeTemplate.TAB, TypeTemplate.MODAL },
-	    notDomain = { "entityTree" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityTree" }),
+		}),	    
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onNext")
 	    )
@@ -113,7 +132,9 @@ value = {
 	    icon = "save",
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
 	    template = TypeTemplate.TAB,
-	    notDomain = { "entityAll" },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+		}),	    
 	    action = @UIAction(
 			method = @UIActionMethod(
 				clientMethod = "onFinish", 
@@ -189,19 +210,26 @@ public class EntityTree extends DomainAbstract<UUID> {
 	@UIColumn(label = "Entity Four", fields = { "fruit", "attribute", "inclusionDateTime", "entityFive" }, initial = false)
 	private EntityFour entityFour;
 
-	public void setIdEntityStatus(Long idEntityStatus) {
-		this.entityStatus = new EntityStatus();
-		this.entityStatus.setId(idEntityStatus);
+	public EntityTree() {
+		super();
 	}
 
-	public void setIdEntityFour(UUID idEntityFour) {
-		this.entityFour = new EntityFour();
-		this.entityFour.setId(idEntityFour);
+	public EntityTree(UUID id) {
+		super();
+		this.id = id;
 	}
 
 	@Override
 	public UUID getId() {
-		return id;
+		try {
+			Boolean existId = (Boolean) ReflectionUtils.isIdNull(this);
+			if (!existId) {
+				this.id = null;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return this.id;
 	}
 
 	@Override
@@ -263,5 +291,39 @@ public class EntityTree extends DomainAbstract<UUID> {
 
 	public void setEntityStatus(EntityStatus entityStatus) {
 		this.entityStatus = entityStatus;
+	}
+	
+	public void setIdEntityStatus(Long idEntityStatus) {
+		this.entityStatus = new EntityStatus();
+		this.entityStatus.setId(idEntityStatus);
+	}
+
+	public void setIdEntityFour(UUID idEntityFour) {
+		this.entityFour = new EntityFour();
+		this.entityFour.setId(idEntityFour);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EntityTree other = (EntityTree) obj;
+		return Objects.equals(id, other.id);
+	}
+
+	@Override
+	public String toString() {
+		return "EntityTree [id=" + id + ", animal=" + animal + ", entityStatus=" + entityStatus + ", indicator="
+				+ indicator + ", amount=" + amount + ", localDate=" + localDate + ", localDateTime=" + localDateTime
+				+ ", entityFour=" + entityFour + "]";
 	}
 }

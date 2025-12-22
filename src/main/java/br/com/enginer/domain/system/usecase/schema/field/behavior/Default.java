@@ -194,12 +194,12 @@ public class Default {
 		file.setLabel(label);
 		file.setField(field);
 		file.setValue(value);
-		file.setAction("http://localhost:8081/api/upload");
-		file.setMode(TypeFileUpload.SIMPLE);
-		file.setListType("text");
-		file.setFiles(files);
 		file.setPosition(position);
 		file.setDisable(disable);
+		file.setListType("text");
+		file.setMode(TypeFileUpload.SIMPLE);
+		file.setAction("http://localhost:8081/api/upload");
+		file.setFiles(files);
 		return file;
 	}
 

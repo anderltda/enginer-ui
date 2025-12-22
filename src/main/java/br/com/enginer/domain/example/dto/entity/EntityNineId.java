@@ -30,6 +30,17 @@ public class EntityNineId extends DomainAbstract<Object[]> implements DomainId {
 	@UIColumn(label = "Entity Eight", fields = { "position" }, initial = false)
 	private EntityEight entityEight;
 	
+	public EntityNineId() {
+		super();
+	}
+
+	public EntityNineId(Long idEntityEight, UUID idEntitySeven, Long idEntitySix) {
+		super();
+		this.idEntityEight = idEntityEight;
+		this.idEntitySeven = idEntitySeven;
+		this.idEntitySix = idEntitySix;
+	}
+
 	public Long getIdEntityEight() {
 		return this.idEntityEight;
 	}

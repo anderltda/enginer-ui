@@ -3,6 +3,7 @@ package br.com.enginer.domain.example.dto.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 import br.com.enginer.domain.system.usecase.annotation.field.UICheckbox;
@@ -66,6 +67,7 @@ import br.com.enginer.domain.system.usecase.enums.TypeLayoutTarget;
 import br.com.enginer.domain.system.usecase.enums.TypeOperator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 
 /**
  * 
@@ -94,11 +96,14 @@ import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
 }, 
 value = {	
 	@UIButton(
-		label = "Custom", 
+		label = "Go entityTwo", 
 		template = TypeTemplate.FORM,
 		icon = "google_plus", 
 		needsValidation = true,
 		confirm = false, 
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "id", operator = TypeOperator.IS_NOT_NULL),
+		}),
 		action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH, ui = "form", domain = "entityTwo", param = "{ disable=false, field=entityTwo, value=$object }"))
 	),
 })
@@ -327,101 +332,26 @@ public class EntityOne extends DomainAbstract<Long> {
 	@UIRow(visible = false)
 	private Integer valorUm = 1;
 	
-	public Integer getValorUm() {
-		return valorUm;
-	}
-
-	public void setValorUm(Integer valorUm) {
-		this.valorUm = valorUm;
-	}
-
-	public Double getValorDivisao() {
-		return valorDivisao;
-	}
-
-	public void setValorDivisao(Double valorDivisao) {
-		this.valorDivisao = valorDivisao;
-	}
-
-	public Double getValorSubtracao() {
-		return valorSubtracao;
-	}
-
-	public void setValorSubtracao(Double valorSubtracao) {
-		this.valorSubtracao = valorSubtracao;
-	}
-
-	public Double getValorSoma() {
-		return valorSoma;
-	}
-
-	public void setValorSoma(Double valorSoma) {
-		this.valorSoma = valorSoma;
-	}
-
-	public Double getValorMultiplicacao() {
-		return valorMultiplicacao;
-	}
-
-	public void setValorMultiplicacao(Double valorMultiplicacao) {
-		this.valorMultiplicacao = valorMultiplicacao;
-	}
-
-	/**
-	 * BLOCO START
-	 */
-	public void setIdEntityStatus(Long idEntityStatus) {
-		this.entityStatus = new EntityStatus();
-		this.entityStatus.setId(idEntityStatus);
-	}
-
-	public void setIdEntityTwo(UUID idEntityTwo) {
-		this.entityTwo = new EntityTwo();
-		this.entityTwo.setId(idEntityTwo);
+	public EntityOne() {
+		super();
 	}
 	
-	public void setIdEntityNine(EntityNineId idEntityNine) {
-		this.entityNine = new EntityNine();
-		this.entityNine.setId(idEntityNine);
+	public EntityOne(Long id) {
+		super();
+		this.id = id;
 	}
-	
-	public void setIdEntityEight(Long idEntityEight) {
-		if(this.entityNine == null) {
-			this.entityNine = new EntityNine();
-			this.entityNine.setId(new EntityNineId());
-			this.entityNine.getId().setIdEntityEight(idEntityEight);
-		} else {
-			this.entityNine.getId().setIdEntityEight(idEntityEight);
-		}
-	}
-
-	public void setIdEntitySeven(UUID idEntitySeven) {
-		if(this.entityNine == null) {
-			this.entityNine = new EntityNine();
-			this.entityNine.setId(new EntityNineId());
-			this.entityNine.getId().setIdEntitySeven(idEntitySeven);
-		} else {
-			this.entityNine.getId().setIdEntitySeven(idEntitySeven);
-		}
-	}
-
-	public void setIdEntitySix(Long idEntitySix) {
-		if(this.entityNine == null) {
-			this.entityNine = new EntityNine();
-			this.entityNine.setId(new EntityNineId());
-			this.entityNine.getId().setIdEntitySix(idEntitySix);
-		} else {
-			this.entityNine.getId().setIdEntitySix(idEntitySix);
-		}
-	}
-	
-	/**
-	 * BLOCO END
-	 */
 
 	@Override
 	public Long getId() {
-		return id;
+		try {
+			Boolean existId = (Boolean) ReflectionUtils.isIdNull(this);
+			if (!existId) {
+				this.id = null;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return this.id;
 	}
 
 	@Override
@@ -492,7 +422,7 @@ public class EntityOne extends DomainAbstract<Long> {
 	public void setEntityTwo(EntityTwo entityTwo) {
 		this.entityTwo = entityTwo;
 	}
-	
+
 	public EntityNine getEntityNine() {
 		return entityNine;
 	}
@@ -501,10 +431,121 @@ public class EntityOne extends DomainAbstract<Long> {
 		this.entityNine = entityNine;
 	}
 
+	public Integer getValorUm() {
+		return valorUm;
+	}
+
+	public void setValorUm(Integer valorUm) {
+		this.valorUm = valorUm;
+	}
+
+	public Double getValorDivisao() {
+		return valorDivisao;
+	}
+
+	public void setValorDivisao(Double valorDivisao) {
+		this.valorDivisao = valorDivisao;
+	}
+
+	public Double getValorSubtracao() {
+		return valorSubtracao;
+	}
+
+	public void setValorSubtracao(Double valorSubtracao) {
+		this.valorSubtracao = valorSubtracao;
+	}
+
+	public Double getValorSoma() {
+		return valorSoma;
+	}
+
+	public void setValorSoma(Double valorSoma) {
+		this.valorSoma = valorSoma;
+	}
+
+	public Double getValorMultiplicacao() {
+		return valorMultiplicacao;
+	}
+
+	public void setValorMultiplicacao(Double valorMultiplicacao) {
+		this.valorMultiplicacao = valorMultiplicacao;
+	}
+
+	/**
+	 * BLOCO START
+	 */
+	public void setIdEntityStatus(Long idEntityStatus) {
+		this.entityStatus = new EntityStatus();
+		this.entityStatus.setId(idEntityStatus);
+	}
+
+	public void setIdEntityTwo(UUID idEntityTwo) {
+		this.entityTwo = new EntityTwo();
+		this.entityTwo.setId(idEntityTwo);
+	}
+
+	public void setIdEntityNine(EntityNineId idEntityNine) {
+		this.entityNine = new EntityNine();
+		this.entityNine.setId(idEntityNine);
+	}
+
+	public void setIdEntityEight(Long idEntityEight) {
+		if (this.entityNine == null) {
+			this.entityNine = new EntityNine();
+			this.entityNine.setId(new EntityNineId());
+			this.entityNine.getId().setIdEntityEight(idEntityEight);
+		} else {
+			this.entityNine.getId().setIdEntityEight(idEntityEight);
+		}
+	}
+
+	public void setIdEntitySeven(UUID idEntitySeven) {
+		if (this.entityNine == null) {
+			this.entityNine = new EntityNine();
+			this.entityNine.setId(new EntityNineId());
+			this.entityNine.getId().setIdEntitySeven(idEntitySeven);
+		} else {
+			this.entityNine.getId().setIdEntitySeven(idEntitySeven);
+		}
+	}
+
+	public void setIdEntitySix(Long idEntitySix) {
+		if (this.entityNine == null) {
+			this.entityNine = new EntityNine();
+			this.entityNine.setId(new EntityNineId());
+			this.entityNine.getId().setIdEntitySix(idEntitySix);
+		} else {
+			this.entityNine.getId().setIdEntitySix(idEntitySix);
+		}
+	}
+
+	/**
+	 * BLOCO END
+	 */
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EntityOne other = (EntityOne) obj;
+		return Objects.equals(id, other.id);
+	}
+
 	@Override
 	public String toString() {
-		return "EntityOne [id=" + id + ", name=" + name + ", entityStatus=" + entityStatus + ", code=" + code + ", age="
-				+ age + ", height=" + height + ", birthDate=" + birthDate + ", prohibitedDateTime=" + prohibitedDateTime
-				+ ", entityTwo=" + entityTwo + "]";
+		return "EntityOne [id=" + id + ", name=" + name + ", entityStatus=" + entityStatus + ", entityNine="
+				+ entityNine + ", code=" + code + ", age=" + age + ", height=" + height + ", birthDate=" + birthDate
+				+ ", prohibitedDateTime=" + prohibitedDateTime + ", entityTwo=" + entityTwo + ", valorMultiplicacao="
+				+ valorMultiplicacao + ", valorSoma=" + valorSoma + ", valorSubtracao=" + valorSubtracao
+				+ ", valorDivisao=" + valorDivisao + ", valorUm=" + valorUm + "]";
 	}
 }

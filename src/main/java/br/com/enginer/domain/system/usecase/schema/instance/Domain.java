@@ -20,7 +20,7 @@ public interface Domain<I> {
     /**
      * @return Indica se o domínio é um modal.
      */
-	public Boolean isModal();
+	public Boolean getModal();
 
     /**
      * @param Define se o domínio é um modal.
@@ -30,7 +30,7 @@ public interface Domain<I> {
     /**
      * @return Informa se os campos estao disabled, porém apenas visualmente.
      */
-	public Boolean isDisabled();
+	public Boolean getDisabled();
 
     /**
      * @param Define se o disabled está habilitado.

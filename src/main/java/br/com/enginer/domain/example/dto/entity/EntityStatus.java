@@ -1,6 +1,7 @@
 package br.com.enginer.domain.example.dto.entity;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import br.com.enginer.domain.system.usecase.annotation.field.UICheckbox;
 import br.com.enginer.domain.system.usecase.annotation.field.UIColumn;
@@ -31,6 +32,7 @@ import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIPagi
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.helper.ComboHelper;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 
 /**
  * 
@@ -95,9 +97,26 @@ public class EntityStatus extends DomainAbstract<Long> {
 	@UIRow(visible = true)
 	private LocalDateTime startDateTime;
 	
+	public EntityStatus() {
+		super();
+	}
+	
+	public EntityStatus(Long id) {
+		super();
+		this.id = id;
+	}
+
 	@Override
 	public Long getId() {
-		return id;
+		try {
+			Boolean existId = (Boolean) ReflectionUtils.isIdNull(this);
+			if (!existId) {
+				this.id = null;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return this.id;
 	}
 
 	@Override
@@ -137,4 +156,26 @@ public class EntityStatus extends DomainAbstract<Long> {
 		this.startDateTime = startDateTime;
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EntityStatus other = (EntityStatus) obj;
+		return Objects.equals(id, other.id);
+	}
+
+	@Override
+	public String toString() {
+		return "EntityStatus [id=" + id + ", name=" + name + ", status=" + status + ", ativo=" + ativo
+				+ ", startDateTime=" + startDateTime + "]";
+	}
 }
