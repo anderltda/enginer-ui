@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.enginer.domain.system.usecase.exception.CheckedException;
-import br.com.enginer.domain.system.usecase.logger.ActionLogger;
 import br.com.enginer.domain.system.usecase.page.PageResult;
 import br.com.enginer.domain.system.usecase.port.inbound.InboundPort;
 import br.com.enginer.domain.system.usecase.schema.instance.Domain;
@@ -87,5 +86,5 @@ public interface ActionInboundPort<T extends Domain<?>> extends InboundPort {
      * @return lista de domínios processados
      * @throws CheckedException em caso de erro de regra de negócio
      */
-    List<Domain<?>> methodName(Domain<?> domain, List<Domain<?>> domains, ActionLogger actionLogger) throws CheckedException;
+    List<Domain<?>> methodName(Domain<?> domain, List<Domain<?>> domains) throws CheckedException;
 }

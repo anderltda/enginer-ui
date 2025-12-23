@@ -1306,7 +1306,7 @@ public class FormTemplate {
 						continue;
 					}
 
-					if (uiButton.label().equals(Constants.LABEL_DELETE) || uiButton.label().equals(Constants.LABEL_CLEAR)) {
+					if (uiButton.label().equals(Constants.LABEL_DELETE)) {
 
 						if (domain.getId() == null) {
 							continue;

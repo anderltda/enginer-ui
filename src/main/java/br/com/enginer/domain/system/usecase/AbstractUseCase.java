@@ -4,8 +4,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import br.com.enginer.domain.system.usecase.annotation.PostAction;
-import br.com.enginer.domain.system.usecase.annotation.PreAction;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.post.PostAction;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.post.PostCollectionAction;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.post.PostForm;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.pre.PreAction;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.pre.PreCollectionAction;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.pre.PreForm;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.exception.CheckedException;
 import br.com.enginer.domain.system.usecase.exception.UncheckedException;
@@ -169,7 +173,7 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 			map.put(TypeTemplate.DISABLED, domain.getDisabled());
 			map.put(TypeTemplate.MAIN_DOMAIN, domain.getMainDomain());
 
-			domain = repositoryOutboundPort.formId(domain);
+			domain = formBuscarPorId(domain);
 
 			return form.create(domain, this, map);
 
@@ -177,12 +181,18 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 			throw new UncheckedException("Erro ao montar o template " + templateType + " para " + domain.getClass().getSimpleName(), ex);
 		}
 	}
-
+	
 	/** 
 	 * --------------------------------------------------------------------------------------------
 	 * Ações CRUD genéricas
 	 * --------------------------------------------------------------------------------------------
      **/    
+
+	@Override
+	public T formBuscarPorId(T domain) throws Exception {
+		return repositoryOutboundPort.formId(domain);
+	}
+
 	@Override
 	public T buscarPorId(T domain) throws UncheckedException {
 		return repositoryOutboundPort.findById(domain);
@@ -329,17 +339,38 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 	 * --------------------------------------------------------------------------------------------
      **/	
 	@PreAction
-	public void pre(T domain) {
-		System.out.println("Pré-execução: validando...");
+	public void preAction(T domain) {
+		System.out.println("@PreAction - Pré-execução: validando...");
 		tagRepositoryOutboundPort.pull(domain);
 		uploadFileRepositoryOutboundPort.pull(domain);
 	}
 
 	@PostAction
-	public void post(T domain) {
-		System.out.println("Pós-execução: auditando...");
+	public void postAction(T domain) {
+		System.out.println("@PostAction - Pós-execução: auditando...");
 		tagRepositoryOutboundPort.push(domain);
 		uploadFileRepositoryOutboundPort.push(domain);
+	}
+
+	@PreCollectionAction
+	public void preCollectionAction(T domain) {
+		System.out.println("@PreCollectionAction - Pré-execução: validando...");
+	}
+
+	@PostCollectionAction
+	public void postCollectionAction(T domain) {
+		System.out.println("@PostCollectionAction - Pós-execução: auditando...");
+	}
+
+	@PreForm
+	public void preForm(T domain) {
+		System.out.println("@PreFormAction - Pré-execução: validando...");
+		tagRepositoryOutboundPort.decode(domain);
+	}
+
+	@PostForm
+	public void postForm(Form form) {
+		System.out.println("@PostFormAction - Pós-execução: auditando...");
 	}	
 
 	/** 

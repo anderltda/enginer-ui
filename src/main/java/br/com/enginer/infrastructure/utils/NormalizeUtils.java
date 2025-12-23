@@ -1,6 +1,8 @@
 package br.com.enginer.infrastructure.utils;
 
 import java.lang.reflect.Field;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -249,5 +251,29 @@ public class NormalizeUtils {
 				});
 			}
 		}
+	}
+	
+	/**
+	 * @param value
+	 * @return
+	 */
+	public static String decodeIfNeeded(String value) {
+        if (value == null) return null;
+        if (value.indexOf('%') >= 0 || value.indexOf('+') >= 0) {
+            return URLDecoder.decode(value, StandardCharsets.UTF_8);
+        }
+        return value;
+    }
+	
+	/**
+	 * @param value
+	 * @return
+	 */
+	public static String decodeIfEncoded(String value) {
+	    if (value == null) return null;
+	    if (value.contains("%") || value.contains("+")) {
+	        return URLDecoder.decode(value, StandardCharsets.UTF_8);
+	    }
+	    return value;
 	}
 }

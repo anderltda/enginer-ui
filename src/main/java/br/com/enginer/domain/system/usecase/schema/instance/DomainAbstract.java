@@ -8,7 +8,6 @@ import br.com.enginer.domain.system.usecase.annotation.field.UIIgnore;
 import br.com.enginer.domain.system.usecase.annotation.field.behavior.UITag;
 import br.com.enginer.domain.system.usecase.annotation.field.behavior.validation.UIFieldValidation;
 import br.com.enginer.domain.system.usecase.enums.TypeFileUpload;
-import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.logger.ActionLogger;
 
 /**
@@ -31,7 +30,7 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 	@UITag(label = "Tags", disable = false)
 	private transient List<String> tags;
 	
-	@UIFieldValidation(required = false, template = { TypeTemplate.FORM, TypeTemplate.TAB })
+	@UIFieldValidation(required = false)
 	//@UIFile(label = "Imagem", mode = TypeFileUpload.WALL_PICKER, listType = "picture-card", limit = 5)
 	@UIFile(label = "Arquivos", mode = TypeFileUpload.LIST, listType = "picture", limit = 8)
 	//@UIFile(label = "Arquivos", mode = TypeFileUpload.SIMPLE, listType = "text", limit = 3)
@@ -49,6 +48,7 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 	/**
 	 * @param actionLogger
 	 */
+	@Override
 	public void setActionLogger(ActionLogger actionLogger) {
 		this.actionLogger = actionLogger;
 	}
@@ -127,5 +127,20 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 	 */
 	public void setFiles(List<UploadFile> files) {
 		this.files = files;
+	}
+
+	@Override
+	public I getId() {
+		return null;
+	}
+
+	@Override
+	public void setId(I id) {
+		// Do nothing
+	}
+
+	@Override
+	public Boolean isIdNull() {
+		return true;
 	}
 }

@@ -90,6 +90,9 @@ public class BeanConfiguration {
 		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 		mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
+		// MixIn personalizado (se necessário para isIdNull)
+	    mapper.addMixIn(Domain.class, DomainMixIn.class);
+
 		return mapper;
 	}
 	

@@ -180,17 +180,20 @@ public class EntityEight extends DomainAbstract<Long> {
 		super();
 		this.id = id;
 	}
-
+	
 	@Override
-	public Long getId() {
+	public Boolean isIdNull() {
+		Boolean isIdNull = false;
 		try {
-			Boolean existId = (Boolean) ReflectionUtils.isIdNull(this);
-			if (!existId) {
-				this.id = null;
-			}
+			isIdNull = (Boolean) ReflectionUtils.isIdNull(this);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		return isIdNull;
+	}
+
+	@Override
+	public Long getId() {
 		return this.id;
 	}
 

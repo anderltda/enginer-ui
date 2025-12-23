@@ -218,17 +218,20 @@ public class EntityNine extends DomainAbstract<EntityNineId> {
 		super();
 		this.id = id;
 	}
-
+	
 	@Override
-	public EntityNineId getId() {
+	public Boolean isIdNull() {
+		Boolean isIdNull = false;
 		try {
-			Boolean existId = (Boolean) ReflectionUtils.isIdNull(this);
-			if (!existId) {
-				this.id = null;
-			}
+			isIdNull = (Boolean) ReflectionUtils.isIdNull(this);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		return isIdNull;
+	}
+
+	@Override
+	public EntityNineId getId() {
 		return this.id;
 	}
 

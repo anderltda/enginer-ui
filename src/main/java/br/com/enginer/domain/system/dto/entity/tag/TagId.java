@@ -9,6 +9,17 @@ public class TagId extends DomainAbstract<Object[]> implements DomainId {
 	private String domain;
 	private String domainId;
 
+	public TagId() {
+		super();
+	}
+
+	public TagId(String normalizedName, String domain, String domainId) {
+		super();
+		this.normalizedName = normalizedName;
+		this.domain = domain;
+		this.domainId = domainId;
+	}
+
 	public String getNormalizedName() {
 		return this.normalizedName;
 	}
@@ -50,14 +61,7 @@ public class TagId extends DomainAbstract<Object[]> implements DomainId {
 	}
 
 	@Override
-	public Object[] getId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setId(Object[] id) {
-		// TODO Auto-generated method stub
-		
+	public String toString() {
+		return "TagId [normalizedName=" + normalizedName + ", domain=" + domain + ", domainId=" + domainId + "]";
 	}
 }

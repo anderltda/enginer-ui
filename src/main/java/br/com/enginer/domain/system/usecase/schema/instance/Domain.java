@@ -17,6 +17,14 @@ public interface Domain<I> {
 	 */
 	public void setId(I id);
 	
+	/**
+	 * Metodo para verificar se o id está nulo, pois alguns ids podem ser compostos.
+	 * Entao se o retorno for nulo, quer dizer que o id pode está incomplento, no caso de
+	 * ids compostos, ou seja, nao está completo o id, ou está nulo completo.	
+	 * @return id está nulo
+	 */
+	public Boolean isIdNull();
+	
     /**
      * @return Indica se o domínio é um modal.
      */
@@ -51,5 +59,10 @@ public interface Domain<I> {
 	 * @return
 	 */
 	public ActionLogger getActionLogger();
+	
+	/**
+	 * @return
+	 */
+	public void setActionLogger(ActionLogger actionLogger);
 
 }

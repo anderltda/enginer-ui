@@ -8,5 +8,5 @@ import br.com.enginer.domain.system.usecase.AbstractUseCase;
  * 
  */
 public class TagUseCase extends AbstractUseCase<Tag> implements br.com.enginer.domain.system.usecase.port.tag.TagUseCase {
-
+	
 }

@@ -285,25 +285,28 @@ public class EntityTwo extends DomainAbstract<UUID> {
 		this.entityTree.setId(idEntityTree);
 	}
 	
+	public EntityTwo() {
+		super();
+	}
+
 	public EntityTwo(UUID id) {
 		super();
 		this.id = id;
 	}
 
-	public EntityTwo() {
-		super();
+	@Override
+	public Boolean isIdNull() {
+		Boolean isIdNull = false;
+		try {
+			isIdNull = (Boolean) ReflectionUtils.isIdNull(this);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return isIdNull;
 	}
 
 	@Override
 	public UUID getId() {
-		try {
-			Boolean existId = (Boolean) ReflectionUtils.isIdNull(this);
-			if (!existId) {
-				this.id = null;
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
 		return this.id;
 	}
 

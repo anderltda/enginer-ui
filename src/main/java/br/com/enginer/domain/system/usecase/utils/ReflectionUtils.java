@@ -847,6 +847,25 @@ public class ReflectionUtils {
 
 		return isMatch;
 	}
+	
+	/**
+	 * Metodo responsavel por verificar existe valores em value.
+	 * @param value
+	 */
+	public static Boolean hasIdValue(Domain<?> domain) throws Exception {
+
+		Boolean isMatch = Boolean.TRUE;
+
+		if (domain.getId() == null) {
+			return Boolean.FALSE;
+		}
+		
+		if (domain.getId() instanceof DomainId) {
+			return ofNullDomainId(domain.getId().getClass(), domain);
+		}
+
+		return isMatch;
+	}	
 
 	/**
 	 * Metodo responsavel por trazer a TYPE('Class') do FIELD informado da clazz
@@ -1029,15 +1048,14 @@ public class ReflectionUtils {
 	 * @throws Exception em caso de erro ao acessar campos do ID via reflexão
 	 */
 	public static boolean isIdNull(Domain<?> domain) throws Exception {
-
 	    if (domain == null) return true;
 
-	    Object idObj = domain.getId();
+	    Object idObj = readIdFieldDirect(domain); 
 	    if (idObj == null) return true;
 
 	    Class<?> idClass = idObj.getClass();
 
-	    // ID simples (UUID, Long, Integer, String, etc.)
+	    // ID simples
 	    if (!ReflectionUtils.isIdComposedType(idClass)) {
 	        return isNullOrEmptyGeneric(idObj);
 	    }
@@ -1047,9 +1065,10 @@ public class ReflectionUtils {
 	        field.setAccessible(true);
 	        Object value = field.get(idObj);
 
-	        // Campo Domain dentro do ID (ex: entitySeven, entityEight)
+	        // Se o ID composto tiver Domain interno
 	        if (value instanceof Domain<?> d) {
-	            if (d.getId() == null) return true;
+	            Object innerId = readIdFieldDirect(d); 
+	            if (innerId == null) return true;
 	            continue;
 	        }
 
@@ -1059,6 +1078,25 @@ public class ReflectionUtils {
 	    }
 
 	    return false;
+	}
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	private static Object readIdFieldDirect(Object obj) throws Exception {
+	    Class<?> c = obj.getClass();
+	    while (c != null && c != Object.class) {
+	        try {
+	            Field f = c.getDeclaredField("id");
+	            f.setAccessible(true);
+	            return f.get(obj);
+	        } catch (NoSuchFieldException ignored) {
+	            c = c.getSuperclass();
+	        }
+	    }
+	    return null;
 	}
 
 	/**
@@ -1149,8 +1187,7 @@ public class ReflectionUtils {
 
 			for (Field field : domainId.getClass().getDeclaredFields()) {
 
-				Object object = ReflectionUtils.executeMethod(domain.getId(),
-						StringsUtils.getMethod(field.getName()));
+				Object object = ReflectionUtils.executeMethod(domain.getId(), StringsUtils.getMethod(field.getName()));
 
 				if (object != null) {
 					return true;
@@ -1180,21 +1217,56 @@ public class ReflectionUtils {
 	}
 	
 	/**
-	 * @param UseCase
+	 * @param useCase
 	 * @param annotation
 	 * @param domain
 	 */
-	public static void runAnnotatedMethods(Object UseCase, Class<? extends Annotation> annotation, Domain<?> domain) {
-	    for (Method method : UseCase.getClass().getMethods()) {
+	public static void runAnnotatedMethods(Object useCase, Class<? extends Annotation> annotation, Domain<?> domain) {
+	    for (Method method : useCase.getClass().getMethods()) {
 	        if (method.isAnnotationPresent(annotation)) {
 	            try {
-	                method.invoke(UseCase, domain);
+	                method.invoke(useCase, domain);
 	            } catch (Exception e) {
-	                throw new RuntimeException("Erro ao executar @" + annotation.getSimpleName() + " no UseCase " + UseCase.getClass().getSimpleName(), e);
+	                throw new RuntimeException("Erro ao executar @" + annotation.getSimpleName() + " no UseCase " + useCase.getClass().getSimpleName(), e);
 	            }
 	        }
 	    }
 	}
+	
+	/**
+	 * @param useCase
+	 * @param annotation
+	 * @param domains
+	 */
+	public static void runAnnotatedMethods(Object useCase, Class<? extends Annotation> annotation, List<Domain<?>> domains) {
+	    for (Method method : useCase.getClass().getMethods()) {
+	        if (method.isAnnotationPresent(annotation)) {
+	            try {
+	                method.invoke(useCase, domains);
+	            } catch (Exception e) {
+	                throw new RuntimeException("Erro ao executar @" + annotation.getSimpleName() + " no UseCase " + useCase.getClass().getSimpleName(), e);
+	            }
+	        }
+	    }
+	}
+	
+	/**
+	 * @param useCase
+	 * @param annotation
+	 * @param object
+	 */
+	public static void runAnnotatedMethods(Object useCase, Class<? extends Annotation> annotation, Object object) {
+	    for (Method method : useCase.getClass().getMethods()) {
+	        if (method.isAnnotationPresent(annotation)) {
+	            try {
+	                method.invoke(useCase, object);
+	            } catch (Exception e) {
+	                throw new RuntimeException("Erro ao executar @" + annotation.getSimpleName() + " no UseCase " + useCase.getClass().getSimpleName(), e);
+	            }
+	        }
+	    }
+	}	
+	
 	
 	/**
      * Normaliza um texto mantendo apenas letras e números,

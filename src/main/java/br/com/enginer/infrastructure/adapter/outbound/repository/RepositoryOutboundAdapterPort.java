@@ -893,13 +893,17 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 
 			if (!(DomainId.class.isAssignableFrom(domain.getClass()))) {
 				
-				T loadedDomain = findById(domain);
+				Boolean hasValueId = ReflectionUtils.hasIdValue(domain);
 				
-				if(loadedDomain == null) {
+				T loadedDomain = hasValueId ? findById(domain) : null;
+				
+				if(loadedDomain == null && hasValueId) {
 					throw new UncheckedException("Nenhum registro encontrado");
 				}
 				
-				domain = loadedDomain;
+				if (loadedDomain != null) {
+					domain = loadedDomain;
+				}
 			}
 			
 			return domain;
@@ -916,7 +920,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@Override
 	public T findById(T domain) throws UncheckedException {
 		
-		if (domain.getId() == null) return null;
+		if (domain.isIdNull()) return null;
 
 		try {
 			

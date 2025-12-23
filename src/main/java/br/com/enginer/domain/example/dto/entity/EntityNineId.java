@@ -9,7 +9,7 @@ import br.com.enginer.domain.system.usecase.annotation.field.UIRow;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainId;
 
-public class EntityNineId extends DomainAbstract<Object[]> implements DomainId {
+public class EntityNineId extends DomainAbstract<EntityNineId> implements DomainId {
 
 	@UIHidden
 	private Long idEntityEight;
@@ -96,15 +96,5 @@ public class EntityNineId extends DomainAbstract<Object[]> implements DomainId {
 	@Override
 	public int hashCode() {
 		return java.util.Objects.hash(idEntitySeven, idEntitySix, idEntityEight);
-	}
-
-	@Override
-	public Object[] getId() {
-		return null;
-	}
-
-	@Override
-	public void setId(Object[] id) {
-		// TODO Auto-generated method stub
 	}
 }

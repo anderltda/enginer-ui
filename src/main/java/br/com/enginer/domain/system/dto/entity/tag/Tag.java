@@ -1,6 +1,7 @@
 package br.com.enginer.domain.system.dto.entity.tag;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import br.com.enginer.domain.system.usecase.annotation.field.UIColumn;
 import br.com.enginer.domain.system.usecase.annotation.field.UIJoin;
@@ -24,6 +25,7 @@ import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIConf
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIPaginator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 
 @UITitle("Tag")
 @UIButtonAction(
@@ -60,6 +62,26 @@ public class Tag extends DomainAbstract<TagId> {
 	private String name;
 	private TagType type;
 	private LocalDateTime createdAt;
+	
+	public Tag() {
+		super();
+	}
+
+	public Tag(TagId id) {
+		super();
+		this.id = id;
+	}
+
+	@Override
+	public Boolean isIdNull() {
+		Boolean isIdNull = false;
+		try {
+			isIdNull = (Boolean) ReflectionUtils.isIdNull(this);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return isIdNull;
+	}
 
 	@Override
 	public TagId getId() {
@@ -92,6 +114,23 @@ public class Tag extends DomainAbstract<TagId> {
 	
 	public void setType(TagType type) {
 		this.type = type;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Tag other = (Tag) obj;
+		return Objects.equals(id, other.id);
 	}
 
 	@Override

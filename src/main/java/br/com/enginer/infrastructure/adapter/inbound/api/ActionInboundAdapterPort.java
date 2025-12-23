@@ -308,14 +308,22 @@ public class ActionInboundAdapterPort {
 				ArrayNode dataArray = (ArrayNode) json.get("data");
 
 				for (JsonNode itemNode : dataArray) {
+					
 					JsonNode normalizedNode = NormalizeUtils.normalizer(itemNode);
+					
 					logger.info(ActionInboundAdapterPort.class, "Payload normalizado: \n" + normalizedNode.toPrettyString());
+					
 					Domain<?> itemDomain = objectMapper.convertValue(normalizedNode, domain.getClass());
+					
 					newDomains.add(itemDomain);
 				}
 
 				ActionLogger actionLogger = objectMapper.convertValue(json.get("action"), ActionLogger.class);
-				List<Domain<?>> resultDomains = actionInboundPort.methodName(domain, newDomains, actionLogger);
+				
+				domain.setActionLogger(actionLogger);
+				
+				List<Domain<?>> resultDomains = actionInboundPort.methodName(domain, newDomains);
+				
 				return ResponseEntity.ok(resultDomains);
 			}
 

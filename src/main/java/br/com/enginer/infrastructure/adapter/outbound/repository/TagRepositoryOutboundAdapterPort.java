@@ -20,6 +20,7 @@ import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOut
 import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 import br.com.enginer.domain.system.usecase.utils.StringsUtils;
+import br.com.enginer.infrastructure.utils.NormalizeUtils;
 
 /**
  * Adapter outbound específico para o domínio {@link Tag}.
@@ -135,12 +136,25 @@ public class TagRepositoryOutboundAdapterPort extends DelegatingRepositoryOutbou
 			
 			entities.forEach(tag -> {
 				tag.getId().setDomain(domain);
-				tag.getId().setDomainId(domainId.toString());
+				tag.getId().setDomainId(NormalizeUtils.decodeIfNeeded(domainId.toString()));
 				delegate.save(tag);
 			});
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	/**
+	 *
+	 */
+	@Override
+	public void decode(Domain<?> type) {
+
+		if(type == null || type.isIdNull()) return;
+
+		Tag tag = (Tag) type;
+		
+		tag.getId().setDomainId(NormalizeUtils.decodeIfNeeded(tag.getId().getDomainId()));
 	}
 }

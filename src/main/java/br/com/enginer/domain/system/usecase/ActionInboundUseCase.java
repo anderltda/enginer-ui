@@ -3,8 +3,10 @@ package br.com.enginer.domain.system.usecase;
 import java.util.List;
 import java.util.Map;
 
-import br.com.enginer.domain.system.usecase.annotation.PostAction;
-import br.com.enginer.domain.system.usecase.annotation.PreAction;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.post.PostAction;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.post.PostCollectionAction;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.pre.PreAction;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.pre.PreCollectionAction;
 import br.com.enginer.domain.system.usecase.exception.CheckedException;
 import br.com.enginer.domain.system.usecase.logger.ActionLogger;
 import br.com.enginer.domain.system.usecase.page.PageResult;
@@ -196,12 +198,12 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
     	try {
         	
         	/** Injected Dependency */
-        	Object UseCase = injectedDependency(domain);
+        	Object useCase = injectedDependency(domain);
             
             if(value != null && value.length > 0) {
-            	result = (Object) ReflectionUtils.executeMethod(UseCase, methodName, value);
+            	result = (Object) ReflectionUtils.executeMethod(useCase, methodName, value);
             } else {
-            	result = (Object) ReflectionUtils.executeMethod(UseCase, methodName);
+            	result = (Object) ReflectionUtils.executeMethod(useCase, methodName);
             }
 
         } catch (Exception ex) {
@@ -230,13 +232,13 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
         	/** Injected Dependency */
         	Object useCase = injectedDependency(domain);
         	
-        	/** Executa todos @PreAction */
+        	/** Executa @PreAction */
         	ReflectionUtils.runAnnotatedMethods(useCase, PreAction.class, domain);
             
         	/** Executa o método real */
         	Domain<?> newDomain = (Domain<?>) ReflectionUtils.executeMethod(useCase, actionLogger.getActionName(), domain);
         	
-        	/** Executa todos @PostAction */
+        	/** Executa @PostAction */
         	ReflectionUtils.runAnnotatedMethods(useCase, PostAction.class, newDomain);
             
         	return newDomain;
@@ -251,23 +253,32 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
      * Executa uma ação genérica do domínio sobre uma lista de entidades.
      * @param domain domínio principal
      * @param domains lista de domínios a serem processados
-     * @param actionLogger log de auditoria da ação
      * @return lista de domínios processados
      * @throws CheckedException em caso de erro de regra de negócio
      */
     @Override
 	@SuppressWarnings("unchecked")
-    public List<Domain<?>> methodName(Domain<?> domain, List<Domain<?>> domains, ActionLogger actionLogger) throws CheckedException {
+    public List<Domain<?>> methodName(Domain<?> domain, List<Domain<?>> domains) throws CheckedException {
         
     	try {
+    		
+        	ActionLogger actionLogger = domain.getActionLogger();
         
     		loggerOutboundPort.info(ActionInboundUseCase.class, "Action -> " + actionLogger.getActionName());
             
         	/** Injected Dependency */
-        	Object UseCase = injectedDependency(domain);
+        	Object useCase = injectedDependency(domain);
+        	
+        	/** Executa todos @PreCollectionAction */
+        	ReflectionUtils.runAnnotatedMethods(useCase, PreCollectionAction.class, domains);
         
-    		return (List<Domain<?>>) ReflectionUtils.executeMethod(UseCase, actionLogger.getActionName(), domains);
-        
+        	List<Domain<?>> newDomainList = (List<Domain<?>>) ReflectionUtils.executeMethod(useCase, actionLogger.getActionName(), domains);
+    		
+        	/** Executa @PostCollectionAction */
+        	ReflectionUtils.runAnnotatedMethods(useCase, PostCollectionAction.class, newDomainList);
+        	
+        	return newDomainList;
+        	
     	} catch (Exception ex) {
             loggerOutboundPort.error(ActionInboundUseCase.class, ex);
             throw new CheckedException(ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage(), ex);

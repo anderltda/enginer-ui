@@ -3,6 +3,7 @@ package br.com.enginer.infrastructure.adapter.outbound.repository;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -88,9 +89,9 @@ public class UploadFileRepositoryOutboundAdapterPort extends DelegatingRepositor
 			
 			if (domain instanceof UploadFile) return;
 		
-			files.forEach(file -> {
-				salvarEntityId(file, domain.getId());
-			});
+			Optional.ofNullable(files)
+					.filter(f -> !f.isEmpty())
+					.ifPresent(f -> f.forEach(file -> salvarEntityId(file, domain.getId())));
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();

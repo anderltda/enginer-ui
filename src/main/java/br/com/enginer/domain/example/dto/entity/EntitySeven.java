@@ -175,15 +175,18 @@ public class EntitySeven extends DomainAbstract<EntitySevenId> {
 	}
 
 	@Override
-	public EntitySevenId getId() {
+	public Boolean isIdNull() {
+		Boolean isIdNull = false;
 		try {
-			Boolean existId = (Boolean) ReflectionUtils.isIdNull(this);
-			if (!existId) {
-				this.id = null;
-			}
+			isIdNull = (Boolean) ReflectionUtils.isIdNull(this);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		return isIdNull;
+	}	
+	
+	@Override
+	public EntitySevenId getId() {
 		return this.id;
 	}
 

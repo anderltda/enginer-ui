@@ -1,4 +1,4 @@
-package br.com.enginer.domain.system.usecase.annotation;
+package br.com.enginer.domain.system.usecase.annotation.instance.action.pre;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,4 +7,4 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PostAction {}
+public @interface PreForm {}

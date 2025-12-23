@@ -50,6 +50,7 @@ public interface ActionUseCase<T extends Domain<?>> {
     void setTagRepositoryOutboundPort(TagRepositoryOutboundPort tagRepositoryOutboundPort);
 	
 	// ------------------- Ações principais -------------------
+	T formBuscarPorId(T domain) throws Exception;
 	T buscarPorId(T domain) throws CheckedException;
 	T buscarPorRegistroUnico(T domain, Map<String, Object> filter) throws UncheckedException;
 	T buscarPorRegistroUnico(T domain, Map<String, Object> filter, String method) throws UncheckedException;

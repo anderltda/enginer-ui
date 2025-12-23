@@ -220,15 +220,18 @@ public class EntityTree extends DomainAbstract<UUID> {
 	}
 
 	@Override
-	public UUID getId() {
+	public Boolean isIdNull() {
+		Boolean isIdNull = false;
 		try {
-			Boolean existId = (Boolean) ReflectionUtils.isIdNull(this);
-			if (!existId) {
-				this.id = null;
-			}
+			isIdNull = (Boolean) ReflectionUtils.isIdNull(this);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		return isIdNull;
+	}	
+	
+	@Override
+	public UUID getId() {
 		return this.id;
 	}
 

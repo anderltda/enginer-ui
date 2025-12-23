@@ -1,5 +1,7 @@
 package br.com.enginer.domain.system.usecase;
 
+import br.com.enginer.domain.system.usecase.annotation.instance.action.post.PostForm;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.pre.PreForm;
 import br.com.enginer.domain.system.usecase.exception.CheckedException;
 import br.com.enginer.domain.system.usecase.port.inbound.api.UIInboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
@@ -43,10 +45,23 @@ public class UIInboundUseCase<T extends Domain<?>> implements UIInboundPort<T> {
 	 */
 	@Override
 	public Form form(Domain<?> domain) throws CheckedException {
+		
 		try {
-			Object newInstanceUseCase = injectedDependency(domain);
-			Form form = (Form) ReflectionUtils.executeMethod(newInstanceUseCase, "form", domain);
+		
+			/** Injected Dependency */
+			Object useCase = injectedDependency(domain);
+			
+        	/** Executa @PreForm */
+        	ReflectionUtils.runAnnotatedMethods(useCase, PreForm.class, domain);
+			
+        	/** Executa o método real */
+			Form form = (Form) ReflectionUtils.executeMethod(useCase, "form", domain);
+			
+        	/** Executa @PostForm */
+        	ReflectionUtils.runAnnotatedMethods(useCase, PostForm.class, form);
+			
 			return form;
+			
 		} catch (Exception ex) {
 			logger.error(UIInboundUseCase.class, ex.getMessage(), ex);
 			throw new CheckedException(ex.getMessage(), ex);
