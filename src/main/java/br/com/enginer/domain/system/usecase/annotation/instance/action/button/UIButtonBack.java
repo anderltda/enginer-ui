@@ -23,7 +23,7 @@ import br.com.enginer.domain.system.usecase.enums.TypeOperator;
     state = TypeButtonState.BTN_STATE_DEFAULT,
 	conditional = @UIConditional({
 		@UIConditionalOn(field = "modal", operator = TypeOperator.EQUALS, matchs = { "false" }),
-		@UIConditionalOn(field = "typeTemplate", operator = TypeOperator.EQUALS, matchs = { "DESABILTY" }),
+		@UIConditionalOn(field = "typeTemplate", operator = TypeOperator.EQUALS, matchs = { }),
 	}),
     action = @UIAction(
         method = @UIActionMethod(clientMethod = "onBack")

@@ -13,6 +13,7 @@ import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditi
 import br.com.enginer.domain.system.usecase.constants.Constants;
 import br.com.enginer.domain.system.usecase.enums.TypeButtonState;
 import br.com.enginer.domain.system.usecase.enums.TypeOperator;
+import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -21,9 +22,9 @@ import br.com.enginer.domain.system.usecase.enums.TypeOperator;
     icon = "bin_alt",
     needsValidation = false,
     state = TypeButtonState.BTN_STATE_DEFAULT,
+    template = { TypeTemplate.FILTER },
 	conditional = @UIConditional({
 		@UIConditionalOn(field = "disabled", operator = TypeOperator.EQUALS, matchs = { "false" }),
-		@UIConditionalOn(field = "typeTemplate", operator = TypeOperator.EQUALS, matchs = { "DESAT" }),
 	}),    
     action = @UIAction(
         method = @UIActionMethod(clientMethod = Constants.METHOD_CLEAR_FORM)

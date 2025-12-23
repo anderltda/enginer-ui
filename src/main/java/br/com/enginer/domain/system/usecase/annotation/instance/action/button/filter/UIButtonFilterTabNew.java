@@ -8,7 +8,10 @@ import java.lang.annotation.Target;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIAction;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIActionRedirect;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIButton;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditional;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditionalOn;
 import br.com.enginer.domain.system.usecase.constants.Constants;
+import br.com.enginer.domain.system.usecase.enums.TypeOperator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -17,7 +20,10 @@ import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
     label = Constants.LABEL_NEW,
     icon = "menu_add",
     needsValidation = false,
-    template = TypeTemplate.FILTER,
+    template = { TypeTemplate.FILTER },
+	conditional = @UIConditional({
+		@UIConditionalOn(field = "modal", operator = TypeOperator.EQUALS, matchs = { "false" }),
+	}),    
 	action = @UIAction(
 		redirect = @UIActionRedirect(value = Constants.PATH, ui = "tab", param = "{ disabled=false }")
 	)

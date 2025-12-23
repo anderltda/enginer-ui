@@ -1264,12 +1264,17 @@ public class FormTemplate {
 					UIConditionalOn[] uiConditionalOns = conditional.value();
 
 					for (UIConditionalOn uiConditionalOn : uiConditionalOns) {
-						System.out.println(uiConditionalOn.field());
+						
 						Object object = ReflectionUtils.executeMethod(domain, StringsUtils.getMethod(uiConditionalOn.field()));
+						
 						TypeOperator operator = uiConditionalOn.operator();
-				        List<String> matchs = List.of(uiConditionalOn.matchs());
+				        
+						List<String> matchs = List.of(uiConditionalOn.matchs());
+						
 						boolean ok = TypeOperatorEvaluator.test(object, operator, matchs);
+						
 						if (ok) continue;
+						
 						continue outer;
 					}
 
