@@ -21,6 +21,7 @@ import br.com.enginer.domain.system.usecase.annotation.instance.action.button.pa
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIPaginator;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 
 /**
  * Representa um arquivo enviado ao sistema, incluindo seus metadados e
@@ -66,6 +67,26 @@ public class UploadFile extends DomainAbstract<Long> {
 	private transient String uid;
 	private transient String status;
 	private transient byte[] bytes;
+	
+	public UploadFile() {
+		super();
+	}
+
+	public UploadFile(Long id) {
+		super();
+		this.id = id;
+	}
+	
+	@Override
+	public Boolean isIdNull() {
+		Boolean isIdNull = false;
+		try {
+			isIdNull = (Boolean) ReflectionUtils.isIdNull(this);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return isIdNull;
+	}
 
 	@Override
 	public Long getId() {
@@ -212,5 +233,4 @@ public class UploadFile extends DomainAbstract<Long> {
 				+ ", domain=" + domain + ", domainId=" + domainId + ", isPublic=" + isPublic + ", createdAt="
 				+ createdAt + ", uid=" + uid + ", status=" + status + ", bytes=" + Arrays.toString(bytes);
 	}
-
 }

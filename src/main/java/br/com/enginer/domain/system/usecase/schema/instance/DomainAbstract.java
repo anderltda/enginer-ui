@@ -35,8 +35,8 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 	private transient List<String> tags;
 	
 	@UIFieldValidation(required = false)
-	//@UIFile(label = "Imagem", mode = TypeFileUpload.WALL_PICKER, listType = "picture-card", limit = 5)
-	@UIFile(label = "Arquivos", mode = TypeFileUpload.LIST, listType = "picture", limit = 8)
+	//@UIFile(label = "", mode = TypeFileUpload.WALL_PICKER, listType = "picture-card", limit = 5)
+	@UIFile(label = "", mode = TypeFileUpload.LIST, listType = "picture", limit = 8)
 	//@UIFile(label = "Arquivos", mode = TypeFileUpload.SIMPLE, listType = "text", limit = 3)
 	//@UIFile(label = "Arquivos", mode = TypeFileUpload.DRAG_DROP, listType = "text", limit = 2)
 	private transient List<UploadFile> files;

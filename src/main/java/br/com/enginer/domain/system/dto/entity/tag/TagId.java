@@ -12,7 +12,7 @@ import br.com.enginer.domain.system.usecase.schema.instance.DomainId;
 /**
  * 
  */
-public class TagId extends DomainAbstract<Object[]> implements DomainId {
+public class TagId extends DomainAbstract<TagId> implements DomainId {
 
 	@UIHidden
 	@UIColumn(label = "Normalized", initial = true)
