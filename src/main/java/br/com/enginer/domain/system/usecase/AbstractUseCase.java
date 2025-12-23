@@ -362,17 +362,6 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 		System.out.println("@PostCollectionAction - Pós-execução: auditando...");
 	}
 
-	@PreForm
-	public void preForm(T domain) {
-		System.out.println("@PreFormAction - Pré-execução: validando...");
-		tagRepositoryOutboundPort.decode(domain);
-	}
-
-	@PostForm
-	public void postForm(Form form) {
-		System.out.println("@PostFormAction - Pós-execução: auditando...");
-	}	
-
 	/** 
 	 * --------------------------------------------------------------------------------------------
 	 * Metodos utilizados em formulários TemplateUseCase<T>
@@ -386,6 +375,17 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 	@Override
 	public List<T> buscarFormTodos(T domain, Map<String, Object> filter) throws UncheckedException {
 		return repositoryOutboundPort.findAll(domain, filter);
+	}
+	
+	@PreForm
+	public void preForm(T domain) {
+		System.out.println("@PreFormAction: validando...");
+		tagRepositoryOutboundPort.decode(domain);
+	}
+
+	@PostForm
+	public void postForm(Form form) {
+		System.out.println("@PostFormAction: auditando...");
 	}
 
 }
