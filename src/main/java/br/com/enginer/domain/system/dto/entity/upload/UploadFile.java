@@ -6,12 +6,11 @@ import java.util.Objects;
 
 import br.com.enginer.domain.system.usecase.annotation.instance.UITitle;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIButtonAction;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterClear;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.UIButtonBack;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.UIButtonClear;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterFormNew;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterSearch;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterTabNew;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormBack;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormClear;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormDelete;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormEdit;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormSave;
@@ -28,21 +27,18 @@ import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
  * informações de armazenamento.
  */
 @UITitle("Tag")
-@UIButtonAction(
-includes = {
+@UIButtonAction(includes = {
+	UIButtonClear.class, 
+	UIButtonBack.class, 
 	// FILTER
-	UIButtonFilterClear.class,
 	UIButtonFilterTabNew.class, 
 	UIButtonFilterFormNew.class, 
 	UIButtonFilterSearch.class, 
 	// FORM
-	UIButtonFormClear.class, 
-	UIButtonFormBack.class, 
 	UIButtonFormDelete.class,
 	UIButtonFormEdit.class, 
 	UIButtonFormSave.class,
-} 
-)
+})
 @UIPaginator(
 	config = @UIConfig(expandable = false, multiSelectable = false),
 	actions = @UIButtonAction(

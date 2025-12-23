@@ -12,12 +12,11 @@ import br.com.enginer.domain.system.usecase.annotation.field.behavior.UIPosition
 import br.com.enginer.domain.system.usecase.annotation.field.behavior.validation.UIFieldValidation;
 import br.com.enginer.domain.system.usecase.annotation.instance.UITitle;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIButtonAction;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterClear;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.UIButtonBack;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.UIButtonClear;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterFormNew;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterSearch;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterTabNew;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormBack;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormClear;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormDelete;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormEdit;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormSave;
@@ -25,7 +24,6 @@ import br.com.enginer.domain.system.usecase.annotation.instance.action.button.pa
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowAdd;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.tab.UIButtonTabBack;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.tab.UIButtonTabFinish;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIPaginator;
@@ -39,21 +37,19 @@ import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
  */
 @UITitle("Status -> Stream")
 @UIButtonAction(includes = { 
+	UIButtonBack.class, 
+	UIButtonClear.class, 
 	// FILTER
-	UIButtonFilterClear.class,
 	UIButtonFilterTabNew.class, 
 	UIButtonFilterFormNew.class, 
 	UIButtonFilterSearch.class, 
 	// FORM
-	UIButtonFormBack.class, 
-	UIButtonFormClear.class, 
 	UIButtonFormDelete.class,
 	UIButtonFormEdit.class, 
 	UIButtonFormSave.class,
 	// ROW
 	UIButtonRowAdd.class,
 	// TAB
-	UIButtonTabBack.class, 
 	UIButtonTabFinish.class,  
 })
 @UIPaginator(

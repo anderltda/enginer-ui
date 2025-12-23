@@ -1,4 +1,4 @@
-package br.com.enginer.domain.system.usecase.annotation.instance.action.button.form;
+package br.com.enginer.domain.system.usecase.annotation.instance.action.button;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,7 +13,6 @@ import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditi
 import br.com.enginer.domain.system.usecase.constants.Constants;
 import br.com.enginer.domain.system.usecase.enums.TypeButtonState;
 import br.com.enginer.domain.system.usecase.enums.TypeOperator;
-import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -22,13 +21,12 @@ import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
     icon = "undo",
     needsValidation = false,
     state = TypeButtonState.BTN_STATE_DEFAULT,
-    template = TypeTemplate.FORM,
 	conditional = @UIConditional({
-		//@UIConditionalOn(field = "modal", operator = TypeOperator.EQUALS, matchs = { "false" }),
-		@UIConditionalOn(field = "id", operator = TypeOperator.EQUALS, matchs = { "desabiltado" }),
+		@UIConditionalOn(field = "modal", operator = TypeOperator.EQUALS, matchs = { "false" }),
+		@UIConditionalOn(field = "typeTemplate", operator = TypeOperator.EQUALS, matchs = { "DESABILTY" }),
 	}),
     action = @UIAction(
         method = @UIActionMethod(clientMethod = "onBack")
     )
 )
-public @interface UIButtonFormBack {}
+public @interface UIButtonBack {}

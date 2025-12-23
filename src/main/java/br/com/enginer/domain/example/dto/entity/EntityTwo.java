@@ -23,12 +23,11 @@ import br.com.enginer.domain.system.usecase.annotation.instance.action.UIActionR
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIActionTriggerMethod;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIButton;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIButtonAction;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterClear;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.UIButtonBack;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.UIButtonClear;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterFormNew;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterSearch;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterTabNew;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormBack;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormClear;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormDelete;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormEdit;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormSave;
@@ -37,7 +36,6 @@ import br.com.enginer.domain.system.usecase.annotation.instance.action.button.pa
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorSave;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowAdd;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowBack;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowClear;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowDelete;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowEdit;
@@ -66,20 +64,18 @@ import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
  */
 @UITitle("Segundo")
 @UIButtonAction(includes = { 
+	UIButtonBack.class, 
+	UIButtonClear.class, 
 	// FILTER
-	UIButtonFilterClear.class,
 	UIButtonFilterTabNew.class, 
 	UIButtonFilterFormNew.class, 
 	UIButtonFilterSearch.class, 
 	// FORM
-	UIButtonFormBack.class, 
-	UIButtonFormClear.class, 
 	UIButtonFormDelete.class,
 	UIButtonFormEdit.class, 
 	UIButtonFormSave.class,
 	// ROW
 	UIButtonRowClear.class, 
-	UIButtonRowBack.class,
 	UIButtonRowAdd.class,
 }, 
 value = {

@@ -170,7 +170,6 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements UIUseCase<
 
 		try {
 			
-			FormTemplate form = new FormTemplate();
 			Map<TypeTemplate, Object> map = new LinkedHashMap<>();
 			map.put(TypeTemplate.TYPE_TEMPLATE, typeTemplate);
 			map.put(TypeTemplate.MODAL, domain.getModal());
@@ -179,7 +178,11 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements UIUseCase<
 			
 			domain = formBuscarPorId(domain);
 
-			return form.create(domain, this, map);
+			FormTemplate formTemplate = new FormTemplate();
+			
+			Form form = formTemplate.create(domain, this, map);
+			
+			return form;
 
 		} catch (Exception ex) {
 			throw new UncheckedException("Erro ao montar o template " + typeTemplate + " para " + domain.getClass().getSimpleName(), ex);
