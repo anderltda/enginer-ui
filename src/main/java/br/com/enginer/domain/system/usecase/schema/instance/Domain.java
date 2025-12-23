@@ -1,5 +1,6 @@
 package br.com.enginer.domain.system.usecase.schema.instance;
 
+import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.logger.ActionLogger;
 
 /**
@@ -10,12 +11,12 @@ public interface Domain<I> {
 	/**
 	 * @return id
 	 */
-	public I getId();
+	I getId();
 	
 	/**
 	 * @param id
 	 */
-	public void setId(I id);
+	void setId(I id);
 	
 	/**
 	 * Metodo para verificar se o id está nulo, pois alguns ids podem ser compostos.
@@ -23,46 +24,55 @@ public interface Domain<I> {
 	 * ids compostos, ou seja, nao está completo o id, ou está nulo completo.	
 	 * @return id está nulo
 	 */
-	public Boolean isIdNull();
+	Boolean isIdNull();
 	
     /**
      * @return Indica se o domínio é um modal.
      */
-	public Boolean getModal();
+	Boolean getModal();
 
     /**
      * @param Define se o domínio é um modal.
      */
-	public void setModal(Boolean modal);
+	void setModal(Boolean modal);
 	
     /**
      * @return Informa se os campos estao disabled, porém apenas visualmente.
      */
-	public Boolean getDisabled();
+	Boolean getDisabled();
 
     /**
      * @param Define se o disabled está habilitado.
      */
-	public void setDisabled(Boolean disabled);
+	void setDisabled(Boolean disabled);
     
     /**
      * @param Define o domain principal.
      */
-	public void setMainDomain(String mainDomain);
+	void setMainDomain(String mainDomain);
     
     /**
      * @return Informar qual o domain principal.
      */
-	public String getMainDomain();
+	String getMainDomain();
 
 	/**
 	 * @return
 	 */
-	public ActionLogger getActionLogger();
+	ActionLogger getActionLogger();
 	
 	/**
 	 * @return
 	 */
-	public void setActionLogger(ActionLogger actionLogger);
+	void setActionLogger(ActionLogger actionLogger);
+	
+	/**
+	 * @return
+	 */
+	TypeTemplate getTypeTemplate();
 
+	/**
+	 * @return
+	 */
+	void setTypeTemplate(TypeTemplate typeTemplate);
 }

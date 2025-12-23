@@ -25,6 +25,7 @@ import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 	template = TypeTemplate.FORM,
 	conditional = @UIConditional({
 		@UIConditionalOn(field = "disabled", operator = TypeOperator.EQUALS, matchs = { "true" }),
+		@UIConditionalOn(field = "id", operator = TypeOperator.IS_NOT_NULL),
 	}),	
 	action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH_FIND_BY_ID, param = "{ disable=false, field=id }"))
 )

@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
-import br.com.enginer.domain.system.usecase.TemplateUseCase;
+import br.com.enginer.domain.system.usecase.UIUseCase;
 import br.com.enginer.domain.system.usecase.annotation.field.UICheckbox;
 import br.com.enginer.domain.system.usecase.annotation.field.UIColumn;
 import br.com.enginer.domain.system.usecase.annotation.field.UIDate;
@@ -129,9 +129,10 @@ import br.com.enginer.domain.system.usecase.utils.StringsUtils;
 public class FormTemplate {
 
 	private static final Map<Class<? extends Annotation>, Class<? extends Annotation>> annotationMap = new HashMap<>();
-	private static TypeTemplate typeTemplate;
-	private static TemplateUseCase<?> useCase;
-	private static Map<TypeTemplate, Object> mapTypeTemplates;
+	
+	private TypeTemplate typeTemplate;
+	private UIUseCase<?> useCase;
+	private Domain<?> domain;
 
 	//private static Boolean modal = Boolean.FALSE;
 	//private static Boolean disabled = Boolean.FALSE;
@@ -168,38 +169,39 @@ public class FormTemplate {
 
 	/**
 	 * @param domain
-	 * @param templateUseCase
-	 * @param maps
+	 * @param useCase
+	 * @param mapTypeTemplates
 	 * @return
 	 * @throws Exception
 	 */
-	public Form create(Domain<?> domain, TemplateUseCase<?> templateUseCase, Map<TypeTemplate, Object> maps) throws Exception {
+	public Form create(Domain<?> domain_, UIUseCase<?> useCase, Map<TypeTemplate, Object> mapTypeTemplates) throws Exception {
 		
 		List<Field> fields = new ArrayList<>();
 		Field field = null;
 		Form form = null;
 
 		try {
-			
-			mapTypeTemplates = maps;
-			useCase = templateUseCase;
-			typeTemplate = (TypeTemplate) mapTypeTemplates.get(TypeTemplate.TYPE_TEMPLATE);
+
+			this.domain = domain_;
+			this.useCase = useCase;
+			this.typeTemplate = (TypeTemplate) mapTypeTemplates.get(TypeTemplate.TYPE_TEMPLATE);
 			
 			Boolean modal = (Boolean) mapTypeTemplates.get(TypeTemplate.MODAL);
 			Boolean disabled = (Boolean) mapTypeTemplates.get(TypeTemplate.DISABLED);
 			String mainDomain = (String) mapTypeTemplates.get(TypeTemplate.MAIN_DOMAIN);
 			
-			domain.setModal(modal);
-			domain.setDisabled(disabled);
-			domain.setMainDomain(mainDomain);
+			this.domain.setModal(modal);
+			this.domain.setDisabled(disabled);
+			this.domain.setMainDomain(mainDomain);
+			this.domain.setTypeTemplate(typeTemplate);
 
-			Paginator paginator = !(typeTemplate.equals(TypeTemplate.FORM) || typeTemplate.equals(TypeTemplate.TAB)) ? getPaginator(domain) : null;
-			Tab tab = (typeTemplate.equals(TypeTemplate.TAB)) ? getTab(domain) : null;
-			String title = getTitle(domain);
-			Validate validate = getValidate(domain);
+			Paginator paginator = !(typeTemplate.equals(TypeTemplate.FORM) || typeTemplate.equals(TypeTemplate.TAB)) ? getPaginator() : null;
+			Tab tab = (typeTemplate.equals(TypeTemplate.TAB)) ? getTab() : null;
+			String title = getTitle(this.domain);
+			Validate validate = getValidate(this.domain);
 
 			form = new Form();
-			form.setId(StringsUtils.firstLower(domain.getClass().getSimpleName()));
+			form.setId(StringsUtils.firstLower(this.domain.getClass().getSimpleName()));
 			form.setTitle(title);
 			form.setValidate(validate);
 			form.setFields(fields);
@@ -207,7 +209,7 @@ public class FormTemplate {
 			form.setTab(tab);
 			form.setPaginator(paginator);
 
-			List<java.lang.reflect.Field> fs = ReflectionUtils.extractFieldsDomain(domain, false);
+			List<java.lang.reflect.Field> fs = ReflectionUtils.extractFieldsDomain(this.domain, false);
 
 			int count = 1;
 
@@ -216,7 +218,7 @@ public class FormTemplate {
 				int x = count;
 				int y = count % 2 == 0 ? count - 1 : count;
 
-				Default default_ = new Default(x, y, f.getName(), disabled, domain);
+				Default default_ = new Default(x, y, f.getName(), this.domain);
 
 				field = new Field();
 				fields.add(field);
@@ -235,7 +237,7 @@ public class FormTemplate {
 
 							Hidden hidden = getHidden(f, default_, annotations);
 							field.setHidden(hidden);
-							hidden.setValue(domain.getId());
+							hidden.setValue(this.domain.getId());
 
 							identity = true;
 
@@ -254,7 +256,7 @@ public class FormTemplate {
 							boolean containsTemplate = checkTemplate(uiJoin);
 
 							if (containsTemplate) {
-								field.setJoin(getJoin(domain, f, default_, annotations));
+								field.setJoin(getJoin(this.domain, f, default_, annotations));
 							}
 
 							identity = true;
@@ -375,7 +377,7 @@ public class FormTemplate {
 							boolean containsTemplate = checkTemplate(uiTag);
 
 							if (containsTemplate) {
-								field.setTag(getTag(domain, f, default_, annotations));
+								field.setTag(getTag(f, default_, annotations));
 								count++;
 							}
 
@@ -386,7 +388,7 @@ public class FormTemplate {
 							boolean containsTemplate = checkTemplate(uiFile);
 
 							if (containsTemplate) {
-								field.setFile(getFiles(domain, f, default_, annotations));
+								field.setFile(getFiles(f, default_, annotations));
 								count++;
 							}
 
@@ -408,7 +410,7 @@ public class FormTemplate {
 							boolean containsTemplate = checkTemplate(uiFilter);
 
 							if (containsTemplate) {
-								field.setFilter(getFilter(domain, f, default_, annotations, uiFilter));
+								field.setFilter(getFilter(f, default_, annotations, uiFilter));
 								count++;
 							}
 
@@ -425,7 +427,7 @@ public class FormTemplate {
 
 				if (!ReflectionUtils.isClassTypeCustom(f.getType())) {
 
-					field.setJoin(getJoin(domain, f, default_, annotations));
+					field.setJoin(getJoin(this.domain, f, default_, annotations));
 
 					count--;
 
@@ -467,7 +469,7 @@ public class FormTemplate {
 					if (genericType instanceof ParameterizedType parameterizedType) {
 						Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
 						if (actualTypeArguments.length == 1) {
-							field.setFile(getFiles(domain, f, default_, annotations));
+							field.setFile(getFiles(f, default_, annotations));
 						}
 						continue;
 					}
@@ -478,7 +480,7 @@ public class FormTemplate {
 				count++;
 			}
 
-			List<Button> buttons = getButton(domain);
+			List<Button> buttons = getButton(this.domain);
 
 			if (buttons != null) {
 				buttons.forEach(button -> {
@@ -488,7 +490,7 @@ public class FormTemplate {
 				});
 			}
 
-			Button submit = getSubmit(domain);
+			Button submit = getSubmit(this.domain);
 
 			if (submit != null) {
 				Field fieldSubmit = new Field();
@@ -505,10 +507,9 @@ public class FormTemplate {
 	}
 
 	/**
-	 * @param domain
 	 * @return
 	 */
-	private Tab getTab(Domain<?> domain) {
+	private Tab getTab() {
 		Tab tab = new Tab(false);  // habilitado para cada acao chama o backend
 		tab.getConfig().setTabEnabled(true); // habilitado para todas as abas está abertas ao clique (tester)
 		//Tab tab = new Tab(true);     // nao habilitado para cada acao chama o backend
@@ -521,7 +522,7 @@ public class FormTemplate {
 	 * @return
 	 * @throws Exception
 	 */
-	private Paginator getPaginator(Domain<?> domain) throws Exception {
+	private Paginator getPaginator() throws Exception {
 		Paginator paginator = new Paginator();
 		Config config = new Config();
 		Column column = new Column();
@@ -531,7 +532,7 @@ public class FormTemplate {
 		paginator.setColumn(column);
 		paginator.setActions(actions);
 
-		if (domain.getClass().isAnnotationPresent(UIPaginator.class)) {
+		if (this.domain.getClass().isAnnotationPresent(UIPaginator.class)) {
 
 			TypeTemplate copyTypeTemplate = typeTemplate;
 
@@ -539,7 +540,7 @@ public class FormTemplate {
 				typeTemplate = TypeTemplate.PAGINATOR;
 			}
 
-			UIPaginator uiPaginator = domain.getClass().getAnnotation(UIPaginator.class);
+			UIPaginator uiPaginator = this.domain.getClass().getAnnotation(UIPaginator.class);
 
 			UIConfig uiConfig = uiPaginator.config();
 			config.setEditableAll(uiConfig.editableAll());
@@ -598,7 +599,7 @@ public class FormTemplate {
 			typeTemplate = copyTypeTemplate;
 		}
 
-		configPaginator(domain, paginator);
+		configPaginator(paginator);
 
 		return paginator;
 	}
@@ -608,14 +609,14 @@ public class FormTemplate {
 	 * @param paginator
 	 * @throws Exception
 	 */
-	private void configPaginator(Domain<?> domain, Paginator paginator) throws Exception {
+	private void configPaginator(Paginator paginator) throws Exception {
 
 		ParamUtils paramUtils = new ParamUtils();
 		paramUtils.setTypeTemplate(typeTemplate);
 
-		String domainName = StringsUtils.firstLower(domain.getClass().getSimpleName());
+		String domainName = StringsUtils.firstLower(this.domain.getClass().getSimpleName());
 
-		for (java.lang.reflect.Field field_ : domain.getClass().getDeclaredFields()) {
+		for (java.lang.reflect.Field field_ : this.domain.getClass().getDeclaredFields()) {
 			String name = domainName.concat(".").concat(field_.getName());
 			// UIFilter
 			UIFilter uiFilter = field_.getAnnotation(UIFilter.class);
@@ -773,7 +774,6 @@ public class FormTemplate {
 	}	
 
 	/**
-	 * @param domain
 	 * @param f
 	 * @param default_
 	 * @param annotations
@@ -781,7 +781,7 @@ public class FormTemplate {
 	 * @return
 	 * @throws Exception
 	 */
-	private Filter getFilter(Domain<?> domain, java.lang.reflect.Field f, Default default_, Annotation[] annotations, UIFilter uiFilter) throws Exception {
+	private Filter getFilter(java.lang.reflect.Field f, Default default_, Annotation[] annotations, UIFilter uiFilter) throws Exception {
 
 		Class<?> typeClass = f.getType();
 
@@ -793,25 +793,25 @@ public class FormTemplate {
 
 		Domain<?> value = null;
 
-		TemplateUseCase<?> templateUseCase = null;
+		UIUseCase<?> templateUseCase = null;
 
-		if (domain instanceof DomainId) {
+		if (this.domain instanceof DomainId) {
 			/** Essa condicao is true quando o domain é um id de uma entidade */
 
 			if (ReflectionUtils.isIdComposedType(typeId)) {
 
-				Domain<?> compositeKey = ReflectionUtils.setCompositeKeyByDomainId(typeClass, ((DomainId) domain));
+				Domain<?> compositeKey = ReflectionUtils.setCompositeKeyByDomainId(typeClass, ((DomainId) this.domain));
 
 				if (compositeKey != null) {
-					templateUseCase = (TemplateUseCase<?>) ReflectionUtils.executeInjectedDependencyUseCaseCached(compositeKey.getClass(), useCase.getRepositoryOutboundPort());
-					value = (Domain<?>) ReflectionUtils.executeMethod(templateUseCase, TemplateUseCase.buscarFormPorId, compositeKey);
+					templateUseCase = (UIUseCase<?>) ReflectionUtils.executeInjectedDependencyUseCaseCached(compositeKey.getClass(), useCase.getRepositoryOutboundPort());
+					value = (Domain<?>) ReflectionUtils.executeMethod(templateUseCase, UIUseCase.buscarFormPorId, compositeKey);
 				}
 
 			} else {
 
 				Domain<?> key = (Domain<?>) ReflectionUtils.newInstance(typeClass);
 
-				Object keyValue = ReflectionUtils.executeMethod(domain,
+				Object keyValue = ReflectionUtils.executeMethod(this.domain,
 						StringsUtils.getMethod("id" + typeClass.getSimpleName()));
 
 				if (keyValue != null) {
@@ -826,13 +826,13 @@ public class FormTemplate {
 
 			if (ReflectionUtils.isIdComposedType(typeId)) {
 
-				Domain<?> compositeKey = (Domain<?>) ReflectionUtils.executeMethod(domain,
+				Domain<?> compositeKey = (Domain<?>) ReflectionUtils.executeMethod(this.domain,
 						StringsUtils.getMethod(typeClass.getSimpleName()));
 
 				if (compositeKey != null) {
-					templateUseCase = (TemplateUseCase<?>) ReflectionUtils.executeInjectedDependencyUseCaseCached(compositeKey.getClass(), useCase.getRepositoryOutboundPort());
+					templateUseCase = (UIUseCase<?>) ReflectionUtils.executeInjectedDependencyUseCaseCached(compositeKey.getClass(), useCase.getRepositoryOutboundPort());
 					value = (Domain<?>) ReflectionUtils.executeMethod(templateUseCase,
-							TemplateUseCase.buscarFormPorId, compositeKey);
+							UIUseCase.buscarFormPorId, compositeKey);
 				}
 
 			} else {
@@ -841,9 +841,9 @@ public class FormTemplate {
 						StringsUtils.getMethod(typeClass.getSimpleName()));
 
 				if (key != null) {
-					templateUseCase = (TemplateUseCase<?>) ReflectionUtils.executeInjectedDependencyUseCaseCached(key.getClass(), useCase.getRepositoryOutboundPort());
+					templateUseCase = (UIUseCase<?>) ReflectionUtils.executeInjectedDependencyUseCaseCached(key.getClass(), useCase.getRepositoryOutboundPort());
 					value = (Domain<?>) ReflectionUtils.executeMethod(templateUseCase,
-							TemplateUseCase.buscarFormPorId, key);
+							UIUseCase.buscarFormPorId, key);
 				}
 
 			}
@@ -857,7 +857,7 @@ public class FormTemplate {
 
 			Object provider = ReflectionUtils.newInstance(f.getType());
 
-			List<?> options = (List<?>) ReflectionUtils.executeMethod(useCase, TemplateUseCase.buscarFormTodos, provider, filters);
+			List<?> options = (List<?>) ReflectionUtils.executeMethod(useCase, UIUseCase.buscarFormTodos, provider, filters);
 
 			filter.setOptions(options);
 
@@ -888,15 +888,15 @@ public class FormTemplate {
 	 * @throws Exception 
 	 */
 	@SuppressWarnings("unchecked")
-	private File getFiles(Domain<?> domain, java.lang.reflect.Field f, Default default_, Annotation[] annotations) throws Exception {
+	private File getFiles(java.lang.reflect.Field f, Default default_, Annotation[] annotations) throws Exception {
 
 		List<UploadFile> files = new ArrayList<>();
 
-		if (domain.getId() != null) {
+		if (this.domain.getId() != null) {
 			
-			Map<String, Object> filter = Map.of("domain", domain.getClass().getSimpleName(), "domainId", domain.getId().toString());
+			Map<String, Object> filter = Map.of("domain", this.domain.getClass().getSimpleName(), "domainId", this.domain.getId().toString());
 		
-			files = (List<UploadFile>) ReflectionUtils.executeMethod(useCase, TemplateUseCase.buscarTodos, new UploadFile(), filter);
+			files = (List<UploadFile>) ReflectionUtils.executeMethod(this.useCase, UIUseCase.buscarTodos, new UploadFile(), filter);
 		}
 		
 		File file = default_.getFile(files);
@@ -911,17 +911,17 @@ public class FormTemplate {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private Tag getTag(Domain<?> domain, java.lang.reflect.Field f, Default default_, Annotation[] annotations) throws Exception {
+	private Tag getTag(java.lang.reflect.Field f, Default default_, Annotation[] annotations) throws Exception {
 		
 		List<String> tags = new ArrayList<>();
 		
-		if (domain.getId() != null) {
+		if (this.domain.getId() != null) {
 			
-			Object domainId = ReflectionUtils.createUriIdComposedType(domain);
+			Object domainId = ReflectionUtils.createUriIdComposedType(this.domain);
 			
-			Map<String, Object> filter = Map.of("id.domain", domain.getClass().getSimpleName(), "id.domainId", domainId);
+			Map<String, Object> filter = Map.of("id.domain", this.domain.getClass().getSimpleName(), "id.domainId", domainId);
 		
-			Object object = ReflectionUtils.executeMethod(useCase, TemplateUseCase.buscarTodos, new br.com.enginer.domain.system.dto.entity.tag.Tag(), filter);
+			Object object = ReflectionUtils.executeMethod(this.useCase, UIUseCase.buscarTodos, new br.com.enginer.domain.system.dto.entity.tag.Tag(), filter);
 			
 			List<br.com.enginer.domain.system.dto.entity.tag.Tag> entities = (List<br.com.enginer.domain.system.dto.entity.tag.Tag>) object;
 			
@@ -1300,22 +1300,6 @@ public class FormTemplate {
 						boolean ok = TypeOperatorEvaluator.test(object, operator, matchs);
 						if (ok) continue;
 						continue outer;
-					}
-
-					if (!(uiButton.label().equals(Constants.LABEL_BACK) || uiButton.label().equals(Constants.LABEL_EDIT)) && domain.getDisabled()) {
-						continue;
-					}
-
-					if (uiButton.label().equals(Constants.LABEL_DELETE)) {
-
-						if (domain.getId() == null) {
-							continue;
-						}
-					}
-
-					if (domain.getModal()) {
-						if (uiButton.label().equals(Constants.LABEL_DELETE) || uiButton.label().equals(Constants.LABEL_BACK))
-							continue;
 					}
 
 					boolean containsTemplate = checkTemplate(uiButton);

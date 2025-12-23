@@ -18,9 +18,4 @@ public interface TagRepositoryOutboundPort extends RepositoryOutboundPort<Tag> {
 	 * @param type
 	 */
 	void push(Domain<?> type);
-	
-	/**
-	 * @param tag
-	 */
-	void decode(Domain<?> tag);
 }

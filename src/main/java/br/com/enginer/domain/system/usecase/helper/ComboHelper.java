@@ -10,6 +10,13 @@ import br.com.enginer.domain.system.usecase.schema.field.behavior.Option;
  */
 public class ComboHelper {
 	
+	public List<Option> typesTags() {
+		List<Option> options = new ArrayList<>();
+		options.add(new Option("Global", "GLOBAL"));
+		options.add(new Option("System", "SYSTEM"));
+		return options;
+	}
+	
 	public List<Object> status() {
 		List<Object> options = new ArrayList<>();
 		options.add(new Option("Andamento", 1));

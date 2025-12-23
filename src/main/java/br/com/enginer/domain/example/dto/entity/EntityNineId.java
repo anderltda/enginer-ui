@@ -5,6 +5,7 @@ import java.util.UUID;
 import br.com.enginer.domain.system.usecase.annotation.field.UIColumn;
 import br.com.enginer.domain.system.usecase.annotation.field.UIFilter;
 import br.com.enginer.domain.system.usecase.annotation.field.UIHidden;
+import br.com.enginer.domain.system.usecase.annotation.field.UIIdPart;
 import br.com.enginer.domain.system.usecase.annotation.field.UIRow;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainId;
@@ -12,12 +13,15 @@ import br.com.enginer.domain.system.usecase.schema.instance.DomainId;
 public class EntityNineId extends DomainAbstract<EntityNineId> implements DomainId {
 
 	@UIHidden
+	@UIIdPart
 	private Long idEntityEight;
 
 	@UIHidden
+	@UIIdPart
 	private UUID idEntitySeven;
 
 	@UIHidden
+	@UIIdPart
 	private Long idEntitySix;
 	
 	@UIFilter(label = "Entity Seven", field = "dado", readonly = false)

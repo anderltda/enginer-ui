@@ -36,11 +36,11 @@ public class Default {
 	private Position position;
 	private Boolean disable;
 
-	public Default(Integer xposition, Integer yposition, String name, Boolean disable, Object object) {
+	public Default(Integer xposition, Integer yposition, String name, Object object) {
 		this.position = new Position(xposition, yposition);
 		this.label = StringsUtils.normalizeLabelToLowercaseCamelization(name);
 		this.field = StringsUtils.normalizeToCamelCaseFromPascalCase(name);
-		this.disable = disable;
+		this.disable = (Boolean) ReflectionUtils.get(StringsUtils.getMethod("disabled"), object);
 		this.value = ReflectionUtils.get(StringsUtils.getMethod(name), object);
 	}
 

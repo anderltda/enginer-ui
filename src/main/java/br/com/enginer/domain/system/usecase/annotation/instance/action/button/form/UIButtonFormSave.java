@@ -12,8 +12,11 @@ import br.com.enginer.domain.system.usecase.annotation.instance.action.UIActionR
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIActionResponseError;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIActionResponseSuccess;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIButton;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditional;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditionalOn;
 import br.com.enginer.domain.system.usecase.constants.Constants;
 import br.com.enginer.domain.system.usecase.enums.TypeButtonState;
+import br.com.enginer.domain.system.usecase.enums.TypeOperator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -23,6 +26,9 @@ import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
     icon = "save",
     state = TypeButtonState.BTN_STATE_PRIMARY,
     template = { TypeTemplate.FORM, TypeTemplate.MODAL },
+	conditional = @UIConditional({
+		@UIConditionalOn(field = "disabled", operator = TypeOperator.EQUALS, matchs = { "false" }),
+	}),    
     action = @UIAction(
         method = @UIActionMethod(serverMethod = "salvar"),
         response = @UIActionResponse(

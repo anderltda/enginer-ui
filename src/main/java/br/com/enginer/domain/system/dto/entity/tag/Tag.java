@@ -4,8 +4,13 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import br.com.enginer.domain.system.usecase.annotation.field.UIColumn;
+import br.com.enginer.domain.system.usecase.annotation.field.UIHidden;
 import br.com.enginer.domain.system.usecase.annotation.field.UIJoin;
 import br.com.enginer.domain.system.usecase.annotation.field.UIRow;
+import br.com.enginer.domain.system.usecase.annotation.field.UISelect;
+import br.com.enginer.domain.system.usecase.annotation.field.UIText;
+import br.com.enginer.domain.system.usecase.annotation.field.behavior.UIPosition;
+import br.com.enginer.domain.system.usecase.annotation.field.behavior.validation.UIFieldValidation;
 import br.com.enginer.domain.system.usecase.annotation.instance.UITitle;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIButtonAction;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterClear;
@@ -24,6 +29,7 @@ import br.com.enginer.domain.system.usecase.annotation.instance.action.button.pa
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIPaginator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
+import br.com.enginer.domain.system.usecase.helper.ComboHelper;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
 import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 
@@ -59,8 +65,20 @@ public class Tag extends DomainAbstract<TagId> {
 	@UIRow(visible = true, fields = { "normalizedName", "domain", "domainId" })
 	private TagId id;
 	
+	@UIPosition(x = 2, y = 1)
+	@UIFieldValidation(required = true)
+	@UIText(label = "Name", max = 100)
+	@UIColumn(label = "Name", initial = true)
 	private String name;
+	
+	@UIPosition(x = 3, y = 1)
+	@UIFieldValidation(required = true)
+	@UIColumn(label = "Type", initial = true)
+	@UISelect(label = "Type", provider = ComboHelper.class, method = "typesTags")
 	private TagType type;
+	
+	@UIHidden
+	@UIColumn(label = "Date Create", initial = true)
 	private LocalDateTime createdAt;
 	
 	public Tag() {

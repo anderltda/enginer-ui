@@ -8,6 +8,7 @@ import br.com.enginer.domain.system.usecase.annotation.field.UIIgnore;
 import br.com.enginer.domain.system.usecase.annotation.field.behavior.UITag;
 import br.com.enginer.domain.system.usecase.annotation.field.behavior.validation.UIFieldValidation;
 import br.com.enginer.domain.system.usecase.enums.TypeFileUpload;
+import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.logger.ActionLogger;
 
 /**
@@ -27,6 +28,9 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 	@UIIgnore
 	private ActionLogger actionLogger;
 	
+	@UIIgnore
+	private TypeTemplate typeTemplate;
+	
 	@UITag(label = "Tags", disable = false)
 	private transient List<String> tags;
 	
@@ -38,51 +42,18 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 	private transient List<UploadFile> files;
 	
 	/**
-	 * @return
+	 * @return id
 	 */
 	@Override
-	public ActionLogger getActionLogger() {
-		return actionLogger;
+	public I getId() {
+		return null;
 	}
 
 	/**
-	 * @param actionLogger
+	 * @return the files
 	 */
-	@Override
-	public void setActionLogger(ActionLogger actionLogger) {
-		this.actionLogger = actionLogger;
-	}
-
-    /**
-     * Indica se o domínio é um modal.
-     */
-	@Override
-	public Boolean getModal() {
-		return modal;
-	}
-
-    /**
-     * Define se o domínio é um modal.
-     */
-	@Override
-	public void setModal(Boolean modal) {
-		this.modal = modal;
-	}
-
-    /**
-     * Informa se os campos estao disabled, porém apenas visualmente.
-     */
-	@Override
-	public Boolean getDisabled() {
-		return disabled;
-	}
-
-    /**
-     * Define se o disabled está habilitado.
-     */
-	@Override
-	public void setDisabled(Boolean disabled) {
-		this.disabled = disabled;
+	public List<UploadFile> getFiles() {
+		return files;
 	}
 	
 	/**
@@ -91,6 +62,50 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 	@Override
 	public void setMainDomain(String mainDomain) {
 		this.mainDomain = mainDomain;
+	}
+
+	/**
+	 * @param actionLogger
+	 */
+	@Override
+	public void setActionLogger(ActionLogger actionLogger) {
+		this.actionLogger = actionLogger;
+	}	
+
+    /**
+	 * @param tags the tags to set
+	 */
+	public void setTags(List<String> tags) {
+		this.tags = tags;
+	}
+
+    @Override
+	public Boolean isIdNull() {
+		return true;
+	}
+
+    /**
+	 * @return
+	 */
+	@Override
+	public ActionLogger getActionLogger() {
+		return actionLogger;
+	}
+
+    /**
+	 * @return the typeTemplate
+	 */
+	@Override
+	public TypeTemplate getTypeTemplate() {
+		return typeTemplate;
+	}
+	
+	/**
+     * Define se o domínio é um modal.
+     */
+	@Override
+	public void setModal(Boolean modal) {
+		this.modal = modal;
 	}
 
 	/**
@@ -109,19 +124,38 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 	}
 
 	/**
-	 * @param tags the tags to set
-	 */
-	public void setTags(List<String> tags) {
-		this.tags = tags;
+     * Define se o disabled está habilitado.
+     */
+	@Override
+	public void setDisabled(Boolean disabled) {
+		this.disabled = disabled;
 	}
 	
 	/**
-	 * @return the files
+	 * Metodo para definir o id, porem em dominios abstratos nao faz nada.
 	 */
-	public List<UploadFile> getFiles() {
-		return files;
+	@Override
+	public void setId(I id) {
+		// Do nothing
 	}
 	
+	/**
+     * Informa se os campos estao disabled, porém apenas visualmente.
+     */
+	@Override
+	public Boolean getDisabled() {
+		return disabled;
+	}
+	
+	
+	/**
+	 * @param typeTemplate the typeTemplate to set
+	 */
+	@Override
+	public void setTypeTemplate(TypeTemplate typeTemplate) {
+		this.typeTemplate = typeTemplate;
+	}
+
 	/**
 	 * @param files the files to set
 	 */
@@ -129,18 +163,11 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 		this.files = files;
 	}
 
+	/**
+     * Indica se o domínio é um modal.
+     */
 	@Override
-	public I getId() {
-		return null;
-	}
-
-	@Override
-	public void setId(I id) {
-		// Do nothing
-	}
-
-	@Override
-	public Boolean isIdNull() {
-		return true;
+	public Boolean getModal() {
+		return modal;
 	}
 }

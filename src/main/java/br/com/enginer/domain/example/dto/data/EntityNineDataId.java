@@ -1,11 +1,16 @@
 package br.com.enginer.domain.example.dto.data;
 
+import br.com.enginer.domain.system.usecase.annotation.field.UIIdPart;
+
 public class EntityNineDataId {
 
+	@UIIdPart
 	private Long idEntityEight;
 
+	@UIIdPart
 	private Long idEntitySeven;
 
+	@UIIdPart
 	private Long idEntitySix;
 
 	public Long getIdEntityEight() {

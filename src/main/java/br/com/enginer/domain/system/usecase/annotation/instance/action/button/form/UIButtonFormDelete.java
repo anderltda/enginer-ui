@@ -12,8 +12,11 @@ import br.com.enginer.domain.system.usecase.annotation.instance.action.UIActionR
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIActionResponseError;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIActionResponseSuccess;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIButton;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditional;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditionalOn;
 import br.com.enginer.domain.system.usecase.constants.Constants;
 import br.com.enginer.domain.system.usecase.enums.TypeButtonState;
+import br.com.enginer.domain.system.usecase.enums.TypeOperator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -27,6 +30,10 @@ import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
     highlight = true,
     dropdown = true,
     template = { TypeTemplate.FORM },
+	conditional = @UIConditional({
+		@UIConditionalOn(field = "disabled", operator = TypeOperator.EQUALS, matchs = { "false" }),
+		@UIConditionalOn(field = "id", operator = TypeOperator.IS_NOT_NULL),
+	}),	
     action = @UIAction(
     		method = @UIActionMethod(serverMethod = "excluir"),
             response = @UIActionResponse(

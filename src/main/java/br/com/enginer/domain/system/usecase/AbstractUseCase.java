@@ -6,10 +6,14 @@ import java.util.Map;
 
 import br.com.enginer.domain.system.usecase.annotation.instance.action.post.PostAction;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.post.PostCollectionAction;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.post.PostFilter;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.post.PostForm;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.post.PostTab;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.pre.PreAction;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.pre.PreCollectionAction;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.pre.PreFilter;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.pre.PreForm;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.pre.PreTab;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.exception.CheckedException;
 import br.com.enginer.domain.system.usecase.exception.UncheckedException;
@@ -31,7 +35,7 @@ import br.com.enginer.infrastructure.injector.DependencyInjector;
  * Classe base para todos os casos de uso do domínio.
  * Agora totalmente tipada com <T extends Domain<?>>.
  */
-public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUseCase<T>, ActionUseCase<T> {
+public abstract class AbstractUseCase<T extends Domain<?>> implements UIUseCase<T>, ActionUseCase<T> {
 	
 	/** 
 	 * Port de log.
@@ -162,23 +166,23 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 		return createTemplate(domain, TypeTemplate.ROW);
 	}
 
-	private Form createTemplate(T domain, TypeTemplate templateType) {
+	private Form createTemplate(T domain, TypeTemplate typeTemplate) {
 
 		try {
 			
 			FormTemplate form = new FormTemplate();
 			Map<TypeTemplate, Object> map = new LinkedHashMap<>();
-			map.put(TypeTemplate.TYPE_TEMPLATE, templateType);
+			map.put(TypeTemplate.TYPE_TEMPLATE, typeTemplate);
 			map.put(TypeTemplate.MODAL, domain.getModal());
 			map.put(TypeTemplate.DISABLED, domain.getDisabled());
 			map.put(TypeTemplate.MAIN_DOMAIN, domain.getMainDomain());
-
+			
 			domain = formBuscarPorId(domain);
 
 			return form.create(domain, this, map);
 
 		} catch (Exception ex) {
-			throw new UncheckedException("Erro ao montar o template " + templateType + " para " + domain.getClass().getSimpleName(), ex);
+			throw new UncheckedException("Erro ao montar o template " + typeTemplate + " para " + domain.getClass().getSimpleName(), ex);
 		}
 	}
 	
@@ -340,26 +344,32 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
      **/	
 	@PreAction
 	public void preAction(T domain) {
-		System.out.println("@PreAction - Pré-execução: validando...");
+		
+		loggerOutboundPort.info(this.getClass(), "@PreAction - Pré-execução: validando...");
+		
 		tagRepositoryOutboundPort.pull(domain);
+		
 		uploadFileRepositoryOutboundPort.pull(domain);
 	}
 
 	@PostAction
 	public void postAction(T domain) {
-		System.out.println("@PostAction - Pós-execução: auditando...");
+		
+		loggerOutboundPort.info(this.getClass(), "@PostAction - Pós-execução: auditando...");
+		
 		tagRepositoryOutboundPort.push(domain);
+		
 		uploadFileRepositoryOutboundPort.push(domain);
 	}
 
 	@PreCollectionAction
 	public void preCollectionAction(T domain) {
-		System.out.println("@PreCollectionAction - Pré-execução: validando...");
+		loggerOutboundPort.info(this.getClass(), "@PreCollectionAction - Pré-execução: iniciando...");
 	}
 
 	@PostCollectionAction
 	public void postCollectionAction(T domain) {
-		System.out.println("@PostCollectionAction - Pós-execução: auditando...");
+		loggerOutboundPort.info(this.getClass(), "@PostCollectionAction - Pós-execução: finalizando...");
 	}
 
 	/** 
@@ -377,15 +387,34 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements TemplateUs
 		return repositoryOutboundPort.findAll(domain, filter);
 	}
 	
+	@PreFilter
+	public void preFilter(T domain) {
+		loggerOutboundPort.info(this.getClass(), "@PreFilter: iniciando...");
+	}
+
+	@PostFilter
+	public void postFilter(Form form) {
+		loggerOutboundPort.info(this.getClass(), "@PostFilter: finalizando...");
+	}
+	
 	@PreForm
 	public void preForm(T domain) {
-		System.out.println("@PreFormAction: validando...");
-		tagRepositoryOutboundPort.decode(domain);
+		loggerOutboundPort.info(this.getClass(), "@PreForm: iniciando...");
 	}
 
 	@PostForm
 	public void postForm(Form form) {
-		System.out.println("@PostFormAction: auditando...");
+		loggerOutboundPort.info(this.getClass(), "@PostForm: finalizando...");
+	}
+	
+	@PreTab
+	public void preTab(T domain) {
+		loggerOutboundPort.info(this.getClass(), "@PreTab: iniciando...");
+	}
+
+	@PostTab
+	public void postTab(Form form) {
+		loggerOutboundPort.info(this.getClass(), "@PostTab: finalizando...");
 	}
 
 }

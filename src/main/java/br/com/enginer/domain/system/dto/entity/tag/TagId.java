@@ -1,12 +1,36 @@
 package br.com.enginer.domain.system.dto.entity.tag;
 
+import br.com.enginer.domain.system.usecase.annotation.field.UIColumn;
+import br.com.enginer.domain.system.usecase.annotation.field.UIHidden;
+import br.com.enginer.domain.system.usecase.annotation.field.UIIdPart;
+import br.com.enginer.domain.system.usecase.annotation.field.UIText;
+import br.com.enginer.domain.system.usecase.annotation.field.behavior.UIPosition;
+import br.com.enginer.domain.system.usecase.annotation.field.behavior.validation.UIFieldValidation;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
 import br.com.enginer.domain.system.usecase.schema.instance.DomainId;
 
+/**
+ * 
+ */
 public class TagId extends DomainAbstract<Object[]> implements DomainId {
 
+	@UIHidden
+	@UIColumn(label = "Normalized", initial = true)
+	@UIIdPart
 	private String normalizedName;
+
+	@UIPosition(x = 2, y = 1)
+	@UIFieldValidation(required = true)
+	@UIText(label = "Domain", max = 100)
+	@UIColumn(label = "Domain", initial = true)
+	@UIIdPart
 	private String domain;
+	
+	@UIPosition(x = 2, y = 2)
+	@UIFieldValidation(required = true)
+	@UIText(label = "Domain-Id", max = 100)
+	@UIColumn(label = "Domain-Id", initial = true)
+	@UIIdPart
 	private String domainId;
 
 	public TagId() {

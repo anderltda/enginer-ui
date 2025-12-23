@@ -23,6 +23,10 @@ public class UIInboundAdapterPort {
 	private final UIInboundPort<Domain<?>> uIInboundPort;
 	private final LoggerOutboundPort logger;
 
+	/**
+	 * @param uIInboundPort
+	 * @param logger
+	 */
 	public UIInboundAdapterPort(UIInboundPort<Domain<?>> uIInboundPort, LoggerOutboundPort logger) {
 		this.uIInboundPort = uIInboundPort;
 		this.logger = logger;
@@ -35,10 +39,17 @@ public class UIInboundAdapterPort {
 	 */
 	@GetMapping({ "/tab", "/tab/{id}" })
 	public ResponseEntity<Form> tab(@UIDomain Domain<?> domain) throws Exception {
+		
 		long start = System.currentTimeMillis();
+		
+		ResponseEntity<Form> response;
+		
 		try {
+		
 			Form form = uIInboundPort.tab(domain);
-			return ResponseEntity.ok(form);
+		
+			response = ResponseEntity.ok(form);
+		
 		} catch (Exception ex) {
 			logger.error(UIInboundAdapterPort.class, "Erro ao criar [template-tab]", ex);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -46,6 +57,12 @@ public class UIInboundAdapterPort {
 			long duration = System.currentTimeMillis() - start;
 	        logger.info(RepositoryOutboundAdapterPort.class, "[template-tab] concluído em " + duration + "ms ");
 		}
+		
+		long duration = System.currentTimeMillis() - start;
+		
+		logger.info(UIInboundAdapterPort.class, "[template-tab] processado em " + duration + "ms ");
+		
+		return response;
 	}
 
 	/**
@@ -55,10 +72,17 @@ public class UIInboundAdapterPort {
 	 */
 	@GetMapping({ "/row", "/row/{id}" })
 	public ResponseEntity<Form> row(@UIDomain Domain<?> domain) throws Exception {
+		
 		long start = System.currentTimeMillis();
+		
+		ResponseEntity<Form> response;
+		
 		try {
+			
 			Form form = uIInboundPort.row(domain);
-			return ResponseEntity.ok(form);
+			
+			response = ResponseEntity.ok(form);
+			
 		} catch (Exception ex) {
 			logger.error(UIInboundAdapterPort.class, "Erro ao criar [template-row]", ex);
 			throw ex;
@@ -66,6 +90,12 @@ public class UIInboundAdapterPort {
 			long duration = System.currentTimeMillis() - start;
 	        logger.info(RepositoryOutboundAdapterPort.class, "[template-row] concluído em " + duration + "ms ");
 		}
+		
+		long duration = System.currentTimeMillis() - start;
+		
+		logger.info(UIInboundAdapterPort.class, "[template-row] processado em " + duration + "ms ");
+		
+		return response;
 	}	
 
 
@@ -76,10 +106,17 @@ public class UIInboundAdapterPort {
 	 */
 	@GetMapping({ "/form", "/form/{id}" })
 	public ResponseEntity<Form> form(@UIDomain Domain<?> domain) throws Exception {
+		
 		long start = System.currentTimeMillis();
+		
+		ResponseEntity<Form> response;
+		
 		try {
+			
 			Form form = uIInboundPort.form(domain);
-			return ResponseEntity.ok(form);
+			
+			response = ResponseEntity.ok(form);
+			
 		} catch (Exception ex) {
 			logger.error(UIInboundAdapterPort.class, "Erro ao criar [template-form]", ex);
 			throw ex;
@@ -87,7 +124,14 @@ public class UIInboundAdapterPort {
 			long duration = System.currentTimeMillis() - start;
 	        logger.info(RepositoryOutboundAdapterPort.class, "[template-form] concluído em " + duration + "ms ");
 		}
+		
+		long duration = System.currentTimeMillis() - start;
+		
+		logger.info(UIInboundAdapterPort.class, "[template-form] processado em " + duration + "ms ");
+		
+		return response;
 	}
+	
 	/**
 	 * @param domain
 	 * @return ResponseEntity<Form>
@@ -95,10 +139,17 @@ public class UIInboundAdapterPort {
 	 */
 	@GetMapping({ "/filter", "/filter/{id}" })
 	public ResponseEntity<Form> filter(@UIDomain Domain<?> domain) throws Exception {
+		
 		long start = System.currentTimeMillis();
+		
+		ResponseEntity<Form> response;
+		
 		try {
+			
 			Form form = uIInboundPort.filter(domain);
-			return ResponseEntity.ok(form);
+			
+			response = ResponseEntity.ok(form);
+			
 		} catch (Exception ex) {
 			logger.error(UIInboundAdapterPort.class, "Erro ao criar [template-filter]", ex);
 			throw ex;
@@ -106,5 +157,11 @@ public class UIInboundAdapterPort {
 			long duration = System.currentTimeMillis() - start;
 	        logger.info(RepositoryOutboundAdapterPort.class, "[template-filter] concluído em " + duration + "ms ");
 		}
+		
+		long duration = System.currentTimeMillis() - start;
+		
+		logger.info(UIInboundAdapterPort.class, "[template-filter] processado em " + duration + "ms ");
+		
+		return response;
 	}
 }

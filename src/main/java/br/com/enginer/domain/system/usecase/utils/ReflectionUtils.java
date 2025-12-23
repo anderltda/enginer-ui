@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import br.com.enginer.domain.system.usecase.AbstractUseCase;
+import br.com.enginer.domain.system.usecase.annotation.field.UIIdPart;
 import br.com.enginer.domain.system.usecase.exception.CheckedException;
 import br.com.enginer.domain.system.usecase.port.outbound.DependencyInjectorPort;
 import br.com.enginer.domain.system.usecase.port.outbound.OutboundPort;
@@ -1048,36 +1049,36 @@ public class ReflectionUtils {
 	 * @throws Exception em caso de erro ao acessar campos do ID via reflexão
 	 */
 	public static boolean isIdNull(Domain<?> domain) throws Exception {
-	    if (domain == null) return true;
+		if (domain == null) return true;
 
-	    Object idObj = readIdFieldDirect(domain); 
-	    if (idObj == null) return true;
+		Object idObj = readIdFieldDirect(domain);
+		if (idObj == null) return true;
 
-	    Class<?> idClass = idObj.getClass();
+		Class<?> idClass = idObj.getClass();
 
-	    // ID simples
-	    if (!ReflectionUtils.isIdComposedType(idClass)) {
-	        return isNullOrEmptyGeneric(idObj);
-	    }
+		// ID simples
+		if (!ReflectionUtils.isIdComposedType(idClass)) {
+			return isNullOrEmptyGeneric(idObj);
+		}
 
-	    // ID composto (DomainId)
-	    for (Field field : idClass.getDeclaredFields()) {
-	        field.setAccessible(true);
-	        Object value = field.get(idObj);
+		// ID composto: valida somente os campos marcados como parte da chave
+		boolean foundKeyPart = false;
 
-	        // Se o ID composto tiver Domain interno
-	        if (value instanceof Domain<?> d) {
-	            Object innerId = readIdFieldDirect(d); 
-	            if (innerId == null) return true;
-	            continue;
-	        }
+		for (Field field : idClass.getDeclaredFields()) {
+			if (!field.isAnnotationPresent(UIIdPart.class)) continue;
 
-	        if (isNullOrEmptyGeneric(value)) {
-	            return true;
-	        }
-	    }
+			foundKeyPart = true;
 
-	    return false;
+			field.setAccessible(true);
+
+			Object value = field.get(idObj);
+
+			if (isNullOrEmptyGeneric(value)) return true;
+		}
+
+		// segurança: se ninguém marcou @UIIdPart, não tenta “adivinhar”
+		// (você pode trocar para true se quiser obrigar a marcação)
+		return !foundKeyPart;
 	}
 
 	/**

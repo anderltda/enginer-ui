@@ -16,7 +16,7 @@ import br.com.enginer.domain.system.usecase.schema.instance.Domain;
  * Agora totalmente tipada com <T extends Domain<?>>, garantindo segurança de tipo
  * e eliminando conflitos com ActionUseCase<T>.
  */
-public interface TemplateUseCase<T extends Domain<?>> {
+public interface UIUseCase<T extends Domain<?>> {
 
 	public static final String buscarFormPorId = "buscarFormPorId";
 	public static final String buscarFormTodos = "buscarFormTodos";

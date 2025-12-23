@@ -117,6 +117,7 @@ public class TagRepositoryOutboundAdapterPort extends DelegatingRepositoryOutbou
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			loggerOutboundPort.warn(TagRepositoryOutboundAdapterPort.class, ex.getMessage());
 		}
 	}
 	
@@ -142,19 +143,7 @@ public class TagRepositoryOutboundAdapterPort extends DelegatingRepositoryOutbou
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			loggerOutboundPort.warn(TagRepositoryOutboundAdapterPort.class, ex.getMessage());
 		}
-	}
-	
-	/**
-	 *
-	 */
-	@Override
-	public void decode(Domain<?> type) {
-
-		if(type == null || type.isIdNull()) return;
-
-		Tag tag = (Tag) type;
-		
-		tag.getId().setDomainId(NormalizeUtils.decodeIfNeeded(tag.getId().getDomainId()));
 	}
 }
