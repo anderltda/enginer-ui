@@ -867,7 +867,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@Override
 	public void delete(T domain) throws UncheckedException {
 		
-		if (domain.getId() == null) return;
+		if (domain.isIdNull()) return;
 
 		try {
 		

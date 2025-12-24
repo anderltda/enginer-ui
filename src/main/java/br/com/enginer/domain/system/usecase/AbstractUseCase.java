@@ -301,7 +301,7 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements UIUseCase<
 	@Override
 	public void excluirLista(List<T> entities) throws UncheckedException {
 		for (T entity : entities) {
-			repositoryOutboundPort.delete(entity, entity.getId());
+			repositoryOutboundPort.delete(entity);
 		}
 	}
 

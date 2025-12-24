@@ -8,8 +8,11 @@ import java.lang.annotation.Target;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIAction;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIActionMethod;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIButton;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditional;
+import br.com.enginer.domain.system.usecase.annotation.instance.validate.conditional.UIConditionalOn;
 import br.com.enginer.domain.system.usecase.constants.Constants;
 import br.com.enginer.domain.system.usecase.enums.TypeButtonState;
+import br.com.enginer.domain.system.usecase.enums.TypeOperator;
 import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -18,7 +21,10 @@ import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
     label = Constants.LABEL_NEXT,
     icon = "chevron_right",
     state = TypeButtonState.BTN_STATE_PRIMARY,
-    template = { TypeTemplate.TAB, TypeTemplate.MODAL },
+    template = TypeTemplate.TAB,
+	conditional = @UIConditional({
+		@UIConditionalOn(field = "disabled", operator = TypeOperator.EQUALS, matchs = { "false" }),
+	}),    
     action = @UIAction(
         method = @UIActionMethod(clientMethod = "onNext")
     )

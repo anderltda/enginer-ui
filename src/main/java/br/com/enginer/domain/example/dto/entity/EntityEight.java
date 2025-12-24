@@ -47,8 +47,8 @@ import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 
 @UITitle("Oitavo")
 @UIButtonAction(includes = { 
-	UIButtonBack.class, 
-	UIButtonClear.class, 
+	UIButtonBack.class,
+	UIButtonClear.class,
 	// FILTER
 	UIButtonFilterTabNew.class, 
 	UIButtonFilterFormNew.class, 

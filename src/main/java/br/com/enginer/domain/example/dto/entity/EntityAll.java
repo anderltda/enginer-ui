@@ -62,20 +62,10 @@ value = {
 	    label = Constants.LABEL_BACK,
 	    icon = "undo",
 	    needsValidation = false,
-	    template = { TypeTemplate.DISABLED },
+	    template = TypeTemplate.TAB,
 	    state = TypeButtonState.BTN_STATE_DEFAULT,
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onBack")
-	    )
-	),
-	@UIButton(
-	    label = Constants.LABEL_CLEAR,
-	    icon = "bin_alt",
-	    needsValidation = false,
-	    template = { TypeTemplate.DISABLED },
-	    state = TypeButtonState.BTN_STATE_DEFAULT,
-	    action = @UIAction(
-	        method = @UIActionMethod(clientMethod = Constants.METHOD_CLEAR_FORM)
 	    )
 	)		
 })

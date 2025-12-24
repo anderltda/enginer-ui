@@ -28,6 +28,7 @@ import br.com.enginer.domain.system.usecase.annotation.instance.action.button.fo
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormEdit;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormSave;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorAdd;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorBack;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
@@ -65,18 +66,46 @@ import br.com.enginer.domain.system.usecase.utils.StringsUtils;
 		UIButtonFormSave.class,
 		// TAB
 		UIButtonTabFinish.class
-	}
-)
+	},
+	value = {
+		@UIButton(
+		    label = Constants.LABEL_BACK,
+		    icon = "undo",
+			needsValidation = false,
+			state = TypeButtonState.BTN_STATE_DEFAULT,
+			template = TypeTemplate.TAB,
+			conditional = @UIConditional({
+				@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+			}),
+			action = @UIAction(
+			    method = @UIActionMethod(clientMethod = "onBack")
+			)
+		)
+	})
 @UIPaginator(config = @UIConfig(editableAll = true), 
 actions = @UIButtonAction(
 	includes = {
 		UIButtonPaginatorView.class, 
 		UIButtonPaginatorEdit.class, 
 		UIButtonPaginatorDelete.class,			
+		UIButtonPaginatorBack.class,
 		UIButtonPaginatorAdd.class,
-		UIButtonRowDelete.class
+		UIButtonRowDelete.class,
 	},
-	value = { 
+	value = {
+		@UIButton(
+		    label = Constants.LABEL_BACK,
+		    icon = "undo",
+			needsValidation = false,
+			state = TypeButtonState.BTN_STATE_DEFAULT,
+			template = TypeTemplate.TAB,
+			conditional = @UIConditional({
+				@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+			}),
+			action = @UIAction(
+			    method = @UIActionMethod(clientMethod = "onBack")
+			)
+		),			
 		@UIButton(
 			label = Constants.LABEL_SAVE, 
 			icon = "save",

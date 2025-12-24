@@ -25,12 +25,10 @@ import br.com.enginer.domain.system.usecase.annotation.instance.action.UIActionR
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIActionTriggerMethod;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIButton;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIButtonAction;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.UIButtonBack;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.UIButtonClear;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterFormNew;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterSearch;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterTabNew;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormDelete;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormEdit;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
@@ -57,14 +55,12 @@ import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
  */
 @UITitle("Decimo")
 @UIButtonAction(includes = { 
-	UIButtonBack.class, 
-	UIButtonClear.class, 
+	UIButtonClear.class,
 	// FILTER
 	UIButtonFilterTabNew.class, 
 	UIButtonFilterFormNew.class, 
 	UIButtonFilterSearch.class, 
 	// FORM
-	UIButtonFormDelete.class,
 	UIButtonFormEdit.class,
 	// ROW
 	UIButtonRowClear.class, 
@@ -72,10 +68,47 @@ import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 },
 value = { 
 	@UIButton(
+		label = Constants.LABEL_BACK,
+		icon = "undo",
+		needsValidation = false,
+		state = TypeButtonState.BTN_STATE_DEFAULT,
+		template = { TypeTemplate.FORM, TypeTemplate.TAB },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+		}),
+		action = @UIAction(
+			method = @UIActionMethod(clientMethod = "onBack")
+		)
+	),
+	@UIButton(
+		label = Constants.LABEL_DELETE,
+		icon = "close_ circle",
+		state = TypeButtonState.BTN_STATE_DANGER,
+		confirm = true,
+		needsValidation = false,
+		highlight = true,
+		dropdown = true,
+		template = { TypeTemplate.FORM },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "disabled", operator = TypeOperator.EQUALS, matchs = { "false" }),
+			@UIConditionalOn(field = "id", operator = TypeOperator.IS_NOT_NULL),
+		}),	
+		action = @UIAction(
+		method = @UIActionMethod(serverMethod = "excluir"),
+		response = @UIActionResponse(
+			template = { TypeTemplate.FORM },
+			error = @UIActionResponseError(method = @UIActionMethod(clientMethod = "onAlertTestError")), 
+			success = @UIActionResponseSuccess(redirect = @UIActionRedirect(value = Constants.PATH, ui = "filter")))
+		)
+	),	
+	@UIButton(
 	    label = Constants.LABEL_SAVE,
 	    icon = "save",
 	    state = TypeButtonState.BTN_STATE_PRIMARY,
-	    template = { TypeTemplate.FORM, TypeTemplate.MODAL },
+	    template = TypeTemplate.FORM,
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "disabled", operator = TypeOperator.EQUALS, matchs = { "false" }),
+		}),		    
 	    action = @UIAction(
 	        method = @UIActionMethod(serverMethod = "salvar"),
 	        response = @UIActionResponse(
@@ -84,19 +117,6 @@ value = {
 	    		success = @UIActionResponseSuccess(redirect = @UIActionRedirect(value = Constants.PATH, ui = "row", domain = "entityEleven", param = "{ disable=true, field=entityTen, value=$object }"))
 	        )
 	    )
-	),
-	@UIButton(
-	    label = Constants.LABEL_BACK,
-	    icon = "undo",
-		needsValidation = false,
-		state = TypeButtonState.BTN_STATE_DEFAULT,
-		template = TypeTemplate.TAB,
-		conditional = @UIConditional({
-			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
-		}),
-		action = @UIAction(
-		    method = @UIActionMethod(clientMethod = "onBack")
-		)
 	),
 	@UIButton(
 	    label = Constants.LABEL_BEFORE,

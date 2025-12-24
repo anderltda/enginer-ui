@@ -100,6 +100,16 @@ value = {
 		}),
 		action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH, ui = "form", domain = "entityTwo", param = "{ disable=false, field=entityTwo, value=$object }"))
 	),
+	@UIButton(
+	    label = Constants.LABEL_BACK,
+	    icon = "undo",
+	    needsValidation = false,
+	    state = TypeButtonState.BTN_STATE_DEFAULT,
+	    template = TypeTemplate.TAB,
+	    action = @UIAction(
+	        method = @UIActionMethod(clientMethod = "onBack")
+	    )
+	),	
 })
 @UIPaginator(
     config = @UIConfig(expandable = true, multiSelectable = false),
@@ -223,7 +233,7 @@ public class EntityOne extends DomainAbstract<Long> {
 	@UIColumn(label = "EntityOne ID", initial = false)
 	private Long id;
 
-	@UIText(label = "Name", template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.TAB, TypeTemplate.FORM, TypeTemplate.MODAL })
+	@UIText(label = "Name", max = 100, template = { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.TAB, TypeTemplate.FORM, TypeTemplate.MODAL })
 	//@UIAutoCompleteSuggestion(suggestions = { "Anderson", "Pedro", "Marcelo", "Michael", "Ramiro", "José" })
 	//@UIAutoComplete(domain = "entityOne", attribute = "name")
 	@UIPosition(x = 1, y = 1)

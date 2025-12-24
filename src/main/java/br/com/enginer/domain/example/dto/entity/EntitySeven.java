@@ -121,7 +121,7 @@ value = {
 	)		
 })
 @UIPaginator(
-	config = @UIConfig(expandable = true, multiSelectable = false),
+	config = @UIConfig(expandable = true, multiSelectable = true),
 	actions = @UIButtonAction(
 	includes = { 
 		UIButtonPaginatorView.class, 

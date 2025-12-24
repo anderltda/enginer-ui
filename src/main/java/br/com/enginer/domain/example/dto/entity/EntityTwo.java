@@ -23,7 +23,6 @@ import br.com.enginer.domain.system.usecase.annotation.instance.action.UIActionR
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIActionTriggerMethod;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIButton;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.UIButtonAction;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.UIButtonBack;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.UIButtonClear;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterFormNew;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterSearch;
@@ -39,6 +38,7 @@ import br.com.enginer.domain.system.usecase.annotation.instance.action.button.ro
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowClear;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowDelete;
 import br.com.enginer.domain.system.usecase.annotation.instance.action.button.row.UIButtonRowEdit;
+import br.com.enginer.domain.system.usecase.annotation.instance.action.button.tab.UIButtonTabEdit;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIPaginator;
 import br.com.enginer.domain.system.usecase.annotation.instance.validate.UIValidate;
@@ -64,7 +64,6 @@ import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
  */
 @UITitle("Segundo")
 @UIButtonAction(includes = { 
-	UIButtonBack.class, 
 	UIButtonClear.class, 
 	// FILTER
 	UIButtonFilterTabNew.class, 
@@ -74,6 +73,8 @@ import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 	UIButtonFormDelete.class,
 	UIButtonFormEdit.class, 
 	UIButtonFormSave.class,
+	// TAB 
+	UIButtonTabEdit.class,
 	// ROW
 	UIButtonRowClear.class, 
 	UIButtonRowAdd.class,
@@ -141,6 +142,7 @@ value = {
 	    template = TypeTemplate.TAB,
 		conditional = @UIConditional({
 			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
+			@UIConditionalOn(field = "disabled", operator = TypeOperator.EQUALS, matchs = { "false" }),
 		}),	    
 	    action = @UIAction(
 			method = @UIActionMethod(

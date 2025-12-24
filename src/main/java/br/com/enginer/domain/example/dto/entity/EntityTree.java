@@ -61,8 +61,8 @@ import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
  * 
  */
 @UITitle("Terceiro")
-@UIButtonAction(includes = { 
-	UIButtonBack.class, 
+@UIButtonAction(includes = {
+	UIButtonBack.class,
 	UIButtonClear.class, 
 	// FILTER
 	UIButtonFilterTabNew.class, 

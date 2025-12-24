@@ -53,7 +53,7 @@ import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
  */
 @UITitle("Quinto")
 @UIButtonAction(includes = { 
-	UIButtonBack.class, 
+	UIButtonBack.class,
 	UIButtonClear.class, 
 	// FILTER
 	UIButtonFilterTabNew.class, 

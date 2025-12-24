@@ -22,10 +22,11 @@ import br.com.enginer.domain.system.usecase.enums.TypeTemplate;
 	icon = "edit",
 	needsValidation = false,
 	state = TypeButtonState.BTN_STATE_PRIMARY,
-	template = TypeTemplate.TAB,
+	template = { TypeTemplate.TAB },
 	conditional = @UIConditional({
 		@UIConditionalOn(field = "disabled", operator = TypeOperator.EQUALS, matchs = { "true" }),
-	}),	
+		@UIConditionalOn(field = "id", operator = TypeOperator.IS_NOT_NULL),
+	}),
 	action = @UIAction(redirect = @UIActionRedirect(value = Constants.PATH_FIND_BY_ID, ui = "tab", param = "{ disable=false, field=id }"))
 )
 public @interface UIButtonTabEdit {}

@@ -16,40 +16,80 @@ import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 public class UriUtils {
 
 	/**
-	 * @param path
-	 * @param params
-	 * @return
+	 * Constrói uma URI adicionando parâmetros de query de forma segura e genérica.
+	 *
+	 * <p>
+	 * O método percorre o mapa de parâmetros e adiciona apenas valores válidos à URL,
+	 * tratando corretamente listas, arrays e evitando o envio de objetos complexos
+	 * (como entidades de domínio) diretamente na query string.
+	 * </p>
+	 *
+	 * <p>
+	 * Objetos do tipo {@code Domain} são convertidos para seus respectivos identificadores,
+	 * prevenindo erros de expansão de URI causados por {@code toString()} com
+	 * caracteres especiais (ex.: <code>{ }</code>).
+	 * </p>
+	 *
+	 * <p>
+	 * Uso típico em chamadas REST via {@link org.springframework.web.reactive.function.client.WebClient},
+	 * garantindo URLs consistentes e compatíveis com o mecanismo de template do Spring.
+	 * </p>
+	 *
+	 * @param path   caminho base da requisição
+	 * @param params mapa de parâmetros de query
+	 * @return função que constrói a {@link URI} final
 	 */
 	public static Function<UriBuilder, URI> buildUriWithQueryParams(String path, Map<String, Object> params) {
-		return uriBuilder -> {
-			UriBuilder builder = uriBuilder.path(path);
+		
+	    return uriBuilder -> {
+	    
+	    	UriBuilder builder = uriBuilder.path(path);
 
-			for (Map.Entry<String, Object> entry : params.entrySet()) {
-				String key = entry.getKey();
-				Object value = entry.getValue();
+	        for (Map.Entry<String, Object> entry : params.entrySet()) {
+	            String key = entry.getKey();
+	            Object value = entry.getValue();
+	            if (value == null) continue;
 
-				if (value == null)
-					continue;
+	            // Evita mandar objetos complexos (ex.: Domain) na querystring
+	            if (value instanceof br.com.enginer.domain.system.usecase.schema.instance.Domain<?> d) {
+	                Object id = d.getId();
+	                if (id != null) builder.queryParam(key, id.toString());
+	                continue;
+	            }
 
-				if (value instanceof List<?> list) {
-					for (Object item : list) {
-						if (item != null) {
-							builder.queryParam(key, item.toString());
-						}
-					}
-				} else if (value.getClass().isArray()) {
-					for (Object item : (Object[]) value) {
-						if (item != null) {
-							builder.queryParam(key, item.toString());
-						}
-					}
-				} else {
-					builder.queryParam(key, value.toString());
-				}
-			}
+	            if (value instanceof List<?> list) {
+	                for (Object item : list) {
+	                    if (item == null) continue;
 
-			return builder.build();
-		};
+	                    if (item instanceof br.com.enginer.domain.system.usecase.schema.instance.Domain<?> d) {
+	                        Object id = d.getId();
+	                        if (id != null) builder.queryParam(key, id.toString());
+	                    } else {
+	                        builder.queryParam(key, item.toString());
+	                    }
+	                }
+	                continue;
+	            }
+
+	            if (value.getClass().isArray()) {
+	                for (Object item : (Object[]) value) {
+	                    if (item == null) continue;
+
+	                    if (item instanceof br.com.enginer.domain.system.usecase.schema.instance.Domain<?> d) {
+	                        Object id = d.getId();
+	                        if (id != null) builder.queryParam(key, id.toString());
+	                    } else {
+	                        builder.queryParam(key, item.toString());
+	                    }
+	                }
+	                continue;
+	            }
+
+	            builder.queryParam(key, value.toString());
+	        }
+
+	        return builder.build();
+	    };
 	}
 	
 	/**

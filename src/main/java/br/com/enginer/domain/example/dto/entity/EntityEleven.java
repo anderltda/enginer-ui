@@ -55,8 +55,8 @@ import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 @UITitle("Decimo Primeiro")
 @UIButtonAction(
 includes = {
-	UIButtonClear.class, 
-	UIButtonBack.class, 
+	UIButtonBack.class,
+	UIButtonClear.class,
 	// FILTER
 	UIButtonFilterTabNew.class, 
 	UIButtonFilterFormNew.class, 
@@ -75,7 +75,7 @@ value = {
 	    icon = "undo",
 		needsValidation = false,
 		state = TypeButtonState.BTN_STATE_DEFAULT,
-		template = TypeTemplate.TAB,
+		template = { TypeTemplate.TAB, TypeTemplate.ROW },
 		conditional = @UIConditional({
 			@UIConditionalOn(field = "mainDomain", operator = TypeOperator.NOT_CONTAINS, matchs = { "entityAll" }),
 		}),

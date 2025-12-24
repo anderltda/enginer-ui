@@ -539,8 +539,8 @@ public class FormTemplate {
 
 			UIConfig uiConfig = uiPaginator.config();
 			config.setEditableAll(uiConfig.editableAll());
-			config.setMultiSelectable(uiConfig.multiSelectable());
 			config.setExpandable(uiConfig.expandable());
+			config.setMultiSelectable(domain.getModal() ? false: uiConfig.multiSelectable());
 
 			UIButtonAction uiButtonAction = uiPaginator.actions();
 			UIButton[] uiButtons = uiButtonAction.value();
@@ -1247,11 +1247,12 @@ public class FormTemplate {
 			UIButtonAction uiButtonAction = domain.getClass().getAnnotation(UIButtonAction.class);
 			UIButton[] uiButtons = domain.getClass().getAnnotationsByType(UIButton.class);
 
+			uiListButtons.addAll(Arrays.asList(uiButtons));
+
 			for (Class<? extends Annotation> custom : uiButtonAction.includes()) {
 				uiListButtons.add(custom.getAnnotation(UIButton.class));
 			}
 
-			uiListButtons.addAll(Arrays.asList(uiButtons));
 
 			if (uiListButtons.size() > 0) {
 
