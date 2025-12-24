@@ -24,7 +24,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**") // Define as rotas que serão liberadas
-				.allowedOrigins("http://localhost:4200") // Define a origem permitida (ex: Angular rodando localmente)
+				.allowedOrigins("http://192.168.68.101:4200", "http://localhost:4200")
 				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Define os métodos HTTP permitidos
 				.allowedHeaders("*") // Define os cabeçalhos permitidos
 				.allowCredentials(true); // Permite envio de credenciais (cookies, autenticação, etc.)
