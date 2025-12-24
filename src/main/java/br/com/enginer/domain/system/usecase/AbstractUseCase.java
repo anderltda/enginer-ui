@@ -366,12 +366,12 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements UIUseCase<
 	}
 
 	@PreCollectionAction
-	public void preCollectionAction(T domain) {
+	public void preCollectionAction(List<T> domains) {
 		loggerOutboundPort.info(this.getClass(), "@PreCollectionAction - Pré-execução: iniciando...");
 	}
 
 	@PostCollectionAction
-	public void postCollectionAction(T domain) {
+	public void postCollectionAction(List<T> domains) {
 		loggerOutboundPort.info(this.getClass(), "@PostCollectionAction - Pós-execução: finalizando...");
 	}
 
