@@ -105,7 +105,7 @@ value = {
 	    icon = "undo",
 	    needsValidation = false,
 	    state = TypeButtonState.BTN_STATE_DEFAULT,
-	    template = TypeTemplate.TAB,
+	    template = { TypeTemplate.TAB, TypeTemplate.ROW },
 	    action = @UIAction(
 	        method = @UIActionMethod(clientMethod = "onBack")
 	    )
