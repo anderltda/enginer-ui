@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -38,16 +37,10 @@ import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalDateDeserializer;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalDateTimeDeserializer;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalTimeDeserializer;
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
 
 @Configuration
 public class BeanConfiguration {
 	
-	@Value("${aws.s3.region:us-east-1}")
-	private String awsRegion;
-
 	/**
 	 * @return
 	 */
@@ -96,14 +89,6 @@ public class BeanConfiguration {
 		return mapper;
 	}
 	
-	@Bean
-	S3Client s3Client() {
-		return S3Client.builder()
-			.region(Region.of(awsRegion))
-			.credentialsProvider(DefaultCredentialsProvider.create())
-			.build();
-	}	
-
 	/**
 	 * @param builder
 	 * @return

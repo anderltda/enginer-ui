@@ -24,7 +24,7 @@
 		<spring.cloud.aws.version>3.2.0</spring.cloud.aws.version>
 		<aws.sdk.version>2.27.16</aws.sdk.version>
 	</properties>
-	
+
 	<!-- Start Dependencias -->
 	<dependencies>
 		<dependency>
@@ -60,9 +60,13 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webflux</artifactId>
-		</dependency>		
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webflux</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor.netty</groupId>
+			<artifactId>reactor-netty-http</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>io.projectreactor</groupId>
 			<artifactId>reactor-test</artifactId>
@@ -95,10 +99,10 @@
 		</dependency>
 		<!-- upload de arquivos -->
 		<dependency>
-		  <groupId>commons-codec</groupId>
-		  <artifactId>commons-codec</artifactId>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
 		</dependency>
-		<!-- upload de arquivos -->		
+		<!-- upload de arquivos -->
 		<!-- javapoet -->
 		<dependency>
 			<groupId>com.squareup</groupId>
@@ -161,15 +165,15 @@
 				</executions>
 			</plugin>
 			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-compiler-plugin</artifactId>
-			    <configuration>
-			        <source>${java.version}</source>
-			        <target>${java.version}</target>
-			        <compilerArgs>
-			            <arg>-parameters</arg>
-			        </compilerArgs>
-			    </configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<compilerArgs>
+						<arg>-parameters</arg>
+					</compilerArgs>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>

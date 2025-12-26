@@ -791,7 +791,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 			result = mono.block();
 			
 	        long duration = System.currentTimeMillis() - start;
-	        logger.audit(RepositoryOutboundAdapterPort.class, domain.getActionLogger(), "Ação [save] concluída com sucesso", duration);
 
 		} catch (CheckedException ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[4XX or 5XX ERROR]", ex);
@@ -845,7 +844,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 			savedList = (List<T>) flux.collectList().blockOptional().orElse(List.of());	
 			
 	        long duration = System.currentTimeMillis() - start;
-	        logger.audit(RepositoryOutboundAdapterPort.class, domain.getActionLogger(), "Ação [save] concluída com sucesso", duration);
 
 		} catch (CheckedException ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[CheckedException] " + ex.getMessage(), ex);

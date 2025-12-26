@@ -21,119 +21,118 @@ import br.com.enginer.domain.system.usecase.utils.StringsUtils;
 import br.com.enginer.infrastructure.utils.PackageScannerUtils;
 import jakarta.servlet.http.HttpServletRequest;
 
-/**
- * 
- */
 @Component
 public class DomainResolver implements HandlerMethodArgumentResolver {
 
-	/**
-	 *
-	 */
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
 		return parameter.hasParameterAnnotation(UIDomain.class);
 	}
 
-	/**
-	 *
-	 */
 	@Override
-	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-		
-		HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
+	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
-		String urlDomain = request.getHeader("X-UI-Url");
-		String domainName = request.getHeader("X-UIDomain");
-		String modal = request.getHeader("X-UIModal");
-		String disabled = request.getHeader("X-UI-Mode");
-		
+		HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
+		if (request == null) {
+			throw new IllegalStateException("HttpServletRequest não disponível no contexto.");
+		}
+
+		String urlDomain = trimToNull(request.getHeader("X-UI-Url"));
+		String domainName = trimToNull(request.getHeader("X-UIDomain"));
+		String modalHdr = trimToNull(request.getHeader("X-UIModal"));
+		String modeHdr = trimToNull(request.getHeader("X-UI-Mode"));
+
+		if (domainName == null) {
+			// Se @UIDomain está presente, eu prefiro falhar logo:
+			// (se você realmente quer opcional, aí mantém return null)
+			throw new IllegalArgumentException("Header X-UIDomain é obrigatório para resolver @UIDomain.");
+		}
+
+		boolean isModal = parseBoolean(modalHdr, false);
+		boolean isDisabled = parseDisabled(modeHdr);
+
 		String id = extractIdFromUri(request.getRequestURI());
 
-		if (domainName != null) {
-			
-			Boolean isModal = modal != null && !modal.isEmpty() ? Boolean.valueOf(modal) : Boolean.FALSE;
-			Boolean isDisabled = disabled != null && disabled.equals(Constants.HASH1) ? disabled.equals(Constants.HASH1) : disabled != null ? !disabled.equals(Constants.HASH2) : false;
-			
-			Object object = PackageScannerUtils.findClassBySimpleName(Constants.PACKAGE_NAME_DOMAIN, StringsUtils.firstUpper(domainName));
+		Object found = PackageScannerUtils.findClassBySimpleName(Constants.PACKAGE_NAME_DOMAIN, StringsUtils.firstUpper(domainName));
 
-			Class<?> clazz = object.getClass();
+		if (found == null) {
+			throw new IllegalArgumentException("Domínio não encontrado: " + domainName);
+		}
 
-			if (clazz != null) {
+		Class<?> clazz = found instanceof Class<?> c ? c : found.getClass();
 
-				if (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) {
-					throw new IllegalArgumentException("Classe " + clazz.getName() + " não pode ser instanciada diretamente.");
-				}
+		if (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) {
+			throw new IllegalArgumentException("Classe " + clazz.getName() + " não pode ser instanciada diretamente.");
+		}
 
-				Domain<?> domain = (Domain<?>) ReflectionUtils.newInstance(clazz);
-				
-				if (id != null && !id.isEmpty()) {
-					
-					if (domain instanceof DomainId) {
-						
-						ReflectionUtils.extractKeyCompositedByQueryParameter(id, domain);
-						
-					} else {
-						
-						ReflectionUtils.extractKeyByQueryParameter(id, clazz, domain);
-					}
-				}
+		Domain<?> domain = (Domain<?>) ReflectionUtils.newInstance(clazz);
 
-				ReflectionUtils.executeMethod(domain, StringsUtils.setMethod("modal"), isModal);
-				ReflectionUtils.executeMethod(domain, StringsUtils.setMethod("disabled"), isDisabled);
-				extractMainDomainFromUri(domain, urlDomain);
-
-				return domain;
+		if (id != null) {
+			if (domain instanceof DomainId) {
+				ReflectionUtils.extractKeyCompositedByQueryParameter(id, domain);
+			} else {
+				ReflectionUtils.extractKeyByQueryParameter(id, clazz, domain);
 			}
 		}
-		return null;
-	}
 
-	/**
-	 * @param uri
-	 * @return
-	 */
-	private String extractIdFromUri(String uri) {
-		String[] parts = Arrays.stream(uri.split("/")).filter(s -> !s.isEmpty()).toArray(String[]::new);
-		if (parts.length > 2) {
-			String last = parts[parts.length - 1];
-			String[] reserved = Constants.WORDS_RESERVED;
-			for (String keyword : reserved) {
-				if (keyword.equalsIgnoreCase(last)) {
-					return null;
-				}
-			}
-			if (last.matches("[a-zA-Z0-9\\-]+")) {
-				return last;
-			} else if(last.contains("id.")) {
-				return last;
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Extrai o domínio principal de uma URI.
-	 * @param uri A URI completa.
-	 * @return O domínio principal extraído, ou null se não for possível extrair
-	 * @throws Exception		
-	 */
-	private void extractMainDomainFromUri(Domain<?> domain, String uri) throws Exception {
-		if(uri != null) {
-			String mainDomain = thirdSegment(uri).orElse(null);
+		ReflectionUtils.executeMethod(domain, StringsUtils.setMethod("modal"), isModal);
+		ReflectionUtils.executeMethod(domain, StringsUtils.setMethod("disabled"), isDisabled);
+
+		if (urlDomain != null) {
+			String mainDomain = thirdSegment(urlDomain).orElse(null);
 			ReflectionUtils.executeMethod(domain, StringsUtils.setMethod("mainDomain"), mainDomain);
 		}
+
+		return domain;
 	}
-	
-	/**
-	 * Retorna o terceiro segmento de uma URL ou path.
-	 * Exemplo: para "http://example.com/one/two/three", retorna Optional com "three".
-	 * Exemplo: para "/one/two/three", retorna Optional com "three".
-	 * Exemplo: para "/one/two", retorna Optional vazio.
-	 * 
-	 * @param urlOrPath A URL completa ou apenas o path.
-	 * @return Optional com o terceiro segmento, ou vazio se não existir.
-	 */
+
+	private static String trimToNull(String s) {
+		if (s == null)
+			return null;
+		String t = s.trim();
+		return t.isEmpty() ? null : t;
+	}
+
+	private static boolean parseBoolean(String value, boolean defaultValue) {
+		return value == null ? defaultValue : Boolean.parseBoolean(value);
+	}
+
+	public static boolean parseDisabled(String modeHdr) {
+		if (modeHdr == null)
+			return false;
+		if (modeHdr.equals(Constants.HASH1))
+			return true; // ex: "disabled"
+		if (modeHdr.equals(Constants.HASH2))
+			return false; // ex: "enabled"
+		// fallback (se vier qualquer outro valor, decide uma regra)
+		return true;
+	}
+
+	private String extractIdFromUri(String uri) {
+		String[] parts = Arrays.stream(uri.split("/")).filter(s -> !s.isBlank()).toArray(String[]::new);
+
+		if (parts.length <= 2)
+			return null;
+
+		String last = parts[parts.length - 1];
+
+		for (String keyword : Constants.WORDS_RESERVED) {
+			if (keyword.equalsIgnoreCase(last))
+				return null;
+		}
+
+		// Mais permissivo: aceita uuid, números, hífen, underscore, ponto, etc.
+		if (last.matches("[a-zA-Z0-9._\\-]+"))
+			return last;
+
+		// compat com seu caso "id."
+		if (last.contains("id."))
+			return last;
+
+		return null;
+	}
+
 	private Optional<String> thirdSegment(String urlOrPath) {
 		String path;
 		try {
@@ -141,8 +140,7 @@ public class DomainResolver implements HandlerMethodArgumentResolver {
 		} catch (Exception e) {
 			path = urlOrPath;
 		}
-		return Arrays.stream(path.split("/")).filter(s -> !s.isEmpty())
-				.skip(2)
-				.findFirst();
+
+		return Arrays.stream(path.split("/")).filter(s -> !s.isBlank()).skip(2).findFirst();
 	}
 }
