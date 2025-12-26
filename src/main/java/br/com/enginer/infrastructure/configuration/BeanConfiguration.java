@@ -34,6 +34,7 @@ import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryO
 import br.com.enginer.domain.system.usecase.port.outbound.repository.TagRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.UploadFileRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
+import br.com.enginer.infrastructure.adapter.inbound.audit.ActionLoggerRepositoryOutboundAdapterPort;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalDateDeserializer;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalDateTimeDeserializer;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalTimeDeserializer;
@@ -113,6 +114,7 @@ public class BeanConfiguration {
 
 	/**
 	 * @param loggerOutboundPort
+	 * @param actionLoggerRepositoryOutboundAdapterPort
 	 * @param uploadFileRepositoryOutboundPort
 	 * @param tagRepositoryOutboundPort
 	 * @param repositoryOutboundPort
@@ -121,8 +123,8 @@ public class BeanConfiguration {
 	 * @return
 	 */
 	@Bean
-	ActionInboundPort<Domain<?>> actionInboundPort(LoggerOutboundPort loggerOutboundPort, UploadFileRepositoryOutboundPort uploadFileRepositoryOutboundPort, TagRepositoryOutboundPort tagRepositoryOutboundPort, RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, PublisherOutboundPort<Domain<?>> publisherOutboundPort, FileStorageOutboundPort fileStorageOutboundPort) {
-		return new ActionInboundUseCase<Domain<?>>(loggerOutboundPort, uploadFileRepositoryOutboundPort, tagRepositoryOutboundPort, repositoryOutboundPort, publisherOutboundPort, fileStorageOutboundPort);
+	ActionInboundPort<Domain<?>> actionInboundPort(LoggerOutboundPort loggerOutboundPort, ActionLoggerRepositoryOutboundAdapterPort actionLoggerRepositoryOutboundAdapterPort, UploadFileRepositoryOutboundPort uploadFileRepositoryOutboundPort, TagRepositoryOutboundPort tagRepositoryOutboundPort, RepositoryOutboundPort<Domain<?>> repositoryOutboundPort, PublisherOutboundPort<Domain<?>> publisherOutboundPort, FileStorageOutboundPort fileStorageOutboundPort) {
+		return new ActionInboundUseCase<Domain<?>>(loggerOutboundPort, actionLoggerRepositoryOutboundAdapterPort, uploadFileRepositoryOutboundPort, tagRepositoryOutboundPort, repositoryOutboundPort, publisherOutboundPort, fileStorageOutboundPort);
 	}
 	
 	/**

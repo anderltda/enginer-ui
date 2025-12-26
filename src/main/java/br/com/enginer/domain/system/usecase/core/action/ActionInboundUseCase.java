@@ -19,6 +19,7 @@ import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryO
 import br.com.enginer.domain.system.usecase.port.outbound.repository.TagRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.UploadFileRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
+import br.com.enginer.infrastructure.adapter.inbound.audit.ActionLoggerRepositoryOutboundAdapterPort;
 
 /**
  * Implementação tipada e genérica do ActionInboundPort.
@@ -27,6 +28,7 @@ import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOut
 public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundPort<T> {
 
     private final LoggerOutboundPort loggerOutboundPort;
+    private final ActionLoggerRepositoryOutboundAdapterPort actionLoggerRepositoryOutboundAdapterPort;
     private final UploadFileRepositoryOutboundPort uploadFileRepositoryOutboundPort;
     private final TagRepositoryOutboundPort tagRepositoryOutboundPort;
     private final RepositoryOutboundPort<Domain<?>> repositoryOutboundPort;
@@ -36,19 +38,22 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
 	/**
 	 * Construtor com injeção de dependências.
 	 */
-    public ActionInboundUseCase(LoggerOutboundPort loggerOutboundPort,
-    		UploadFileRepositoryOutboundPort uploadFileRepositoryOutboundPort,
-    		TagRepositoryOutboundPort tagRepositoryOutboundPort,
-    		RepositoryOutboundPort<Domain<?>> repositoryOutboundPort,
-    		PublisherOutboundPort<Domain<?>> publisherOutboundPort, 
-    		FileStorageOutboundPort fileStorageOutboundPort) {
-    	this.loggerOutboundPort = loggerOutboundPort;
-    	this.uploadFileRepositoryOutboundPort = uploadFileRepositoryOutboundPort;
-    	this.tagRepositoryOutboundPort = tagRepositoryOutboundPort;
-    	this.repositoryOutboundPort = repositoryOutboundPort;
-    	this.publisherOutboundPort = publisherOutboundPort;
-    	this.fileStorageOutboundPort = fileStorageOutboundPort;
-    }
+	public ActionInboundUseCase(
+			LoggerOutboundPort loggerOutboundPort,
+			ActionLoggerRepositoryOutboundAdapterPort actionLoggerRepositoryOutboundAdapterPort,
+			UploadFileRepositoryOutboundPort uploadFileRepositoryOutboundPort,
+			TagRepositoryOutboundPort tagRepositoryOutboundPort,
+			RepositoryOutboundPort<Domain<?>> repositoryOutboundPort,
+			PublisherOutboundPort<Domain<?>> publisherOutboundPort,
+			FileStorageOutboundPort fileStorageOutboundPort) {
+		this.loggerOutboundPort = loggerOutboundPort;
+		this.actionLoggerRepositoryOutboundAdapterPort = actionLoggerRepositoryOutboundAdapterPort;
+		this.uploadFileRepositoryOutboundPort = uploadFileRepositoryOutboundPort;
+		this.tagRepositoryOutboundPort = tagRepositoryOutboundPort;
+		this.repositoryOutboundPort = repositoryOutboundPort;
+		this.publisherOutboundPort = publisherOutboundPort;
+		this.fileStorageOutboundPort = fileStorageOutboundPort;
+	}
 
 
 	/**
@@ -57,6 +62,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
     private Object injectedDependency(Domain<?> domain) throws Exception {
         return ReflectionUtils.executeInjectedDependencyUseCaseCached(domain.getClass(), 
         		loggerOutboundPort,
+        		actionLoggerRepositoryOutboundAdapterPort,
         		uploadFileRepositoryOutboundPort,
         		tagRepositoryOutboundPort,
         		repositoryOutboundPort, 
