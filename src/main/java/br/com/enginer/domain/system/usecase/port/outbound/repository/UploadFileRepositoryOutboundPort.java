@@ -1,7 +1,7 @@
 package br.com.enginer.domain.system.usecase.port.outbound.repository;
 
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
-import br.com.enginer.domain.system.usecase.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 
 /**
  * Port outbound responsável por acesso a dados (camada repositório apenas de UploadFile).

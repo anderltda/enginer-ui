@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.enginer.domain.system.usecase.annotation.instance.UIDomain;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.UIDomain;
+import br.com.enginer.domain.system.usecase.core.schema.Form;
+import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.port.inbound.api.UIInboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
-import br.com.enginer.domain.system.usecase.schema.Form;
-import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 import br.com.enginer.infrastructure.adapter.outbound.repository.RepositoryOutboundAdapterPort;
 
 /**

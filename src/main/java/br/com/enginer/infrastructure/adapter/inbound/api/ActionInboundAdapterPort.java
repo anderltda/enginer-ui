@@ -27,17 +27,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
+import br.com.enginer.domain.system.dto.entity.logger.ActionLogger;
 import br.com.enginer.domain.system.dto.entity.tag.SearchOverlay;
 import br.com.enginer.domain.system.dto.entity.tag.TagType;
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
-import br.com.enginer.domain.system.usecase.annotation.instance.UIDomain;
-import br.com.enginer.domain.system.usecase.exception.CheckedException;
-import br.com.enginer.domain.system.usecase.logger.ActionLogger;
-import br.com.enginer.domain.system.usecase.page.PageResult;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.UIDomain;
+import br.com.enginer.domain.system.usecase.core.exception.CheckedException;
+import br.com.enginer.domain.system.usecase.core.page.PageResult;
+import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 import br.com.enginer.domain.system.usecase.port.inbound.api.ActionInboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
-import br.com.enginer.domain.system.usecase.schema.instance.Domain;
-import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
 import br.com.enginer.infrastructure.utils.NormalizeUtils;
 
 /**

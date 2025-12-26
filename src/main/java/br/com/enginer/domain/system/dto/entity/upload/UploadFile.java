@@ -4,24 +4,24 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 
-import br.com.enginer.domain.system.usecase.annotation.instance.UITitle;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.UIButtonAction;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.UIButtonBack;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.UIButtonClear;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterFormNew;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterSearch;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.filter.UIButtonFilterTabNew;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormDelete;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormEdit;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.form.UIButtonFormSave;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorSave;
-import br.com.enginer.domain.system.usecase.annotation.instance.action.button.paginator.UIButtonPaginatorView;
-import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIConfig;
-import br.com.enginer.domain.system.usecase.annotation.instance.paginator.UIPaginator;
-import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
-import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.UITitle;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIButtonAction;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.UIButtonBack;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.UIButtonClear;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.filter.UIButtonFilterFormNew;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.filter.UIButtonFilterSearch;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.filter.UIButtonFilterTabNew;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.form.UIButtonFormDelete;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.form.UIButtonFormEdit;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.form.UIButtonFormSave;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.paginator.UIButtonPaginatorSave;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.paginator.UIButtonPaginatorView;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.paginator.UIConfig;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.paginator.UIPaginator;
+import br.com.enginer.domain.system.usecase.core.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 
 /**
  * Representa um arquivo enviado ao sistema, incluindo seus metadados e

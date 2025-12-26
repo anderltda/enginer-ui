@@ -9,11 +9,11 @@ import java.util.Map;
 import br.com.enginer.domain.example.dto.entity.EntityEleven;
 import br.com.enginer.domain.example.dto.entity.EntitySix;
 import br.com.enginer.domain.example.dto.entity.EntityTen;
-import br.com.enginer.domain.system.usecase.AbstractUseCase;
-import br.com.enginer.domain.system.usecase.annotation.AutoDependencyInjector;
-import br.com.enginer.domain.system.usecase.exception.UncheckedException;
-import br.com.enginer.domain.system.usecase.page.PageResult;
-import br.com.enginer.domain.system.usecase.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.core.AbstractUseCase;
+import br.com.enginer.domain.system.usecase.core.annotation.AutoDependencyInjector;
+import br.com.enginer.domain.system.usecase.core.exception.UncheckedException;
+import br.com.enginer.domain.system.usecase.core.page.PageResult;
+import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 
 public class EntityElevenUseCase extends AbstractUseCase<EntityEleven> implements br.com.enginer.domain.example.usecase.port.EntityElevenUseCase {
 	

@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 import org.springframework.web.util.UriBuilder;
 
-import br.com.enginer.domain.system.usecase.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 
 /**
  * 
@@ -51,7 +51,7 @@ public class UriUtils {
 	            if (value == null) continue;
 
 	            // Evita mandar objetos complexos (ex.: Domain) na querystring
-	            if (value instanceof br.com.enginer.domain.system.usecase.schema.instance.Domain<?> d) {
+	            if (value instanceof br.com.enginer.domain.system.usecase.core.schema.instance.Domain<?> d) {
 	                Object id = d.getId();
 	                if (id != null) builder.queryParam(key, id.toString());
 	                continue;
@@ -61,7 +61,7 @@ public class UriUtils {
 	                for (Object item : list) {
 	                    if (item == null) continue;
 
-	                    if (item instanceof br.com.enginer.domain.system.usecase.schema.instance.Domain<?> d) {
+	                    if (item instanceof br.com.enginer.domain.system.usecase.core.schema.instance.Domain<?> d) {
 	                        Object id = d.getId();
 	                        if (id != null) builder.queryParam(key, id.toString());
 	                    } else {
@@ -75,7 +75,7 @@ public class UriUtils {
 	                for (Object item : (Object[]) value) {
 	                    if (item == null) continue;
 
-	                    if (item instanceof br.com.enginer.domain.system.usecase.schema.instance.Domain<?> d) {
+	                    if (item instanceof br.com.enginer.domain.system.usecase.core.schema.instance.Domain<?> d) {
 	                        Object id = d.getId();
 	                        if (id != null) builder.queryParam(key, id.toString());
 	                    } else {

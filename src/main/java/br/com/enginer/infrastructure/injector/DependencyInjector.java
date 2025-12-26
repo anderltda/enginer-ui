@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import br.com.enginer.domain.system.usecase.AbstractUseCase;
-import br.com.enginer.domain.system.usecase.annotation.AutoDependencyInjector;
+import br.com.enginer.domain.system.usecase.core.AbstractUseCase;
+import br.com.enginer.domain.system.usecase.core.annotation.AutoDependencyInjector;
+import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.port.outbound.DependencyInjectorPort;
 import br.com.enginer.domain.system.usecase.port.outbound.OutboundPort;
-import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 import br.com.enginer.infrastructure.injector.lazy.LazyProxyHandler;
 import br.com.enginer.infrastructure.injector.metrics.InjectionMetrics;
 import br.com.enginer.infrastructure.injector.metrics.InjectionMetricsHistory;

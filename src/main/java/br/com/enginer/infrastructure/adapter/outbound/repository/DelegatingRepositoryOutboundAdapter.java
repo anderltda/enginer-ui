@@ -3,12 +3,12 @@ package br.com.enginer.infrastructure.adapter.outbound.repository;
 import java.util.List;
 import java.util.Map;
 
-import br.com.enginer.domain.system.usecase.exception.UncheckedException;
-import br.com.enginer.domain.system.usecase.page.PageResult;
+import br.com.enginer.domain.system.usecase.core.exception.UncheckedException;
+import br.com.enginer.domain.system.usecase.core.page.PageResult;
+import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
-import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 
 /**
  * Adapter base que delega todas as operações de {@link RepositoryOutboundPort}

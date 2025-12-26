@@ -8,14 +8,14 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
-import br.com.enginer.domain.system.usecase.exception.UncheckedException;
+import br.com.enginer.domain.system.usecase.core.exception.UncheckedException;
+import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
+import br.com.enginer.domain.system.usecase.core.utils.StringsUtils;
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.UploadFileRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
-import br.com.enginer.domain.system.usecase.schema.instance.Domain;
-import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
-import br.com.enginer.domain.system.usecase.utils.StringsUtils;
 
 /**
  * Adapter outbound específico para o domínio {@link UploadFile}.

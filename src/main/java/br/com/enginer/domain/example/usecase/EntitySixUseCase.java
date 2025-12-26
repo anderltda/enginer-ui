@@ -3,8 +3,8 @@ package br.com.enginer.domain.example.usecase;
 import java.util.List;
 
 import br.com.enginer.domain.example.dto.entity.EntitySix;
-import br.com.enginer.domain.system.usecase.AbstractUseCase;
-import br.com.enginer.domain.system.usecase.exception.UncheckedException;
+import br.com.enginer.domain.system.usecase.core.AbstractUseCase;
+import br.com.enginer.domain.system.usecase.core.exception.UncheckedException;
 
 public class EntitySixUseCase extends AbstractUseCase<EntitySix> implements br.com.enginer.domain.example.usecase.port.EntitySixUseCase {
 	

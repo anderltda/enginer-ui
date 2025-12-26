@@ -1,8 +1,8 @@
 package br.com.enginer.domain.example.usecase.port;
 
 import br.com.enginer.domain.example.dto.entity.EntityFive;
-import br.com.enginer.domain.system.usecase.ActionUseCase;
-import br.com.enginer.domain.system.usecase.exception.UncheckedException;
+import br.com.enginer.domain.system.usecase.core.action.ActionUseCase;
+import br.com.enginer.domain.system.usecase.core.exception.UncheckedException;
 
 /**
  * 

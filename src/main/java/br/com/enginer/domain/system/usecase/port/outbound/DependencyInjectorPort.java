@@ -1,6 +1,6 @@
 package br.com.enginer.domain.system.usecase.port.outbound;
 
-import br.com.enginer.domain.system.usecase.AbstractUseCase;
+import br.com.enginer.domain.system.usecase.core.AbstractUseCase;
 
 /**
  * Porta de saída responsável pela injeção de dependências de UseCases.

@@ -13,13 +13,13 @@ import org.springframework.stereotype.Component;
 import br.com.enginer.domain.system.dto.entity.tag.Tag;
 import br.com.enginer.domain.system.dto.entity.tag.TagId;
 import br.com.enginer.domain.system.dto.entity.tag.TagType;
+import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
+import br.com.enginer.domain.system.usecase.core.utils.StringsUtils;
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.TagRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
-import br.com.enginer.domain.system.usecase.schema.instance.Domain;
-import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
-import br.com.enginer.domain.system.usecase.utils.StringsUtils;
 import br.com.enginer.infrastructure.utils.NormalizeUtils;
 
 /**

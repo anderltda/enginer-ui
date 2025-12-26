@@ -3,10 +3,10 @@ package br.com.enginer.domain.system.usecase.port.outbound.repository;
 import java.util.List;
 import java.util.Map;
 
-import br.com.enginer.domain.system.usecase.exception.UncheckedException;
-import br.com.enginer.domain.system.usecase.page.PageResult;
+import br.com.enginer.domain.system.usecase.core.exception.UncheckedException;
+import br.com.enginer.domain.system.usecase.core.page.PageResult;
+import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.port.outbound.OutboundPort;
-import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 import br.com.enginer.infrastructure.adapter.outbound.repository.TypeRepository;
 
 /**

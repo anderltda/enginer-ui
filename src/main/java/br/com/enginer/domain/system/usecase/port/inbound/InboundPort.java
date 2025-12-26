@@ -8,7 +8,7 @@ package br.com.enginer.domain.system.usecase.port.inbound;
  * REST endpoints, CLI handlers, etc.</p>
  *
  * <p>Usada como tipo raiz para padronizar dependências e permitir
- * extensões genéricas em interfaces como {@link br.com.enginer.domain.system.usecase.port.inbound.api.ActionInboundPort}.</p>
+ * extensões genéricas em interfaces como {@link br.com.enginer.domain.system.usecase.core.port.inbound.api.ActionInboundPort}.</p>
  */
 public interface InboundPort {
     // Interface marcadora (sem métodos)

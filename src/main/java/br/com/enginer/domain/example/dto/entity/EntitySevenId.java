@@ -2,13 +2,13 @@ package br.com.enginer.domain.example.dto.entity;
 
 import java.util.UUID;
 
-import br.com.enginer.domain.system.usecase.annotation.field.UIColumn;
-import br.com.enginer.domain.system.usecase.annotation.field.UIFilter;
-import br.com.enginer.domain.system.usecase.annotation.field.UIHidden;
-import br.com.enginer.domain.system.usecase.annotation.field.UIIdPart;
-import br.com.enginer.domain.system.usecase.annotation.field.UIRow;
-import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
-import br.com.enginer.domain.system.usecase.schema.instance.DomainId;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIColumn;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIFilter;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIHidden;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIIdPart;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIRow;
+import br.com.enginer.domain.system.usecase.core.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.core.schema.instance.DomainId;
 
 public class EntitySevenId extends DomainAbstract<EntitySevenId> implements DomainId {
 	

@@ -4,9 +4,9 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.publisher.PublisherOutboundPort;
-import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 
 /**
  * 

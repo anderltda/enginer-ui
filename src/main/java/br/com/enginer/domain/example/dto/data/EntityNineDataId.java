@@ -1,6 +1,6 @@
 package br.com.enginer.domain.example.dto.data;
 
-import br.com.enginer.domain.system.usecase.annotation.field.UIIdPart;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIIdPart;
 
 public class EntityNineDataId {
 

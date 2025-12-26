@@ -12,12 +12,12 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import br.com.enginer.domain.system.usecase.annotation.instance.UIDomain;
-import br.com.enginer.domain.system.usecase.constants.Constants;
-import br.com.enginer.domain.system.usecase.schema.instance.Domain;
-import br.com.enginer.domain.system.usecase.schema.instance.DomainId;
-import br.com.enginer.domain.system.usecase.utils.ReflectionUtils;
-import br.com.enginer.domain.system.usecase.utils.StringsUtils;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.UIDomain;
+import br.com.enginer.domain.system.usecase.core.constants.Constants;
+import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.core.schema.instance.DomainId;
+import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
+import br.com.enginer.domain.system.usecase.core.utils.StringsUtils;
 import br.com.enginer.infrastructure.utils.PackageScannerUtils;
 import jakarta.servlet.http.HttpServletRequest;
 

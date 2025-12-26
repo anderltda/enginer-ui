@@ -3,9 +3,9 @@ package br.com.enginer.infrastructure.injector.lazy;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import br.com.enginer.domain.system.usecase.AbstractUseCase;
+import br.com.enginer.domain.system.usecase.core.AbstractUseCase;
+import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.port.outbound.OutboundPort;
-import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 import br.com.enginer.infrastructure.injector.DependencyInjector;
 
 /**

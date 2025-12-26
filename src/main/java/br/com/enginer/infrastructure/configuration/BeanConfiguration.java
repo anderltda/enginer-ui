@@ -21,9 +21,10 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 
-import br.com.enginer.domain.system.usecase.ActionInboundUseCase;
-import br.com.enginer.domain.system.usecase.SubscriberInboundUseCase;
-import br.com.enginer.domain.system.usecase.UIInboundUseCase;
+import br.com.enginer.domain.system.usecase.core.action.ActionInboundUseCase;
+import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.core.subscriber.SubscriberInboundUseCase;
+import br.com.enginer.domain.system.usecase.core.ui.UIInboundUseCase;
 import br.com.enginer.domain.system.usecase.port.inbound.api.ActionInboundPort;
 import br.com.enginer.domain.system.usecase.port.inbound.api.UIInboundPort;
 import br.com.enginer.domain.system.usecase.port.inbound.subscriber.SubscriberInboundPort;
@@ -33,7 +34,6 @@ import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryO
 import br.com.enginer.domain.system.usecase.port.outbound.repository.TagRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.UploadFileRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
-import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalDateDeserializer;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalDateTimeDeserializer;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalTimeDeserializer;

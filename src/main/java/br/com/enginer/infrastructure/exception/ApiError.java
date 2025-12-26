@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import br.com.enginer.domain.system.usecase.constants.Constants;
+import br.com.enginer.domain.system.usecase.core.constants.Constants;
 
 public class ApiError {
 

@@ -1,9 +1,9 @@
 package br.com.enginer.domain.system.usecase.port.inbound.api;
 
-import br.com.enginer.domain.system.usecase.exception.CheckedException;
+import br.com.enginer.domain.system.usecase.core.exception.CheckedException;
+import br.com.enginer.domain.system.usecase.core.schema.Form;
+import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.port.inbound.InboundPort;
-import br.com.enginer.domain.system.usecase.schema.Form;
-import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 
 /**
  * 

@@ -6,8 +6,8 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.enginer.domain.system.usecase.exception.CheckedException;
-import br.com.enginer.domain.system.usecase.exception.UncheckedException;
+import br.com.enginer.domain.system.usecase.core.exception.CheckedException;
+import br.com.enginer.domain.system.usecase.core.exception.UncheckedException;
 import reactor.core.publisher.Mono;
 
 /**

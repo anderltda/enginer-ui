@@ -2,7 +2,7 @@ package br.com.enginer.domain.system.dto.data;
 
 import java.time.LocalDateTime;
 
-import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.core.schema.instance.DomainAbstract;
 
 public class AuditLogData extends DomainAbstract<Long> {
 	

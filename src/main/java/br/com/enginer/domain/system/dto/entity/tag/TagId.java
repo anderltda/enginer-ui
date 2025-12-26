@@ -1,13 +1,13 @@
 package br.com.enginer.domain.system.dto.entity.tag;
 
-import br.com.enginer.domain.system.usecase.annotation.field.UIColumn;
-import br.com.enginer.domain.system.usecase.annotation.field.UIHidden;
-import br.com.enginer.domain.system.usecase.annotation.field.UIIdPart;
-import br.com.enginer.domain.system.usecase.annotation.field.UIText;
-import br.com.enginer.domain.system.usecase.annotation.field.behavior.UIPosition;
-import br.com.enginer.domain.system.usecase.annotation.field.behavior.validation.UIFieldValidation;
-import br.com.enginer.domain.system.usecase.schema.instance.DomainAbstract;
-import br.com.enginer.domain.system.usecase.schema.instance.DomainId;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIColumn;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIHidden;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIIdPart;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIText;
+import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.UIPosition;
+import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.validation.UIFieldValidation;
+import br.com.enginer.domain.system.usecase.core.schema.instance.DomainAbstract;
+import br.com.enginer.domain.system.usecase.core.schema.instance.DomainId;
 
 /**
  * 

@@ -7,10 +7,10 @@ import br.com.enginer.domain.example.dto.entity.EntityFour;
 import br.com.enginer.domain.example.dto.entity.EntityStatus;
 import br.com.enginer.domain.example.dto.entity.EntityTree;
 import br.com.enginer.domain.example.dto.entity.EntityTwo;
-import br.com.enginer.domain.system.usecase.AbstractUseCase;
-import br.com.enginer.domain.system.usecase.annotation.AutoDependencyInjector;
-import br.com.enginer.domain.system.usecase.exception.UncheckedException;
-import br.com.enginer.domain.system.usecase.page.PageResult;
+import br.com.enginer.domain.system.usecase.core.AbstractUseCase;
+import br.com.enginer.domain.system.usecase.core.annotation.AutoDependencyInjector;
+import br.com.enginer.domain.system.usecase.core.exception.UncheckedException;
+import br.com.enginer.domain.system.usecase.core.page.PageResult;
 
 public class EntityTwoUseCase extends AbstractUseCase<EntityTwo> implements br.com.enginer.domain.example.usecase.port.EntityTwoUseCase {
 	

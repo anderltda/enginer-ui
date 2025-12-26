@@ -3,7 +3,7 @@ package br.com.enginer.domain.example.usecase.port;
 import java.util.List;
 
 import br.com.enginer.domain.example.dto.entity.EntityRow;
-import br.com.enginer.domain.system.usecase.ActionUseCase;
+import br.com.enginer.domain.system.usecase.core.action.ActionUseCase;
 
 /**
  * 

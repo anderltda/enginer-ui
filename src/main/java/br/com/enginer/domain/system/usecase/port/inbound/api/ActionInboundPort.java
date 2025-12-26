@@ -3,10 +3,10 @@ package br.com.enginer.domain.system.usecase.port.inbound.api;
 import java.util.List;
 import java.util.Map;
 
-import br.com.enginer.domain.system.usecase.exception.CheckedException;
-import br.com.enginer.domain.system.usecase.page.PageResult;
+import br.com.enginer.domain.system.usecase.core.exception.CheckedException;
+import br.com.enginer.domain.system.usecase.core.page.PageResult;
+import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.port.inbound.InboundPort;
-import br.com.enginer.domain.system.usecase.schema.instance.Domain;
 
 /**
  * Porta de entrada genérica para execução de ações de domínio (UseCases).

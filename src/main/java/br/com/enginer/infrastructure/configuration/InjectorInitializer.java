@@ -2,8 +2,8 @@ package br.com.enginer.infrastructure.configuration;
 
 import org.springframework.stereotype.Component;
 
+import br.com.enginer.domain.system.usecase.core.registry.DependencyInjectorRegistry;
 import br.com.enginer.domain.system.usecase.port.outbound.DependencyInjectorPort;
-import br.com.enginer.domain.system.usecase.registry.DependencyInjectorRegistry;
 import br.com.enginer.infrastructure.injector.DependencyInjector;
 import jakarta.annotation.PostConstruct;
 

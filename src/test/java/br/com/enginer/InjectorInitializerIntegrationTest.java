@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import br.com.enginer.domain.system.usecase.core.registry.DependencyInjectorRegistry;
 import br.com.enginer.domain.system.usecase.port.outbound.DependencyInjectorPort;
-import br.com.enginer.domain.system.usecase.registry.DependencyInjectorRegistry;
 import br.com.enginer.infrastructure.injector.DependencyInjector;
 
 /**

@@ -6,10 +6,10 @@ import java.util.Map;
 
 import br.com.enginer.domain.example.dto.entity.EntityRow;
 import br.com.enginer.domain.example.dto.entity.EntityTen;
-import br.com.enginer.domain.system.usecase.AbstractUseCase;
-import br.com.enginer.domain.system.usecase.annotation.AutoDependencyInjector;
-import br.com.enginer.domain.system.usecase.exception.UncheckedException;
-import br.com.enginer.domain.system.usecase.page.PageResult;
+import br.com.enginer.domain.system.usecase.core.AbstractUseCase;
+import br.com.enginer.domain.system.usecase.core.annotation.AutoDependencyInjector;
+import br.com.enginer.domain.system.usecase.core.exception.UncheckedException;
+import br.com.enginer.domain.system.usecase.core.page.PageResult;
 
 public class EntityRowUseCase extends AbstractUseCase<EntityRow> implements br.com.enginer.domain.example.usecase.port.EntityRowUseCase {
 	
