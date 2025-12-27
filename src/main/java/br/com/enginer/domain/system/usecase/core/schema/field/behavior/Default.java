@@ -3,6 +3,10 @@ package br.com.enginer.domain.system.usecase.core.schema.field.behavior;
 import java.util.List;
 
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIEmail;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UINumber;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIPassword;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIText;
 import br.com.enginer.domain.system.usecase.core.enums.TypeDateFormat;
 import br.com.enginer.domain.system.usecase.core.enums.TypeFileUpload;
 import br.com.enginer.domain.system.usecase.core.enums.TypeLayoutTarget;
@@ -62,10 +66,14 @@ public class Default {
 		text.setLabel(label);
 		text.setField(field);
 		text.setValue(value);
-		text.setMin(1);
-		text.setMax(20);
 		text.setPosition(position);
 		text.setDisable(disable);
+		try {
+			int min = (Integer) UIText.class.getMethod("min").getDefaultValue();
+			int max = (Integer) UIText.class.getMethod("max").getDefaultValue();
+			text.setMin(min);
+			text.setMax(max);
+		} catch (Exception e) {}		
 		return text;
 	}
 
@@ -74,10 +82,14 @@ public class Default {
 		email.setLabel(label);
 		email.setField(field);
 		email.setValue(value);
-		email.setMin(1);
-		email.setMax(50);
 		email.setPosition(position);
 		email.setDisable(disable);
+		try {
+			int min = (Integer) UIEmail.class.getMethod("min").getDefaultValue();
+			int max = (Integer) UIEmail.class.getMethod("max").getDefaultValue();
+			email.setMin(min);
+			email.setMax(max);
+		} catch (Exception e) {}
 		return email;
 	}
 
@@ -86,10 +98,14 @@ public class Default {
 		number.setLabel(label);
 		number.setField(field);
 		number.setValue(value);
-		number.setMin(1);
-		number.setMax(50);
 		number.setPosition(position);
 		number.setDisable(disable);
+		try {
+			int min = (Integer) UINumber.class.getMethod("min").getDefaultValue();
+			int max = (Integer) UINumber.class.getMethod("max").getDefaultValue();
+			number.setMin(min);
+			number.setMax(max);
+		} catch (Exception e) {}
 		return number;
 	}
 
@@ -107,10 +123,14 @@ public class Default {
 		Password password = new Password();
 		password.setLabel(label);
 		password.setField(field);
-		password.setMin(1);
-		password.setMax(10);
 		password.setPosition(position);
 		password.setDisable(disable);
+		try {
+			int min = (Integer) UIPassword.class.getMethod("min").getDefaultValue();
+			int max = (Integer) UIPassword.class.getMethod("max").getDefaultValue();
+			password.setMin(min);
+			password.setMax(max);
+		} catch (Exception e) {}
 		return password;
 	}
 

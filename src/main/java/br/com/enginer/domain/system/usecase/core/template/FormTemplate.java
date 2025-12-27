@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UICheckbox;
@@ -442,6 +443,10 @@ public class FormTemplate {
 					field.setDecimal(getDecimal(f, default_, annotations));
 
 				} else if (f.getType().equals(String.class)) {
+
+					field.setText(getText(f, default_, annotations));
+
+				}  else if (f.getType().equals(UUID.class)) {
 
 					field.setText(getText(f, default_, annotations));
 

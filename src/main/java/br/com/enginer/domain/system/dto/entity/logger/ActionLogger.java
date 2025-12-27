@@ -4,30 +4,105 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIColumn;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.UITitle;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIButtonAction;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.UIButtonBack;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.UIButtonClear;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.filter.UIButtonFilterFormNew;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.filter.UIButtonFilterSearch;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.filter.UIButtonFilterTabNew;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.form.UIButtonFormDelete;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.form.UIButtonFormEdit;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.form.UIButtonFormSave;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.paginator.UIButtonPaginatorSave;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.paginator.UIButtonPaginatorView;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.paginator.UIConfig;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.paginator.UIPaginator;
 import br.com.enginer.domain.system.usecase.core.schema.instance.DomainAbstract;
 import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 
-/**
- * 
- */
+@UITitle("Action-Logger")
+@UIButtonAction(includes = {
+	UIButtonClear.class, 
+	UIButtonBack.class, 
+	// FILTER
+	UIButtonFilterTabNew.class, 
+	UIButtonFilterFormNew.class, 
+	UIButtonFilterSearch.class, 
+	// FORM
+	UIButtonFormDelete.class,
+	UIButtonFormEdit.class, 
+	UIButtonFormSave.class,
+})
+@UIPaginator(
+	config = @UIConfig(expandable = false, multiSelectable = false),
+	actions = @UIButtonAction(
+	includes = { 
+		UIButtonPaginatorView.class, 
+		UIButtonPaginatorEdit.class, 
+		UIButtonPaginatorDelete.class,
+		UIButtonPaginatorSave.class,
+	}
+))
 public class ActionLogger extends DomainAbstract<Long> {
 
 	private Long id;
+	
+	@UIColumn(label = "Domain", initial = true)
 	private String domain;
-	private String entityId;
+	
+	@UIColumn(label = "Domain-Id", initial = false)
+	private String domainId;
+	
+	@UIColumn(label = "Action", initial = true)
 	private String action;
+	
+	@UIColumn(label = "Type", initial = true)
 	private String type;
+	
+	@UIColumn(label = "UserId", initial = false)
 	private String userId;
+	
+	@UIColumn(label = "Username", initial = true)
 	private String username;
+	
+	@UIColumn(label = "Source", initial = true)
 	private String source;
+	
+	@UIColumn(label = "Ip", initial = false)
 	private String ipAddress;
+	
+	@UIColumn(label = "User Agent", initial = false)
 	private String userAgent;
+	
+	@UIColumn(label = "Success", initial = true)
 	private Boolean success;
+	
+	@UIColumn(label = "Error", initial = false)
 	private String errorMessage;
+	
+	@UIColumn(label = "Duration", initial = false)
 	private Long durationMs;
+	
+	@UIColumn(label = "Old value", initial = false, hidden = true)
 	private Object oldValue;
+	
+	@UIColumn(label = "New value", initial = false, hidden = true)
 	private Object newValue;
+	
+	@UIColumn(label = "Url", initial = true)
+	private String url;
+
+	@UIColumn(label = "Modal", initial = false)
+	private Boolean modal;
+	
+	@UIColumn(label = "Request-Id", initial = true)
 	private UUID requestId;
+	
+	@UIColumn(label = "Data Local", initial = true)
 	private LocalDateTime datelocal;
 
 	public ActionLogger() {
@@ -79,17 +154,17 @@ public class ActionLogger extends DomainAbstract<Long> {
 	}
 
 	/**
-	 * @return the entityId
+	 * @return the domainId
 	 */
-	public String getEntityId() {
-		return entityId;
+	public String getDomainId() {
+		return domainId;
 	}
 
 	/**
-	 * @param entityId the entityId to set
+	 * @param domainId the domainId to set
 	 */
-	public void setEntityId(String entityId) {
-		this.entityId = entityId;
+	public void setDomainId(String domainId) {
+		this.domainId = domainId;
 	}
 
 	/**
@@ -261,6 +336,34 @@ public class ActionLogger extends DomainAbstract<Long> {
 	}
 
 	/**
+	 * @return the url
+	 */
+	public String getUrl() {
+		return url;
+	}
+
+	/**
+	 * @param url the url to set
+	 */
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	/**
+	 * @return the modal
+	 */
+	public Boolean getModal() {
+		return modal;
+	}
+
+	/**
+	 * @param modal the modal to set
+	 */
+	public void setModal(Boolean modal) {
+		this.modal = modal;
+	}
+
+	/**
 	 * @return the requestId
 	 */
 	public UUID getRequestId() {
@@ -307,10 +410,11 @@ public class ActionLogger extends DomainAbstract<Long> {
 
 	@Override
 	public String toString() {
-		return "ActionLogger [id=" + id + ", domain=" + domain + ", entityId=" + entityId + ", action=" + action
+		return "ActionLogger [id=" + id + ", domain=" + domain + ", domainId=" + domainId + ", action=" + action
 				+ ", type=" + type + ", userId=" + userId + ", username=" + username + ", source=" + source
 				+ ", ipAddress=" + ipAddress + ", userAgent=" + userAgent + ", success=" + success + ", errorMessage="
 				+ errorMessage + ", durationMs=" + durationMs + ", oldValue=" + oldValue + ", newValue=" + newValue
-				+ ", requestId=" + requestId + ", datelocal=" + datelocal + "]";
+				+ ", url=" + url + ", modal=" + modal + ", requestId=" + requestId
+				+ ", datelocal=" + datelocal + "]";
 	}
 }

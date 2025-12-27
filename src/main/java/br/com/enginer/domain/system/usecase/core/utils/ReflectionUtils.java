@@ -85,13 +85,13 @@ public class ReflectionUtils {
         }
 
         // 1 - Recupera (ou cria) o UseCase no cache
-        Object UseCaseInstance = USECASE_CACHE.get(domainClass);
-        final boolean fromCache = (UseCaseInstance != null);
+        Object useCaseInstance = USECASE_CACHE.get(domainClass);
+        final boolean fromCache = (useCaseInstance != null);
 
         if (!fromCache) {
-            String UseCaseName = findUseCaseQualifiedName(domainClass, domainClass.getSimpleName());
-            UseCaseInstance = createInstance(UseCaseName);
-            USECASE_CACHE.put(domainClass, UseCaseInstance);
+            String useCaseName = findUseCaseQualifiedName(domainClass, domainClass.getSimpleName());
+            useCaseInstance = createInstance(useCaseName);
+            USECASE_CACHE.put(domainClass, useCaseInstance);
         }
 
         // 2 - Obtém instância do injetor (infraestrutura)
@@ -101,13 +101,13 @@ public class ReflectionUtils {
         injector.registerOutboundPorts(outboundPorts);
 
         // 4 - Injeta os Outbounds no UseCase raiz e processa dependências internas
-        if (UseCaseInstance instanceof AbstractUseCase<?>) {
-            AbstractUseCase<?> root = (AbstractUseCase<?>) UseCaseInstance;
+        if (useCaseInstance instanceof AbstractUseCase<?>) {
+            AbstractUseCase<?> root = (AbstractUseCase<?>) useCaseInstance;
             DependencyInjector.addOutboundPort(root, outboundPorts);
         }
 
         // 5 - Retorna o UseCase pronto para uso
-        return UseCaseInstance;
+        return useCaseInstance;
     }
 
     /**

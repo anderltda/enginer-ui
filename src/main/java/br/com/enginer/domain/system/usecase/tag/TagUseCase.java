@@ -1,5 +1,5 @@
 
-package br.com.enginer.domain.system.usecase;
+package br.com.enginer.domain.system.usecase.tag;
 
 import java.time.LocalDateTime;
 

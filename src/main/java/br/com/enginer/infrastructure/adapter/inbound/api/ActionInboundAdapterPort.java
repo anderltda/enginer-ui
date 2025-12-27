@@ -318,7 +318,7 @@ public class ActionInboundAdapterPort {
 					newDomains.add(itemDomain);
 				}
 
-				ActionLogger actionLogger = objectMapper.convertValue(json.get("action"), ActionLogger.class);
+				ActionLogger actionLogger = objectMapper.convertValue(json.get("actionLogger"), ActionLogger.class);
 				
 				domain.setActionLogger(actionLogger);
 				

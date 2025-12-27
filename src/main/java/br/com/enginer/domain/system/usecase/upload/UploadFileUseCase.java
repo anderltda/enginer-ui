@@ -1,4 +1,4 @@
-package br.com.enginer.domain.system.usecase;
+package br.com.enginer.domain.system.usecase.upload;
 
 import java.io.IOException;
 import java.io.InputStream;
