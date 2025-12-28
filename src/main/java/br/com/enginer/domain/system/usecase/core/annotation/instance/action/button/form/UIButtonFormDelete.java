@@ -23,7 +23,7 @@ import br.com.enginer.domain.system.usecase.core.enums.TypeTemplate;
 @Target(ElementType.TYPE)
 @UIButton(
     label = Constants.LABEL_DELETE,
-    icon = "close_ circle",
+    icon = "close",
     state = TypeButtonState.BTN_STATE_DANGER,
     confirm = true,
     needsValidation = false,
