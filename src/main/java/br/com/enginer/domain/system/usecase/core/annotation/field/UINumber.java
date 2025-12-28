@@ -14,7 +14,7 @@ public @interface UINumber {
 	String icon() default "";
 	String placeholder() default "";
 	int min() default 1;
-	int max() default 10;
+	int max() default 20;
 	boolean disable() default false;
 	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.FORM, TypeTemplate.ROW, TypeTemplate.TAB, TypeTemplate.MODAL } ;
 }

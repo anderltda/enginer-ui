@@ -9,6 +9,7 @@ import br.com.enginer.domain.system.usecase.core.annotation.field.UIDate;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIFilter;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIId;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIJoin;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UINumber;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIRow;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIText;
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.UIPosition;
@@ -174,6 +175,7 @@ public class EntityFour extends DomainAbstract<UUID> {
 	private EntityStatus entityStatus;
 
 	@UIPosition(x = 2, y = 2)
+	@UINumber(label = "Attribute", min = 10, max = 50)
 	@UIColumn(label = "EntityFour Atributo", initial = false)
 	@UIRow(visible = true)
 	private Integer attribute;

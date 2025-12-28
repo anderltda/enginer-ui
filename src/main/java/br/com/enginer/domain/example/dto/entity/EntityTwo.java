@@ -9,6 +9,7 @@ import br.com.enginer.domain.system.usecase.core.annotation.field.UIDate;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIFilter;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIId;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIJoin;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UINumber;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIRow;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UISelect;
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.validation.UIFieldValidation;
@@ -253,6 +254,7 @@ public class EntityTwo extends DomainAbstract<UUID> {
 	@UIRow(visible = true)
 	private LocalDate inclusionDate;
 
+	@UINumber(label = "Hex", min = 10, max = 50)
 	@UIColumn(label = "Hexagonal", initial = true, style = "badge badge-inverse")
 	@UIRow(visible = true)
 	private Integer hex;
