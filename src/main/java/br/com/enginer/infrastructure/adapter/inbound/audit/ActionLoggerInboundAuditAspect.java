@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import br.com.enginer.domain.system.dto.entity.logger.ActionLogger;
 import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.core.utils.StringsUtils;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Aspect
@@ -136,7 +137,7 @@ public class ActionLoggerInboundAuditAspect {
 					domainId = resultId;
 				}
 
-				logger.setDomain(domainName == null ? domain.getClass().getSimpleName() : domainName);
+				logger.setDomain(StringsUtils.firstLower(domainName == null ? StringsUtils.firstLower(domainName) : domainName));
 				logger.setAction(action);
 				logger.setModal(isModal);
 				logger.setUrl(url);

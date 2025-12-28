@@ -1,5 +1,6 @@
 package br.com.enginer.domain.system.dto.entity.logger;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -104,6 +105,9 @@ public class ActionLogger extends DomainAbstract<Long> {
 	
 	@UIColumn(label = "Data Local", initial = true)
 	private LocalDateTime datelocal;
+	
+	@UIColumn(label = "Date Create", initial = true)
+	private Instant createdAt;
 
 	public ActionLogger() {
 		super();
@@ -389,6 +393,20 @@ public class ActionLogger extends DomainAbstract<Long> {
 	 */
 	public void setDatelocal(LocalDateTime datelocal) {
 		this.datelocal = datelocal;
+	}
+	
+	/**
+	 * @return the createdAt
+	 */
+	public Instant getCreatedAt() {
+		return createdAt;
+	}
+
+	/**
+	 * @param createdAt the createdAt to set
+	 */
+	public void setCreatedAt(Instant createdAt) {
+		this.createdAt = createdAt;
 	}
 
 	@Override
