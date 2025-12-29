@@ -28,7 +28,7 @@ public class EntityFiveUseCase extends AbstractUseCase<EntityFive> implements br
 	 * @return
 	 * @throws UncheckedException
 	 */
-	public void atireiopaunogato(EntityFive entityFive) throws UncheckedException {
+	public EntityNine atireiopaunogato(EntityFive entityFive) throws UncheckedException {
 		
 		if(entityFive.getId() == null) {
 			throw new UncheckedException("Faltou o id");
@@ -37,11 +37,11 @@ public class EntityFiveUseCase extends AbstractUseCase<EntityFive> implements br
 		EntityNine entityNine = new EntityNine();
 		EntityNineId entityNineId = new EntityNineId();
 		entityNineId.setIdEntityEight(1l);
-		entityNineId.setIdEntitySeven(UUID.randomUUID());
-		entityNineId.setIdEntitySix(1l);
+		entityNineId.setIdEntitySeven(UUID.fromString("4e6e44e6-07b8-422a-b01c-b067287846e2"));
+		entityNineId.setIdEntitySix(2l);
 		entityNine.setId(entityNineId);
 		
-		entityNineUseCase.buscarPorId(entityNine);
+		return entityNineUseCase.buscarPorId(entityNine);
 	}
 	
 	/**

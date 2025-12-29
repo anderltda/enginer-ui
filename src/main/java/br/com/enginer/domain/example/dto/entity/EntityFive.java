@@ -69,6 +69,24 @@ import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 }, 
 value = {
 	@UIButton(
+		label = "Go entity", 
+		icon = "database", 
+	    template = { TypeTemplate.FORM, TypeTemplate.MODAL },
+		conditional = @UIConditional({
+			@UIConditionalOn(field = "disabled", operator = TypeOperator.EQUALS, matchs = { "false" }),
+		}),    
+	    action = @UIAction(
+	        method = @UIActionMethod(serverMethod = "atireiopaunogato"),
+	        response = @UIActionResponse(
+	        	template = { TypeTemplate.FORM },
+	    		error = @UIActionResponseError(method = @UIActionMethod(clientMethod = "onAlertTestError")), 
+	    		success = @UIActionResponseSuccess(redirect = 
+	    				@UIActionRedirect(value = Constants.PATH, ui = "form", domain = "entityOne", 
+	    				param = "{ disable=true, field=entityNine, value=$object }"))
+	        )
+	    )
+	),	
+	@UIButton(
 	    label = Constants.LABEL_BACK,
 	    icon = "undo",
 		needsValidation = false,

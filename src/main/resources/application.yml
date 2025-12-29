@@ -1,26 +1,25 @@
 server:
   port: 8081
+  address: 0.0.0.0
 logging:
   config: classpath:logback-spring.xml
-  level:
-    org.springframework.boot.context.config: DEBUG   # mostra quais yml foram carregados
 datasource:
   api: http://localhost:8080/v1/enginer-data
 spring:
   profiles:
     default: local
-  main:
-    log-startup-info: true
-    application-startup: buffering   # ESSENCIAL pro endpoint /actuator/startup existir
   servlet:
     multipart:
       max-file-size: 250MB
       max-request-size: 250MB
-management:
+management: # http://localhost:8081/actuator
+  server:
+    port: 8081
   endpoints:
     web:
+      base-path: /actuator
       exposure:
-        include: "*"   # temporário p/ diagnóstico
+        include: health,info,beans,mappings,metrics,startup
   endpoint:
     startup:
-      enabled: true
+      enabled: true 
