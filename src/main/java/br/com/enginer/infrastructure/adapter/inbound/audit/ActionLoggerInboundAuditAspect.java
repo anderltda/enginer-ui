@@ -137,29 +137,32 @@ public class ActionLoggerInboundAuditAspect {
 					domainId = resultId;
 				}
 
-				logger.setDomain(StringsUtils.firstLower(domainName == null ? StringsUtils.firstLower(domainName) : domainName));
-				logger.setAction(action);
-				logger.setModal(isModal);
-				logger.setUrl(url);
-				logger.setDisabled(isDisabled);
-				logger.setUsername(username);
-				logger.setUserId(userId);
-				logger.setSource(source);
-				logger.setIpAddress(ip);
-				logger.setUserAgent(userAgent);
-				logger.setRequestId(requestId);
-				logger.setDurationMs(duration);
-				logger.setSuccess(success);
-				logger.setErrorMessage(success ? null : safeErrorMessage(error));
-				logger.setDomainId(domainId);
-				logger.setType(actionType);
-				logger.setOldValue(origens); // payload original do front (JSONB)
-				logger.setNewValue(result); // payload novo retorno
+				if(domainId != null) {
 
-				actionLoggerRepositoryOutboundAdapterPort.save(logger);
+					logger.setDomain(StringsUtils.firstLower(domainName == null ? StringsUtils.firstLower(domainName) : domainName));
+					logger.setAction(action);
+					logger.setModal(isModal);
+					logger.setUrl(url);
+					logger.setDisabled(isDisabled);
+					logger.setUsername(username);
+					logger.setUserId(userId);
+					logger.setSource(source);
+					logger.setIpAddress(ip);
+					logger.setUserAgent(userAgent);
+					logger.setRequestId(requestId);
+					logger.setDurationMs(duration);
+					logger.setSuccess(success);
+					logger.setErrorMessage(success ? null : safeErrorMessage(error));
+					logger.setDomainId(domainId);
+					logger.setType(actionType);
+					logger.setOldValue(origens); // payload original do front (JSONB)
+					logger.setNewValue(result); // payload novo retorno
+					
+					actionLoggerRepositoryOutboundAdapterPort.save(logger);
+					
+				}
 				
-			} catch (Exception ignored) {
-			}
+			} catch (Exception ignored) { }
         }
     }
 
