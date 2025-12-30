@@ -285,7 +285,7 @@ public class EntityOne extends DomainAbstract<Long> {
 	@UIRow(visible = true, editable = true, order = 4)
 	private BigDecimal height;
 
-	@UIPosition(x = 3, y = 3)
+	@UIPosition(x = 1, y = 4)
 	@UIFieldValidation(required = true)
 	@UIDate(label = "Birth Date")
 	@UIColumn(label = "Aniversario", initial = true, style = "badge",
@@ -296,9 +296,9 @@ public class EntityOne extends DomainAbstract<Long> {
 	@UIRow(visible = false)
 	private LocalDate birthDate;
 
-	@UIPosition(x = 4, y = 3)
+	@UIPosition(x = 2, y = 4)
 	@UIFieldValidation(required = true)
-	@UIDate(label = "Prohibited Date Time", format = TypeDateFormat.DATE_TIME_FORMAT, showtime = true)
+	@UIDate(label = "Prohibited", format = TypeDateFormat.DATE_TIME_FORMAT, showtime = true)
 	@UIColumn(label = "Data da Proibicao", initial = true,	
 	conditional = @UIConditional({
 		@UIConditionalOn(field = "prohibitedDateTime", operator = TypeOperator.DATE_AFTER, matchs = { "birthDate" }, value = "badge badge-important"),
