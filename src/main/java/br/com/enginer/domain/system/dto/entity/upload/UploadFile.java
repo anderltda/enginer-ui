@@ -27,7 +27,7 @@ import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
  * Representa um arquivo enviado ao sistema, incluindo seus metadados e
  * informações de armazenamento.
  */
-@UITitle("Tag")
+@UITitle("UploadFile")
 @UIButtonAction(includes = {
 	UIButtonClear.class, 
 	UIButtonBack.class, 
