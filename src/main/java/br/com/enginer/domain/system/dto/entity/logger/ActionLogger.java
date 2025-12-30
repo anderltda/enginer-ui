@@ -88,9 +88,6 @@ public class ActionLogger extends DomainAbstract<Long> {
 	@UIColumn(label = "Duration", initial = false)
 	private Long durationMs;
 	
-	@UIColumn(label = "Old value", initial = false, hidden = true)
-	private Object oldValue;
-	
 	@UIColumn(label = "New value", initial = false, hidden = true)
 	private Object newValue;
 	
@@ -312,20 +309,6 @@ public class ActionLogger extends DomainAbstract<Long> {
 	}
 
 	/**
-	 * @return the oldValue
-	 */
-	public Object getOldValue() {
-		return oldValue;
-	}
-
-	/**
-	 * @param oldValue the oldValue to set
-	 */
-	public void setOldValue(Object oldValue) {
-		this.oldValue = oldValue;
-	}
-
-	/**
 	 * @return the newValue
 	 */
 	public Object getNewValue() {
@@ -431,7 +414,7 @@ public class ActionLogger extends DomainAbstract<Long> {
 		return "ActionLogger [id=" + id + ", domain=" + domain + ", domainId=" + domainId + ", action=" + action
 				+ ", type=" + type + ", userId=" + userId + ", username=" + username + ", source=" + source
 				+ ", ipAddress=" + ipAddress + ", userAgent=" + userAgent + ", success=" + success + ", errorMessage="
-				+ errorMessage + ", durationMs=" + durationMs + ", oldValue=" + oldValue + ", newValue=" + newValue
+				+ errorMessage + ", durationMs=" + durationMs + ", newValue=" + newValue
 				+ ", url=" + url + ", modal=" + modal + ", requestId=" + requestId
 				+ ", datelocal=" + datelocal + "]";
 	}

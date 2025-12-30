@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import br.com.enginer.domain.system.dto.entity.logger.ActionLogger;
 import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.core.utils.StringsUtils;
+import br.com.enginer.infrastructure.utils.NormalizeUtils;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Aspect
@@ -73,7 +74,7 @@ public class ActionLoggerInboundAuditAspect {
         
     	long start = System.currentTimeMillis();
     	
-        ObjectNode origens = null;
+        ObjectNode origem = null;
         Object result = null;
         Throwable error = null;
 
@@ -81,9 +82,11 @@ public class ActionLoggerInboundAuditAspect {
 
     	Object[] args = pjp.getArgs();
     	
-        Domain<?> domain = (args != null && args.length > 0 && args[0] instanceof Domain<?> d) ? d : null;
+        //Domain<?> domain = (args != null && args.length > 0 && args[0] instanceof Domain<?> d) ? d : null;
         
         JsonNode json = (args != null && args.length > 1 && args[1] instanceof JsonNode j) ? j : null;
+        
+		JsonNode normalizedNode = NormalizeUtils.normalizer(json);
         
         ActionLogger actionLogger = extractFrontLogger(json);
 
@@ -103,9 +106,9 @@ public class ActionLoggerInboundAuditAspect {
         String action     = actionLogger.getAction();
         String domainId   = actionLogger.getDomainId();
         
-        if (json instanceof ObjectNode original) {
-            origens = original.deepCopy();
-            origens.remove("actionLogger");
+        if (normalizedNode instanceof ObjectNode original) {
+            origem = original.deepCopy();
+            origem.remove("actionLogger");
         }
         
         try {
@@ -124,7 +127,6 @@ public class ActionLoggerInboundAuditAspect {
         	
 			try {
 				
-				long duration = System.currentTimeMillis() - start;
 				boolean success = (error == null);
 
 				ActionLogger logger = new ActionLogger();
@@ -150,13 +152,12 @@ public class ActionLoggerInboundAuditAspect {
 					logger.setIpAddress(ip);
 					logger.setUserAgent(userAgent);
 					logger.setRequestId(requestId);
-					logger.setDurationMs(duration);
+					logger.setDurationMs(System.currentTimeMillis() - start);
 					logger.setSuccess(success);
 					logger.setErrorMessage(success ? null : safeErrorMessage(error));
 					logger.setDomainId(domainId);
 					logger.setType(actionType);
-					logger.setOldValue(origens); // payload original do front (JSONB)
-					logger.setNewValue(result); // payload novo retorno
+					logger.setNewValue(origem); // payload original do front (JSONB)
 					
 					actionLoggerRepositoryOutboundAdapterPort.save(logger);
 					
