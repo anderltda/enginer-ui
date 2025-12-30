@@ -23,9 +23,11 @@ public interface ActionUseCase<T extends Domain<?>> {
 	public static final String buscarPorRegistroUnico = "buscarPorRegistroUnico";
 	public static final String buscarPorIds = "buscarPorIds";
 	public static final String buscarTodosPaginado = "buscarTodosPaginado";
-	public static final String existe = "existe";
-	public static final String excluir = "excluir";
 	public static final String salvar = "salvar";
+	public static final String excluir = "excluir";
+	public static final String salvarLista = "salvarLista";
+	public static final String excluirLista = "excluirLista";
+	public static final String existe = "existe";
 	public static final String plus = "plus";
 	
     void addOutboundPort(OutboundPort...outboundPorts);
