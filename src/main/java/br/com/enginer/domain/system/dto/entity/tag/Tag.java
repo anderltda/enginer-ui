@@ -1,6 +1,6 @@
 package br.com.enginer.domain.system.dto.entity.tag;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIColumn;
@@ -76,7 +76,7 @@ public class Tag extends DomainAbstract<TagId> {
 	
 	@UIHidden
 	@UIColumn(label = "Date Create", initial = true)
-	private LocalDateTime createdAt;
+	private Instant createdAt;
 	
 	public Tag() {
 		super();
@@ -115,11 +115,11 @@ public class Tag extends DomainAbstract<TagId> {
 		this.name = name;
 	}
 
-	public LocalDateTime getCreatedAt() {
+	public Instant getCreatedAt() {
 		return this.createdAt;
 	}
 
-	public void setCreatedAt(LocalDateTime createdAt) {
+	public void setCreatedAt(Instant createdAt) {
 		this.createdAt = createdAt;
 	}
 	

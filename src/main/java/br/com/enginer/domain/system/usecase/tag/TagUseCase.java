@@ -1,7 +1,7 @@
 
 package br.com.enginer.domain.system.usecase.tag;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import br.com.enginer.domain.system.dto.entity.tag.Tag;
 import br.com.enginer.domain.system.usecase.core.AbstractUseCase;
@@ -40,7 +40,7 @@ public class TagUseCase extends AbstractUseCase<Tag> implements br.com.enginer.d
 	public void setDateCreateAt(Tag tag) {
 		
 		if(tag.isIdNull()) {
-			tag.setCreatedAt(LocalDateTime.now());
+			tag.setCreatedAt(Instant.now());
 		}
 		
 		tag.getId().setNormalizedName(ReflectionUtils.normalizeAlphaNumeric(tag.getName()));

@@ -3,6 +3,8 @@ package br.com.enginer.infrastructure.adapter.inbound.api;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,6 +34,7 @@ import br.com.enginer.domain.system.dto.entity.tag.SearchOverlay;
 import br.com.enginer.domain.system.dto.entity.tag.TagType;
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.UIDomain;
+import br.com.enginer.domain.system.usecase.core.constants.Constants;
 import br.com.enginer.domain.system.usecase.core.exception.CheckedException;
 import br.com.enginer.domain.system.usecase.core.page.PageResult;
 import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
@@ -61,6 +64,53 @@ public class ActionInboundAdapterPort {
 		this.actionInboundPort = actionInboundPort;
 		this.objectMapper = objectMapper;
 		this.logger = logger;
+	}
+	
+	// ============================================================================================
+	// CALENDAR
+	// ============================================================================================
+	
+	/**
+	 * @param domain
+	 * @param year
+	 * @param month
+	 * @param day
+	 * @return
+	 */
+	@GetMapping("/calendar")
+	public ResponseEntity<List<Domain<?>>> calendar(@UIDomain Domain<?> domain, @RequestParam String year, @RequestParam String month, @RequestParam String day) {
+
+		try {
+
+			logger.info(ActionInboundAdapterPort.class, "Executando calendar: " + domain);
+
+			if (year == null || year.trim().isEmpty() || month == null || month.trim().isEmpty()) {
+				return ResponseEntity.notFound().build();
+			}
+
+			int y = Integer.parseInt(year);
+			int m = Integer.parseInt(month);
+
+			LocalDateTime startDateTime = LocalDateTime.of(y, m, 1, 0, 0);
+
+			int lastDay = YearMonth.of(y, m).lengthOfMonth();
+			LocalDateTime endDateTime = LocalDateTime.of(y, m, lastDay, 23, 59, 59);
+
+			Map<String, Object> filters = new HashMap<>();
+			filters.put("startDateTime", startDateTime);
+			filters.put("startDateTime_op", Constants.MAIOR_OU_IGUAL);
+			filters.put("endDateTime", endDateTime);
+			filters.put("endDateTime_op", Constants.MENOR_OU_IGUAL);
+
+			List<Domain<?>> events = actionInboundPort.searchByConditions(domain, filters);
+
+			return ResponseEntity.ok(events);
+
+		} catch (Exception ex) {
+			logger.error(ActionInboundAdapterPort.class, ex);
+			throw ex;
+		}
+
 	}
 	
 	// ============================================================================================
@@ -102,7 +152,7 @@ public class ActionInboundAdapterPort {
 		    
 		    Map<String, Object> filters = new HashMap<>();
 		    filters.put("id.normalizedName", result);
-		    filters.put("id.normalizedName_op", "in");
+		    filters.put("id.normalizedName_op", Constants.IN);
 		    
 		    filters.put("type", TagType.GLOBAL);
 		    List<Domain<?>> globais = actionInboundPort.searchByConditions(domain, filters);

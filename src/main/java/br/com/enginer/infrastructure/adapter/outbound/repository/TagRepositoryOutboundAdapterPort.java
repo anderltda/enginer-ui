@@ -1,6 +1,6 @@
 package br.com.enginer.infrastructure.adapter.outbound.repository;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,7 +90,7 @@ public class TagRepositoryOutboundAdapterPort extends DelegatingRepositoryOutbou
 						tag.setId(tagId);
 						tag.setName(name);
 						tag.setType(TagType.GLOBAL);
-						tag.setCreatedAt(LocalDateTime.now());
+						tag.setCreatedAt(Instant.now());
 
 						entities.add(tag);
 					});

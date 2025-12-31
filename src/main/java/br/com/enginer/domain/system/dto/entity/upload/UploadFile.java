@@ -1,6 +1,6 @@
 package br.com.enginer.domain.system.dto.entity.upload;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -63,7 +63,7 @@ public class UploadFile extends DomainAbstract<Long> {
 	private String domain;
 	private String domainId;
 	private Boolean isPublic;
-	private LocalDateTime createdAt;
+	private Instant createdAt;
 	private transient String uid;
 	private transient String status;
 	private transient byte[] bytes;
@@ -177,11 +177,11 @@ public class UploadFile extends DomainAbstract<Long> {
 		this.isPublic = isPublic;
 	}
 
-	public LocalDateTime getCreatedAt() {
+	public Instant getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(LocalDateTime createdAt) {
+	public void setCreatedAt(Instant createdAt) {
 		this.createdAt = createdAt;
 	}
 

@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HexFormat;
 import java.util.Map;
 import java.util.UUID;
@@ -86,7 +86,7 @@ public class UploadFileUseCase extends AbstractUseCase<UploadFile> implements br
 			uploadFile.setChecksumSha256((String) result.get("checksum"));
 			uploadFile.setSize((Long) result.get("size"));
 			uploadFile.setIsPublic(false);
-			uploadFile.setCreatedAt(LocalDateTime.now());
+			uploadFile.setCreatedAt(Instant.now());
 
 			// flexível: duplicidade/negócio tratado por código, não por constraints
 			// (adicione suas validações aqui, se desejar)
