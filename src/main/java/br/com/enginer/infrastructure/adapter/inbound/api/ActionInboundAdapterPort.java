@@ -88,13 +88,11 @@ public class ActionInboundAdapterPort {
 				return ResponseEntity.notFound().build();
 			}
 
-			int y = Integer.parseInt(year);
-			int m = Integer.parseInt(month);
+			logger.info(ActionInboundAdapterPort.class, day +"/"+ month +"/"+ year);
 
-			LocalDateTime startDateTime = LocalDateTime.of(y, m, 1, 0, 0);
+			LocalDateTime startDateTime = LocalDateTime.of(2025, 1, 1, 0, 0);
 
-			int lastDay = YearMonth.of(y, m).lengthOfMonth();
-			LocalDateTime endDateTime = LocalDateTime.of(y, m, lastDay, 23, 59, 59);
+			LocalDateTime endDateTime = LocalDateTime.of(2035, 12, 31, 23, 59, 59);
 
 			Map<String, Object> filters = new HashMap<>();
 			filters.put("startDateTime", startDateTime);
