@@ -80,8 +80,12 @@ public class DomainResolver implements HandlerMethodArgumentResolver {
 		ReflectionUtils.executeMethod(domain, StringsUtils.setMethod("disabled"), isDisabled);
 
 		if (urlDomain != null) {
+
 			String mainDomain = thirdSegment(urlDomain).orElse(null);
-			ReflectionUtils.executeMethod(domain, StringsUtils.setMethod("mainDomain"), mainDomain);
+			
+			if(mainDomain != null) {
+				ReflectionUtils.executeMethod(domain, StringsUtils.setMethod("mainDomain"), mainDomain);
+			}
 		}
 
 		return domain;
