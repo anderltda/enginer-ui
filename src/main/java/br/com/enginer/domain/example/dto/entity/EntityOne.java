@@ -199,6 +199,7 @@ value = {
 			)
 		),
         @UIButton(template = TypeTemplate.PAGINATOR, label = "Another Method Action", dropdown = true, action = @UIAction(method = @UIActionMethod(clientMethod = "salvar"))),
+        @UIButton(template = TypeTemplate.PAGINATOR, label = "One domain link", dropdown = true, action = @UIAction(actionObject = @UIActionDomain(object = "entityOne", param = "$id"))),
         @UIButton(template = TypeTemplate.PAGINATOR, label = "Two domain link", dropdown = true, action = @UIAction(actionObject = @UIActionDomain(object = "entityTwo", param = "$id"))),
         @UIButton(template = TypeTemplate.PAGINATOR, label = "Tree domain link", dropdown = true, action = @UIAction(actionObject = @UIActionDomain(object = "entityTwo.entityTree", param = "$id"))),
         @UIButton(template = TypeTemplate.PAGINATOR, label = "Four domain link", dropdown = true, action = @UIAction(actionObject = @UIActionDomain(object = "entityTwo.entityTree.entityFour", param = "$id"))),            

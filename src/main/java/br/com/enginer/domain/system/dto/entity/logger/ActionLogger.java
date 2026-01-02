@@ -7,6 +7,9 @@ import java.util.UUID;
 
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIColumn;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.UITitle;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIAction;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIActionDomain;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIButton;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIButtonAction;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.UIButtonBack;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.UIButtonClear;
@@ -18,10 +21,11 @@ import br.com.enginer.domain.system.usecase.core.annotation.instance.action.butt
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.form.UIButtonFormSave;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.paginator.UIButtonPaginatorEdit;
-import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.paginator.UIButtonPaginatorSave;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.paginator.UIButtonPaginatorView;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.paginator.UIPaginator;
+import br.com.enginer.domain.system.usecase.core.enums.TypeButtonState;
+import br.com.enginer.domain.system.usecase.core.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.core.schema.instance.DomainAbstract;
 import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 
@@ -45,7 +49,17 @@ import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 		UIButtonPaginatorView.class, 
 		UIButtonPaginatorEdit.class, 
 		UIButtonPaginatorDelete.class,
-		UIButtonPaginatorSave.class,
+	},
+	value = {
+        @UIButton(
+    		label = "Visualizar", 
+			template = TypeTemplate.PAGINATOR, 
+			state = TypeButtonState.BTN_STATE_PRIMARY,
+			icon = "link",
+			action = @UIAction(
+				actionObject = @UIActionDomain(object = "actionLogger", param = "$id")
+			)
+		),
 	}
 ))
 public class ActionLogger extends DomainAbstract<Long> {
