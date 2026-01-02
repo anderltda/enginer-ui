@@ -626,30 +626,6 @@ public class ReflectionUtils {
 	 */
 
 	/**
-	 * Metodo responsavel por encontrar a classe UseCase do domain e injetar as
-	 * dependencias necessarias
-	 * 
-	 * @param clazz                  - Classe domain
-	 * @param methodName             - Metodo a ser executado
-	 * @param repositoryOutboundPort - Repository: acesso a banco de dados
-	 * @param publisherOutboundPort  - Publisher: producer de uma mensageria
-	 * @param subscriberInboundPort  - Subscriber: consumer de uma mensageria
-	 * @return - Retorna a classe instaciada do UseCase
-	 * @throws Exception
-	 */
-	public static Object executeInjectedDependencyUseCase_(Class<?> clazz, OutboundPort... outboundPorts) throws Exception {
-
-		Object newInstanceUseCase = createUseCase(clazz);
-
-		for (OutboundPort outboundPort : outboundPorts) {
-			Class<?>[] interfaces = outboundPort.getClass().getInterfaces();
-			executeMethod(newInstanceUseCase, StringsUtils.setMethod(interfaces[0].getSimpleName()), outboundPort);
-		}
-
-		return newInstanceUseCase;
-	}
-
-	/**
 	 * Metodo responsavel por criar uma classe UseCase
 	 * 
 	 * @param clazz
@@ -678,7 +654,7 @@ public class ReflectionUtils {
 	/**
 	 * EXECUTE METHOD REFLECTION
 	 */
-
+	
 	/**
 	 * @param object
 	 * @param methodName
@@ -687,7 +663,7 @@ public class ReflectionUtils {
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes" })
-	public static Object executeMethod(Object object, String methodName, Object... paramValue) throws Exception {
+	public static Object executeMethod_(Object object, String methodName, Object... paramValue) throws Exception {
 		Class[] paramTypes = transformParametersTypes(paramValue);
 		Method method = getMethod(object.getClass(), methodName, paramTypes);
 		if (method != null) {
@@ -731,6 +707,54 @@ public class ReflectionUtils {
 		}
 		return param.getClass();
 	}
+	
+	/**
+	 * @param object
+	 * @param methodName
+	 * @param paramValue
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings({ "rawtypes" })
+	public static Object execute(Object object, String methodName, Object... paramValue) throws Exception {
+		Class[] paramTypes = transformParametersTypes(paramValue);
+		Method method = getMethodInjectedDependency(object.getClass(), methodName, paramTypes);
+		method.setAccessible(true);
+		return method.invoke(object, paramValue);
+	}
+	
+	/**
+	 * @param <T>
+	 * @param clazz
+	 * @param methodName
+	 * @param paramClass
+	 * @return
+	 */
+	@SafeVarargs
+	private static Method getMethodInjectedDependency(Class<?> clazz, String methodName, Class<?>... paramTypes) {
+		Method m = null;
+		try {
+			m = clazz.getDeclaredMethod(methodName, paramTypes);
+		} catch (Exception e) {
+			try {
+				m = clazz.getMethod(methodName, paramTypes);
+			} catch (Exception e1) {
+				for (Method mtmp : clazz.getMethods()) {
+					Class<?>[] methodParams = mtmp.getParameterTypes();
+					if (mtmp.getName().equals(methodName) && methodParams.length == paramTypes.length) {
+						m = mtmp;
+						break;
+					}
+				}
+			}
+		}
+		
+		if(m == null) {
+			throw new IllegalArgumentException("Metodo nao encontrado: -->> " + methodName);
+		}
+		
+		return m;
+	}	
 
 	/**
 	 * @param <T>
@@ -931,13 +955,13 @@ public class ReflectionUtils {
 
 			ReflectionUtils.extractKeyCompositedByQueryParameter(rawId, domainId);
 
-			ReflectionUtils.executeMethod(domain, StringsUtils.setMethod(fieldName), domainId);
+			ReflectionUtils.execute(domain, StringsUtils.setMethod(fieldName), domainId);
 
 		} else if (ReflectionUtils.isTypeMatching(domain.getClass(), fieldName, rawId)) {
 
 			Object id = ReflectionUtils.extractedTypeValue(type, rawId);
 
-			ReflectionUtils.executeMethod(domain, StringsUtils.setMethod(fieldName), id);
+			ReflectionUtils.execute(domain, StringsUtils.setMethod(fieldName), id);
 
 		}
 	}
@@ -960,14 +984,14 @@ public class ReflectionUtils {
 
 			field.setAccessible(true);
 
-			Object object = ReflectionUtils.executeMethod(domainId, StringsUtils.getMethod(field.getName()));
+			Object object = ReflectionUtils.execute(domainId, StringsUtils.getMethod(field.getName()));
 
 			if (object != null) {
-				executeMethod(domainIdEmbeddedId, StringsUtils.setMethod(field.getName()), object);
+				execute(domainIdEmbeddedId, StringsUtils.setMethod(field.getName()), object);
 			}
 		}
 
-		executeMethod(domain, StringsUtils.setMethod("id"), domainIdEmbeddedId);
+		execute(domain, StringsUtils.setMethod("id"), domainIdEmbeddedId);
 
 		return domain;
 	}
@@ -1017,7 +1041,7 @@ public class ReflectionUtils {
 
 		for (Field field : domainId.getClass().getDeclaredFields()) {
 
-			Object object = executeMethod(domainId, StringsUtils.getMethod(field.getName()));
+			Object object = execute(domainId, StringsUtils.getMethod(field.getName()));
 
 			if (object != null) {
 				ids.put(field.getName(), object);
@@ -1157,7 +1181,7 @@ public class ReflectionUtils {
 			
 				if(field.getName().startsWith("id")) {
 					
-					Object value = ReflectionUtils.executeMethod(domain.getId(), StringsUtils.getMethod(field.getName()));
+					Object value = ReflectionUtils.execute(domain.getId(), StringsUtils.getMethod(field.getName()));
 					
 					parts.add("id." + field.getName() + "=" + value);
 				}
@@ -1188,7 +1212,7 @@ public class ReflectionUtils {
 
 			for (Field field : domainId.getClass().getDeclaredFields()) {
 
-				Object object = ReflectionUtils.executeMethod(domain.getId(), StringsUtils.getMethod(field.getName()));
+				Object object = ReflectionUtils.execute(domain.getId(), StringsUtils.getMethod(field.getName()));
 
 				if (object != null) {
 					return true;

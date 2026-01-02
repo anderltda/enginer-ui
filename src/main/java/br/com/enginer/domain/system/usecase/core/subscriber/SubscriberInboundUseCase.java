@@ -56,7 +56,7 @@ public class SubscriberInboundUseCase<T extends Domain<?>> implements Subscriber
 			
 			Object object = injectedDependency(domain);
 			
-			domainNew =  (Domain<?>) ReflectionUtils.executeMethod(object, actionLogger.getAction(), domain);
+			domainNew =  (Domain<?>) ReflectionUtils.execute(object, actionLogger.getAction(), domain);
 			
 		} catch (Exception ex) {
 			logger.error(ActionInboundUseCase.class, ex);

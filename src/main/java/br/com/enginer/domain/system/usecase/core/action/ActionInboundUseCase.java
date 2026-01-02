@@ -84,7 +84,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
         	/** Injected Dependency */
         	Object UseCase = injectedDependency(domain);
         	
-            return (Domain<?>) ReflectionUtils.executeMethod(UseCase, ActionUseCase.buscarPorId, domain);
+            return (Domain<?>) ReflectionUtils.execute(UseCase, ActionUseCase.buscarPorId, domain);
             
         } catch (Exception ex) {
             loggerOutboundPort.error(ActionInboundUseCase.class, ex);
@@ -107,7 +107,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
         	/** Injected Dependency */
         	Object UseCase = injectedDependency(domain);
         	
-			return (Domain<?>) ReflectionUtils.executeMethod(UseCase, ActionUseCase.buscarPorRegistroUnico, domain, filter);
+			return (Domain<?>) ReflectionUtils.execute(UseCase, ActionUseCase.buscarPorRegistroUnico, domain, filter);
 			
 		} catch (Exception ex) {
 			loggerOutboundPort.error(ActionInboundUseCase.class, ex);
@@ -131,7 +131,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
         	/** Injected Dependency */
         	Object UseCase = injectedDependency(domain);
         	
-            return (List<Domain<?>>) ReflectionUtils.executeMethod(UseCase, ActionUseCase.buscarTodos, domain, filter);
+            return (List<Domain<?>>) ReflectionUtils.execute(UseCase, ActionUseCase.buscarTodos, domain, filter);
             
         } catch (Exception ex) {
             loggerOutboundPort.error(ActionInboundUseCase.class, ex);
@@ -155,7 +155,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
         	/** Injected Dependency */
         	Object UseCase = injectedDependency(domain);
             
-            return (PageResult<Domain<?>>) ReflectionUtils.executeMethod(UseCase, ActionUseCase.buscarTodosPaginado, domain, filter);
+            return (PageResult<Domain<?>>) ReflectionUtils.execute(UseCase, ActionUseCase.buscarTodosPaginado, domain, filter);
             
         } catch (Exception ex) {
             loggerOutboundPort.error(ActionInboundUseCase.class, ex);
@@ -180,7 +180,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
         	/** Injected Dependency */
         	Object UseCase = injectedDependency(domain);
             
-            return (PageResult<Domain<?>>) ReflectionUtils.executeMethod(UseCase, ActionUseCase.buscarTodosPaginado, domain, filter, method);
+            return (PageResult<Domain<?>>) ReflectionUtils.execute(UseCase, ActionUseCase.buscarTodosPaginado, domain, filter, method);
             
         } catch (Exception ex) {
             loggerOutboundPort.error(ActionInboundUseCase.class, ex);
@@ -207,9 +207,9 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
         	Object useCase = injectedDependency(domain);
             
             if(value != null && value.length > 0) {
-            	result = (Object) ReflectionUtils.executeMethod(useCase, methodName, value);
+            	result = (Object) ReflectionUtils.execute(useCase, methodName, value);
             } else {
-            	result = (Object) ReflectionUtils.executeMethod(useCase, methodName);
+            	result = (Object) ReflectionUtils.execute(useCase, methodName);
             }
 
         } catch (Exception ex) {
@@ -242,7 +242,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
         	ReflectionUtils.runAnnotatedMethods(useCase, PreAction.class, domain);
             
         	/** Executa o método real */
-        	Domain<?> newDomain = (Domain<?>) ReflectionUtils.executeMethod(useCase, actionLogger.getAction(), domain);
+        	Domain<?> newDomain = (Domain<?>) ReflectionUtils.execute(useCase, actionLogger.getAction(), domain);
         	
         	/** Executa @PostAction */
         	ReflectionUtils.runAnnotatedMethods(useCase, PostAction.class, newDomain);
@@ -278,7 +278,7 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
         	/** Executa todos @PreCollectionAction */
         	ReflectionUtils.runAnnotatedMethods(useCase, PreCollectionAction.class, domains);
         
-        	List<Domain<?>> newDomainList = (List<Domain<?>>) ReflectionUtils.executeMethod(useCase, actionLogger.getAction(), domains);
+        	List<Domain<?>> newDomainList = (List<Domain<?>>) ReflectionUtils.execute(useCase, actionLogger.getAction(), domains);
     		
         	/** Executa @PostCollectionAction */
         	ReflectionUtils.runAnnotatedMethods(useCase, PostCollectionAction.class, newDomainList);

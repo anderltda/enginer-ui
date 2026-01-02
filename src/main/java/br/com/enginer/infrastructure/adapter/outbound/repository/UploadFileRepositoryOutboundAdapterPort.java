@@ -70,7 +70,7 @@ public class UploadFileRepositoryOutboundAdapterPort extends DelegatingRepositor
 			
 			if (domain instanceof UploadFile) return;
 		
-			files = (List<UploadFile>) ReflectionUtils.executeMethod(domain, StringsUtils.getMethod("files"));
+			files = (List<UploadFile>) ReflectionUtils.execute(domain, StringsUtils.getMethod("files"));
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();

@@ -68,7 +68,7 @@ public class TagRepositoryOutboundAdapterPort extends DelegatingRepositoryOutbou
 			
 			if(type == null) return;
 		
-			List<String> tags = (List<String>) ReflectionUtils.executeMethod(type, StringsUtils.getMethod("tags"));
+			List<String> tags = (List<String>) ReflectionUtils.execute(type, StringsUtils.getMethod("tags"));
 			String domain = type.getClass().getSimpleName();
 			Object domainId = ReflectionUtils.createUriIdComposedType(type);
 

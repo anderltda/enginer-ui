@@ -76,15 +76,15 @@ public class DomainResolver implements HandlerMethodArgumentResolver {
 			}
 		}
 
-		ReflectionUtils.executeMethod(domain, StringsUtils.setMethod("modal"), isModal);
-		ReflectionUtils.executeMethod(domain, StringsUtils.setMethod("disabled"), isDisabled);
+		ReflectionUtils.execute(domain, StringsUtils.setMethod("modal"), isModal);
+		ReflectionUtils.execute(domain, StringsUtils.setMethod("disabled"), isDisabled);
 
 		if (urlDomain != null) {
 
 			String mainDomain = thirdSegment(urlDomain).orElse(null);
 			
 			if(mainDomain != null) {
-				ReflectionUtils.executeMethod(domain, StringsUtils.setMethod("mainDomain"), mainDomain);
+				ReflectionUtils.execute(domain, StringsUtils.setMethod("mainDomain"), mainDomain);
 			}
 		}
 

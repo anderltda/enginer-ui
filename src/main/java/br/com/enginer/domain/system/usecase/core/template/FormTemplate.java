@@ -804,18 +804,18 @@ public class FormTemplate {
 
 				if (compositeKey != null) {
 					templateUseCase = (UIUseCase<?>) ReflectionUtils.executeInjectedDependencyUseCaseCached(compositeKey.getClass(), useCase.getRepositoryOutboundPort());
-					value = (Domain<?>) ReflectionUtils.executeMethod(templateUseCase, UIUseCase.buscarFormPorId, compositeKey);
+					value = (Domain<?>) ReflectionUtils.execute(templateUseCase, UIUseCase.buscarFormPorId, compositeKey);
 				}
 
 			} else {
 
 				Domain<?> key = (Domain<?>) ReflectionUtils.newInstance(typeClass);
 
-				Object keyValue = ReflectionUtils.executeMethod(domain,
+				Object keyValue = ReflectionUtils.execute(domain,
 						StringsUtils.getMethod("id" + typeClass.getSimpleName()));
 
 				if (keyValue != null) {
-					value = (Domain<?>) ReflectionUtils.executeMethod(useCase.getRepositoryOutboundPort(), RepositoryOutboundPort.FIND_BY_ID, key, keyValue);
+					value = (Domain<?>) ReflectionUtils.execute(useCase.getRepositoryOutboundPort(), RepositoryOutboundPort.FIND_BY_ID, key, keyValue);
 				}
 			}
 
@@ -826,23 +826,23 @@ public class FormTemplate {
 
 			if (ReflectionUtils.isIdComposedType(typeId)) {
 
-				Domain<?> compositeKey = (Domain<?>) ReflectionUtils.executeMethod(domain,
+				Domain<?> compositeKey = (Domain<?>) ReflectionUtils.execute(domain,
 						StringsUtils.getMethod(typeClass.getSimpleName()));
 
 				if (compositeKey != null) {
 					templateUseCase = (UIUseCase<?>) ReflectionUtils.executeInjectedDependencyUseCaseCached(compositeKey.getClass(), useCase.getRepositoryOutboundPort());
-					value = (Domain<?>) ReflectionUtils.executeMethod(templateUseCase,
+					value = (Domain<?>) ReflectionUtils.execute(templateUseCase,
 							UIUseCase.buscarFormPorId, compositeKey);
 				}
 
 			} else {
 
-				Domain<?> key = (Domain<?>) ReflectionUtils.executeMethod(domain,
+				Domain<?> key = (Domain<?>) ReflectionUtils.execute(domain,
 						StringsUtils.getMethod(typeClass.getSimpleName()));
 
 				if (key != null) {
 					templateUseCase = (UIUseCase<?>) ReflectionUtils.executeInjectedDependencyUseCaseCached(key.getClass(), useCase.getRepositoryOutboundPort());
-					value = (Domain<?>) ReflectionUtils.executeMethod(templateUseCase,
+					value = (Domain<?>) ReflectionUtils.execute(templateUseCase,
 							UIUseCase.buscarFormPorId, key);
 				}
 
@@ -857,7 +857,7 @@ public class FormTemplate {
 
 			Object provider = ReflectionUtils.newInstance(f.getType());
 
-			List<?> options = (List<?>) ReflectionUtils.executeMethod(useCase, UIUseCase.buscarFormTodos, provider, filters);
+			List<?> options = (List<?>) ReflectionUtils.execute(useCase, UIUseCase.buscarFormTodos, provider, filters);
 
 			filter.setOptions(options);
 
@@ -896,7 +896,7 @@ public class FormTemplate {
 			
 			Map<String, Object> filter = Map.of("domain", domain.getClass().getSimpleName(), "domainId", domain.getId().toString());
 		
-			files = (List<UploadFile>) ReflectionUtils.executeMethod(this.useCase, UIUseCase.buscarTodos, new UploadFile(), filter);
+			files = (List<UploadFile>) ReflectionUtils.execute(this.useCase, UIUseCase.buscarTodos, new UploadFile(), filter);
 		}
 		
 		File file = default_.getFile(files);
@@ -921,7 +921,7 @@ public class FormTemplate {
 			
 			Map<String, Object> filter = Map.of("id.domain", domain.getClass().getSimpleName(), "id.domainId", domainId);
 		
-			Object object = ReflectionUtils.executeMethod(this.useCase, UIUseCase.buscarTodos, new br.com.enginer.domain.system.dto.entity.tag.Tag(), filter);
+			Object object = ReflectionUtils.execute(this.useCase, UIUseCase.buscarTodos, new br.com.enginer.domain.system.dto.entity.tag.Tag(), filter);
 			
 			List<br.com.enginer.domain.system.dto.entity.tag.Tag> entities = (List<br.com.enginer.domain.system.dto.entity.tag.Tag>) object;
 			
@@ -950,7 +950,7 @@ public class FormTemplate {
 
 		if (uiSelect != null) {
 			Object provider = uiSelect.provider().getDeclaredConstructor().newInstance();
-			options = (List<Object>) ReflectionUtils.executeMethod(provider, uiSelect.method());
+			options = (List<Object>) ReflectionUtils.execute(provider, uiSelect.method());
 		} else {
 			options = new ComboHelper().values();
 		}
@@ -975,7 +975,7 @@ public class FormTemplate {
 
 		Object provider = uiRadio.provider().getDeclaredConstructor().newInstance();
 
-		List<Object> options = (List<Object>) ReflectionUtils.executeMethod(provider, uiRadio.method());
+		List<Object> options = (List<Object>) ReflectionUtils.execute(provider, uiRadio.method());
 
 		Radio radio = default_.getRadio(options);
 
@@ -1271,7 +1271,7 @@ public class FormTemplate {
 
 					for (UIConditionalOn uiConditionalOn : uiConditionalOns) {
 						
-						Object object = ReflectionUtils.executeMethod(domain, StringsUtils.getMethod(uiConditionalOn.field()));
+						Object object = ReflectionUtils.execute(domain, StringsUtils.getMethod(uiConditionalOn.field()));
 						
 						TypeOperator operator = uiConditionalOn.operator();
 				        

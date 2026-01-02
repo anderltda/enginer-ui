@@ -64,7 +64,7 @@ public class UIInboundUseCase<T extends Domain<?>> implements UIInboundPort<T> {
         	ReflectionUtils.runAnnotatedMethods(useCase, PreForm.class, domain);
 			
         	/** Executa o método real */
-			Form form = (Form) ReflectionUtils.executeMethod(useCase, "form", domain);
+			Form form = (Form) ReflectionUtils.execute(useCase, "form", domain);
 			
         	/** Executa @PostForm */
         	ReflectionUtils.runAnnotatedMethods(useCase, PostForm.class, form);
@@ -92,7 +92,7 @@ public class UIInboundUseCase<T extends Domain<?>> implements UIInboundPort<T> {
         	ReflectionUtils.runAnnotatedMethods(useCase, PreTab.class, domain);
 			
         	/** Executa o método real */
-			Form form = (Form) ReflectionUtils.executeMethod(useCase, "tab", domain);
+			Form form = (Form) ReflectionUtils.execute(useCase, "tab", domain);
 			
         	/** Executa @PostTab */
         	ReflectionUtils.runAnnotatedMethods(useCase, PostTab.class, form);
@@ -120,7 +120,7 @@ public class UIInboundUseCase<T extends Domain<?>> implements UIInboundPort<T> {
         	ReflectionUtils.runAnnotatedMethods(useCase, PreFilter.class, domain);
 			
         	/** Executa o método real */
-			Form form = (Form) ReflectionUtils.executeMethod(useCase, "filter", domain);
+			Form form = (Form) ReflectionUtils.execute(useCase, "filter", domain);
 			
         	/** Executa @PostFilter */
         	ReflectionUtils.runAnnotatedMethods(useCase, PostFilter.class, form);
@@ -148,7 +148,7 @@ public class UIInboundUseCase<T extends Domain<?>> implements UIInboundPort<T> {
         	ReflectionUtils.runAnnotatedMethods(useCase, PreRow.class, domain);
 			
         	/** Executa o método real */
-			Form form = (Form) ReflectionUtils.executeMethod(useCase, "row", domain);
+			Form form = (Form) ReflectionUtils.execute(useCase, "row", domain);
 			
         	/** Executa @PostRow */
         	ReflectionUtils.runAnnotatedMethods(useCase, PostRow.class, form);
