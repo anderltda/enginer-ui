@@ -663,7 +663,7 @@ public class ReflectionUtils {
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes" })
-	public static Object executeMethod_(Object object, String methodName, Object... paramValue) throws Exception {
+	public static Object executeMethod(Object object, String methodName, Object... paramValue) throws Exception {
 		Class[] paramTypes = transformParametersTypes(paramValue);
 		Method method = getMethod(object.getClass(), methodName, paramTypes);
 		if (method != null) {
@@ -926,8 +926,7 @@ public class ReflectionUtils {
 
 				Object value = ReflectionUtils.extractedTypeValue(type, v);
 
-				ReflectionUtils.set(domain, StringsUtils.setMethod(key), new Class<?>[] { type },
-						new Object[] { value });
+				ReflectionUtils.set(domain, StringsUtils.setMethod(key), new Class<?>[] { type }, new Object[] { value });
 
 			} catch (NoSuchFieldException | SecurityException ex) {
 				ex.printStackTrace();
@@ -984,7 +983,7 @@ public class ReflectionUtils {
 
 			field.setAccessible(true);
 
-			Object object = ReflectionUtils.execute(domainId, StringsUtils.getMethod(field.getName()));
+			Object object = ReflectionUtils.executeMethod(domainId, StringsUtils.getMethod(field.getName()));
 
 			if (object != null) {
 				execute(domainIdEmbeddedId, StringsUtils.setMethod(field.getName()), object);
