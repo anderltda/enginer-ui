@@ -11,7 +11,7 @@ import br.com.enginer.domain.system.usecase.core.annotation.field.UISelect;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIText;
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.UIPosition;
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.validation.UIFieldValidation;
-import br.com.enginer.domain.system.usecase.core.annotation.instance.UITitle;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.UIHeader;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIButtonAction;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.UIButtonBack;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.UIButtonClear;
@@ -32,7 +32,7 @@ import br.com.enginer.domain.system.usecase.core.helper.ComboHelper;
 import br.com.enginer.domain.system.usecase.core.schema.instance.DomainAbstract;
 import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 
-@UITitle("Tag")
+@UIHeader(title = "Tag")
 @UIButtonAction(includes = {
 	UIButtonClear.class, 
 	UIButtonBack.class, 

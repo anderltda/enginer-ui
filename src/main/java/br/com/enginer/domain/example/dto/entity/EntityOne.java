@@ -21,7 +21,7 @@ import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.valid
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.validation.UIFieldValidation;
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.validation.UIPattern;
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.validation.UISync;
-import br.com.enginer.domain.system.usecase.core.annotation.instance.UITitle;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.UIHeader;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIAction;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIActionDomain;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIActionMethod;
@@ -69,7 +69,7 @@ import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 /**
  * 
  */
-@UITitle("Primeiro")
+@UIHeader(title = "Xbox360Xseries")
 @UIButtonAction(includes = { 
 	UIButtonBack.class, 
 	UIButtonClear.class, 

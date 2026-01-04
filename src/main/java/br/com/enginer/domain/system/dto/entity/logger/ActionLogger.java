@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIColumn;
-import br.com.enginer.domain.system.usecase.core.annotation.instance.UITitle;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.UIHeader;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIAction;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIActionDomain;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIButton;
@@ -29,7 +29,7 @@ import br.com.enginer.domain.system.usecase.core.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.core.schema.instance.DomainAbstract;
 import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 
-@UITitle("Action-Logger")
+@UIHeader(title = "Action-Logger")
 @UIButtonAction(includes = {
 	UIButtonClear.class, 
 	UIButtonBack.class, 

@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Objects;
 
-import br.com.enginer.domain.system.usecase.core.annotation.instance.UITitle;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.UIHeader;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIButtonAction;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.UIButtonBack;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.UIButtonClear;
@@ -27,7 +27,7 @@ import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
  * Representa um arquivo enviado ao sistema, incluindo seus metadados e
  * informações de armazenamento.
  */
-@UITitle("UploadFile")
+@UIHeader(title = "UploadFile")
 @UIButtonAction(includes = {
 	UIButtonClear.class, 
 	UIButtonBack.class, 

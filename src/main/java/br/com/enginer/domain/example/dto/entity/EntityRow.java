@@ -14,7 +14,7 @@ import br.com.enginer.domain.system.usecase.core.annotation.field.UIHidden;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UINumber;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIRow;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIText;
-import br.com.enginer.domain.system.usecase.core.annotation.instance.UITitle;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.UIHeader;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIAction;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIActionMethod;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIButton;
@@ -51,7 +51,7 @@ import br.com.enginer.domain.system.usecase.core.utils.StringsUtils;
 /**
  * 
  */
-@UITitle("Entity Rows")
+@UIHeader(title = "Entity Rows")
 @UIButtonAction(
 	includes = {
 		UIButtonClear.class, 

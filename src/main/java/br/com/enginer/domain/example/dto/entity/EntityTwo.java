@@ -13,7 +13,7 @@ import br.com.enginer.domain.system.usecase.core.annotation.field.UINumber;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIRow;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UISelect;
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.validation.UIFieldValidation;
-import br.com.enginer.domain.system.usecase.core.annotation.instance.UITitle;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.UIHeader;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIAction;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIActionDomain;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIActionMethod;
@@ -63,7 +63,7 @@ import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 /**
  * 
  */
-@UITitle("Segundo")
+@UIHeader(title = "Segundo")
 @UIButtonAction(includes = { 
 	UIButtonClear.class, 
 	// FILTER

@@ -13,5 +13,5 @@ public @interface UIAction {
     UIActionRedirect redirect() default @UIActionRedirect();
 	UIActionDomain actionObject() default @UIActionDomain;
 	UIActionResponse response() default @UIActionResponse();
-	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.PAGINATOR, TypeTemplate.PAGINATOR };
+	TypeTemplate[] template() default { TypeTemplate.FILTER, TypeTemplate.ROW, TypeTemplate.FORM, TypeTemplate.TAB, TypeTemplate.PAGINATOR, TypeTemplate.MODAL };
 }

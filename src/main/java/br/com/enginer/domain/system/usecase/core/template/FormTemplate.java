@@ -45,7 +45,7 @@ import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.valid
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.validation.UIFieldValidation;
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.validation.UIPattern;
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.validation.UISync;
-import br.com.enginer.domain.system.usecase.core.annotation.instance.UITitle;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.UIHeader;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIAction;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIActionDomain;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIActionMethod;
@@ -98,6 +98,8 @@ import br.com.enginer.domain.system.usecase.core.schema.field.type.Select;
 import br.com.enginer.domain.system.usecase.core.schema.field.type.Tag;
 import br.com.enginer.domain.system.usecase.core.schema.field.type.Text;
 import br.com.enginer.domain.system.usecase.core.schema.field.type.Time;
+import br.com.enginer.domain.system.usecase.core.schema.header.DropdownItem;
+import br.com.enginer.domain.system.usecase.core.schema.header.Header;
 import br.com.enginer.domain.system.usecase.core.schema.instance.Action;
 import br.com.enginer.domain.system.usecase.core.schema.instance.ActionObject;
 import br.com.enginer.domain.system.usecase.core.schema.instance.ActionResponse;
@@ -195,14 +197,14 @@ public class FormTemplate {
 			domain.setMainDomain(mainDomain);
 			domain.setTypeTemplate(typeTemplate);
 
-			String title = getTitle();
+			Header header = getHeader();
 			Tab tab = getTab();
 			Paginator paginator = getPaginator();
 			Validate validate = getValidate();
 
 			form = new Form();
 			form.setId(StringsUtils.firstLower(domain.getClass().getSimpleName()));
-			form.setTitle(title);
+			form.setHeader(header);
 			form.setValidate(validate);
 			form.setFields(fields);
 
@@ -1227,13 +1229,54 @@ public class FormTemplate {
 	 * @param domain
 	 * @return
 	 */
-	private String getTitle() {
+	private Header getHeader() throws Exception {
+		
+		Header header = null;
+		
 		String title = StringsUtils.normalizeLabelToLowercaseCamelization(domain.getClass().getSimpleName().toString());
-		if (domain.getClass().isAnnotationPresent(UITitle.class)) {
-			UITitle uiTitle = domain.getClass().getAnnotation(UITitle.class);
-			title = uiTitle.value();
+		
+		if (domain.getClass().isAnnotationPresent(UIHeader.class)) {
+		
+			UIHeader uiHeader = domain.getClass().getAnnotation(UIHeader.class);
+			
+			boolean containsTemplate = checkTemplate(uiHeader);
+
+			if (containsTemplate) {
+				
+				header = new Header();
+
+				title = uiHeader.title();
+
+				header.setTitle(title);
+
+				UIConditional conditional = uiHeader.conditional();
+				UIConditionalOn[] uiConditionalOns = conditional.value();
+
+				for (UIConditionalOn uiConditionalOn : uiConditionalOns) {
+
+					Object object = ReflectionUtils.execute(domain, StringsUtils.getMethod(uiConditionalOn.field()));
+
+					TypeOperator operator = uiConditionalOn.operator();
+
+					List<String> matchs = List.of(uiConditionalOn.matchs());
+
+					boolean ok = TypeOperatorEvaluator.test(object, operator, matchs);
+
+				}
+
+				List<DropdownItem> dropdownItens = List.of(new DropdownItem("api", "code", "API", null),
+						new DropdownItem("files", "upload", "Anexo", "files"),
+						new DropdownItem("tags", "tag", "Tag", "tags"),
+						new DropdownItem("timeline", "history", "Histórico", null),
+						new DropdownItem("calendar", "calendar", "Calendar", null),
+						new DropdownItem("help", "help", "Ajuda", null));
+
+				header.setDropdownItens(dropdownItens);
+
+			}
 		}
-		return title;
+				
+		return header;
 	}
 
 	/**

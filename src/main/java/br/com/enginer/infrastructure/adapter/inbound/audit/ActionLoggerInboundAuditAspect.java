@@ -159,7 +159,7 @@ public class ActionLoggerInboundAuditAspect {
 
 					String resultId = getResultIdByIndex(resultIds, i);
 
-					if (domainId == null) {
+					if (StringsUtils.isNullOrBlank(domainId)) {
 						domainId = resultId;
 					}
 
@@ -220,10 +220,13 @@ public class ActionLoggerInboundAuditAspect {
 
 		String action = actionLogger.getAction().toLowerCase();
 
-		if (action.contains("excluir"))
+		if (action.contains("excluir")) {
 			return "DELETE";
-		if (action.contains("salvar"))
-			return domainId == null ? "CREATE" : "UPDATE";
+		}
+
+		if (action.contains("salvar")) {
+			return StringsUtils.isNullOrBlank(domainId) ? "CREATE" : "UPDATE";
+		}
 
 		return "UNKNOWN";
 	}

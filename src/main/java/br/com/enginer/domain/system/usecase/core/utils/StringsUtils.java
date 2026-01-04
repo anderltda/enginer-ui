@@ -202,4 +202,26 @@ public class StringsUtils {
 	    }
 	    return value.replaceAll("\\D", ""); // \\D = tudo que não é dígito
 	}
+	
+	/**
+	 * Verifica se uma String deve ser considerada logicamente nula.
+	 *
+	 * <p>
+	 * Retorna {@code true} quando o valor é:
+	 * <ul>
+	 *   <li>{@code null}</li>
+	 *   <li>uma String vazia ou composta apenas por espaços</li>
+	 *   <li>a String literal "null" (ignora maiúsculas/minúsculas)</li>
+	 * </ul>
+	 *
+	 * <p>
+	 * Útil para normalizar valores vindos de múltiplas origens (frontend, JSON,
+	 * serialização ou logs), evitando tratar strings inválidas como IDs válidos.
+	 * </p>
+	 */
+	public static boolean isNullOrBlank(String value) {
+	    return value == null 
+	        || value.isBlank() 
+	        || "null".equalsIgnoreCase(value);
+	}
 }

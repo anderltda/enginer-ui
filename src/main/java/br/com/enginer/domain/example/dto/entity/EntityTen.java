@@ -15,7 +15,7 @@ import br.com.enginer.domain.system.usecase.core.annotation.field.UITextArea;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UITime;
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.UIPosition;
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.validation.UIFieldValidation;
-import br.com.enginer.domain.system.usecase.core.annotation.instance.UITitle;
+import br.com.enginer.domain.system.usecase.core.annotation.instance.UIHeader;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIAction;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIActionMethod;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIActionRedirect;
@@ -53,7 +53,7 @@ import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 /**
  * 
  */
-@UITitle("Decimo")
+@UIHeader(title = "Decimo")
 @UIButtonAction(includes = { 
 	UIButtonClear.class,
 	// FILTER
