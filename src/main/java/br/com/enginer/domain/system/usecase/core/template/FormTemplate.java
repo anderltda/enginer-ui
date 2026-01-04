@@ -1263,13 +1263,27 @@ public class FormTemplate {
 					boolean ok = TypeOperatorEvaluator.test(object, operator, matchs);
 
 				}
+				
+				List<DropdownItem> dropdownItens = null;
+				
+				if(TypeTemplate.FILTER.equals(this.domain.getTypeTemplate())) {
 
-				List<DropdownItem> dropdownItens = List.of(new DropdownItem("api", "code", "API", null),
-						new DropdownItem("files", "upload", "Anexo", "files"),
-						new DropdownItem("tags", "tag", "Tag", "tags"),
-						new DropdownItem("timeline", "history", "Histórico", null),
-						new DropdownItem("calendar", "calendar", "Calendar", null),
-						new DropdownItem("help", "help", "Ajuda", null));
+					dropdownItens = List.of(
+							new DropdownItem("api", "code", "API", null),
+							new DropdownItem("calendar", "calendar", "Calendar", null),
+							new DropdownItem("help", "help", "Ajuda", null));
+					
+				} else {
+					
+					dropdownItens = List.of(
+							new DropdownItem("api", "code", "API", null),
+							new DropdownItem("files", "upload", "Anexo", "files"),
+							new DropdownItem("tags", "tag", "Tag", "tags"),
+							new DropdownItem("timeline", "history", "Histórico", null),
+							new DropdownItem("calendar", "calendar", "Calendar", null),
+							new DropdownItem("help", "help", "Ajuda", null));
+				}
+
 
 				header.setDropdownItens(dropdownItens);
 
