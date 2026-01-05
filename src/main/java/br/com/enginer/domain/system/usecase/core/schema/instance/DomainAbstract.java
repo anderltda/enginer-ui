@@ -34,11 +34,11 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 	@UITag(label = "Tags", disable = false)
 	private transient List<String> tags;
 	
-	@UIFieldValidation(required = false)
 	//@UIAttachment(label = "", mode = TypeFileUpload.WALL_PICKER, listType = "picture-card", limit = 5)
-	@UIAttachment(label = "", mode = TypeFileUpload.LIST, listType = "picture", limit = 8)
 	//@UIAttachment(label = "Arquivos", mode = TypeFileUpload.SIMPLE, listType = "text", limit = 3)
 	//@UIAttachment(label = "Arquivos", mode = TypeFileUpload.DRAG_DROP, listType = "text", limit = 2)
+	@UIFieldValidation(required = false)
+	@UIAttachment(label = "", mode = TypeFileUpload.LIST, listType = "picture", limit = 8)
 	private transient List<UploadFile> attachments;
 	
 	/**

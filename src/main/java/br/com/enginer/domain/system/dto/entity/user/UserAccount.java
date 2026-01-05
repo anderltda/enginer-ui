@@ -8,6 +8,9 @@ import java.util.UUID;
 
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIFile;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIHidden;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIIgnore;
+import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.UIPosition;
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.validation.UIFieldValidation;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.UIHeader;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIButtonAction;
@@ -52,28 +55,38 @@ import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 ))
 public class UserAccount extends DomainAbstract<Long> {
 
+	@UIHidden
 	private Long id;
 
+	@UIPosition(x = 1, y = 2)
 	private UUID publicId;
 
-	private String displayName;
-
+	@UIPosition(x = 1, y = 3)
 	private String username;
 
+	@UIPosition(x = 2, y = 3)
+	private String displayName;
+
+	@UIPosition(x = 1, y = 4)
 	private String email;
 
+	@UIPosition(x = 2, y = 4)
 	private String emailNormalized;
 
+	@UIHidden
 	private Long avatarFileId;
 
+	@UIPosition(x = 2, y = 1)
 	private Boolean active;
 
 	private Instant createdAt;
 
 	private Instant updatedAt;
 
+	@UIIgnore
 	private UploadFile uploadFile;
 
+	@UIPosition(x = 1, y = 1)
 	@UIFieldValidation(required = false)
 	@UIFile(label = "", mode = TypeFileUpload.WALL_PICKER, listType = "picture-card", limit = 1)
 	private transient List<UploadFile> files;
@@ -203,13 +216,11 @@ public class UserAccount extends DomainAbstract<Long> {
 	 * @param avatarFileId the avatarFileId to set
 	 */
 	public void setAvatarFileId(Long avatarFileId) {
-		this.uploadFile = new UploadFile();
-		this.uploadFile.setId(avatarFileId);
-		
 		if(this.files == null) {
 			this.files = new ArrayList<>();
 		}
-		
+		this.uploadFile = new UploadFile();
+		this.uploadFile.setId(avatarFileId);
 		this.files.add(uploadFile);
 	}
 
