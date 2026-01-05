@@ -4,7 +4,7 @@ import java.util.List;
 
 import br.com.enginer.domain.system.dto.entity.logger.ActionLogger;
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
-import br.com.enginer.domain.system.usecase.core.annotation.field.UIFile;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIAttachment;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIIgnore;
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.UITag;
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.validation.UIFieldValidation;
@@ -35,11 +35,11 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 	private transient List<String> tags;
 	
 	@UIFieldValidation(required = false)
-	//@UIFile(label = "", mode = TypeFileUpload.WALL_PICKER, listType = "picture-card", limit = 5)
-	@UIFile(label = "", mode = TypeFileUpload.LIST, listType = "picture", limit = 8)
-	//@UIFile(label = "Arquivos", mode = TypeFileUpload.SIMPLE, listType = "text", limit = 3)
-	//@UIFile(label = "Arquivos", mode = TypeFileUpload.DRAG_DROP, listType = "text", limit = 2)
-	private transient List<UploadFile> files;
+	//@UIAttachment(label = "", mode = TypeFileUpload.WALL_PICKER, listType = "picture-card", limit = 5)
+	@UIAttachment(label = "", mode = TypeFileUpload.LIST, listType = "picture", limit = 8)
+	//@UIAttachment(label = "Arquivos", mode = TypeFileUpload.SIMPLE, listType = "text", limit = 3)
+	//@UIAttachment(label = "Arquivos", mode = TypeFileUpload.DRAG_DROP, listType = "text", limit = 2)
+	private transient List<UploadFile> attachments;
 	
 	/**
 	 * @return id
@@ -49,13 +49,6 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 		return null;
 	}
 
-	/**
-	 * @return the files
-	 */
-	public List<UploadFile> getFiles() {
-		return files;
-	}
-	
 	/**
 	 * Define o domain principal.
 	 */
@@ -155,12 +148,19 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 	public void setTypeTemplate(TypeTemplate typeTemplate) {
 		this.typeTemplate = typeTemplate;
 	}
+	
+	/**
+	 * @return the attachments
+	 */
+	public List<UploadFile> getAttachments() {
+		return attachments;
+	}
 
 	/**
-	 * @param files the files to set
+	 * @param attachments the attachments to set
 	 */
-	public void setFiles(List<UploadFile> files) {
-		this.files = files;
+	public void setAttachments(List<UploadFile> attachments) {
+		this.attachments = attachments;
 	}
 
 	/**

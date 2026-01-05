@@ -46,7 +46,7 @@ public class UploadFileRepositoryOutboundAdapterPort extends DelegatingRepositor
 	/**
 	 * 
 	 */
-	private List<UploadFile> files;
+	private List<UploadFile> attachments;
 
 	/**
 	 * @param delegate
@@ -70,7 +70,7 @@ public class UploadFileRepositoryOutboundAdapterPort extends DelegatingRepositor
 			
 			if (domain instanceof UploadFile) return;
 		
-			files = (List<UploadFile>) ReflectionUtils.execute(domain, StringsUtils.getMethod("files"));
+			attachments = (List<UploadFile>) ReflectionUtils.execute(domain, StringsUtils.getMethod("attachments"));
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -89,7 +89,7 @@ public class UploadFileRepositoryOutboundAdapterPort extends DelegatingRepositor
 			
 			if (domain instanceof UploadFile) return;
 		
-			Optional.ofNullable(files)
+			Optional.ofNullable(attachments)
 					.filter(f -> !f.isEmpty())
 					.ifPresent(f -> f.forEach(file -> salvarEntityId(file, domain.getId())));
 			

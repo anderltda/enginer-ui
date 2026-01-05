@@ -11,6 +11,7 @@ import br.com.enginer.domain.system.usecase.core.enums.TypeDateFormat;
 import br.com.enginer.domain.system.usecase.core.enums.TypeFileUpload;
 import br.com.enginer.domain.system.usecase.core.enums.TypeLayoutTarget;
 import br.com.enginer.domain.system.usecase.core.schema.field.type.Area;
+import br.com.enginer.domain.system.usecase.core.schema.field.type.Attachment;
 import br.com.enginer.domain.system.usecase.core.schema.field.type.Checkbox;
 import br.com.enginer.domain.system.usecase.core.schema.field.type.Date;
 import br.com.enginer.domain.system.usecase.core.schema.field.type.Decimal;
@@ -217,10 +218,24 @@ public class Default {
 		file.setPosition(position);
 		file.setDisable(disable);
 		file.setListType("text");
-		file.setMode(TypeFileUpload.SIMPLE);
+		file.setMode(TypeFileUpload.WALL_PICKER);
 		file.setAction("http://localhost:8081/api/upload");
 		file.setFiles(files);
 		return file;
+	}
+	
+	public Attachment getAttachment(List<UploadFile> attachments) {
+		Attachment attachment = new Attachment();
+		attachment.setLabel(label);
+		attachment.setField(field);
+		attachment.setValue(value);
+		attachment.setPosition(position);
+		attachment.setDisable(disable);
+		attachment.setListType("text");
+		attachment.setMode(TypeFileUpload.SIMPLE);
+		attachment.setAction("http://localhost:8081/api/upload");
+		attachment.setAttachments(attachments);
+		return attachment;
 	}
 
 	public Filter getFilter(Class<?> domain) {

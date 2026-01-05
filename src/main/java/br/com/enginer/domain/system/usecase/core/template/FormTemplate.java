@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIAttachment;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UICheckbox;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIColumn;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIDate;
@@ -83,6 +84,7 @@ import br.com.enginer.domain.system.usecase.core.schema.field.behavior.validatio
 import br.com.enginer.domain.system.usecase.core.schema.field.behavior.validation.Sync;
 import br.com.enginer.domain.system.usecase.core.schema.field.behavior.validation.Validation;
 import br.com.enginer.domain.system.usecase.core.schema.field.type.Area;
+import br.com.enginer.domain.system.usecase.core.schema.field.type.Attachment;
 import br.com.enginer.domain.system.usecase.core.schema.field.type.Checkbox;
 import br.com.enginer.domain.system.usecase.core.schema.field.type.Date;
 import br.com.enginer.domain.system.usecase.core.schema.field.type.Decimal;
@@ -155,6 +157,7 @@ public class FormTemplate {
 		annotationMap.put(UISelect.class, UISelect.class);
 		annotationMap.put(UITextArea.class, UITextArea.class);
 		annotationMap.put(UITag.class, UITag.class);
+		annotationMap.put(UIAttachment.class, UIAttachment.class);
 		annotationMap.put(UIFile.class, UIFile.class);
 		annotationMap.put(UIFilter.class, UIFilter.class);
 		annotationMap.put(UIJoin.class, UIJoin.class);
@@ -380,6 +383,17 @@ public class FormTemplate {
 
 							if (containsTemplate) {
 								field.setTag(getTag(f, default_, annotations));
+								count++;
+							}
+
+							identity = true;
+
+						} else if (annotation instanceof UIAttachment uiAttachment) {
+
+							boolean containsTemplate = checkTemplate(uiAttachment);
+
+							if (containsTemplate) {
+								field.setAttachment(getAttachments(f, default_, annotations));
 								count++;
 							}
 
@@ -905,6 +919,30 @@ public class FormTemplate {
 		addBehaviorAnnotation(file, f, annotations);
 		return file;
 	}
+	
+	/**
+	 * @param f
+	 * @param default_
+	 * @param annotations
+	 * @return
+	 * @throws Exception 
+	 */
+	@SuppressWarnings("unchecked")
+	private Attachment getAttachments(java.lang.reflect.Field f, Default default_, Annotation[] annotations) throws Exception {
+
+		List<UploadFile> attachments = new ArrayList<>();
+
+		if (domain.getId() != null) {
+			
+			Map<String, Object> filter = Map.of("domain", domain.getClass().getSimpleName(), "domainId", domain.getId().toString());
+		
+			attachments = (List<UploadFile>) ReflectionUtils.execute(this.useCase, UIUseCase.buscarTodos, new UploadFile(), filter);
+		}
+		
+		Attachment attachment = default_.getAttachment(attachments);
+		addBehaviorAnnotation(attachment, f, annotations);
+		return attachment;
+	}
 
 	/**
 	 * @param f
@@ -1277,7 +1315,7 @@ public class FormTemplate {
 					
 					dropdownItens = List.of(
 							new DropdownItem("api", "code", "API", null),
-							new DropdownItem("files", "upload", "Anexo", "files"),
+							new DropdownItem("attachments", "upload", "Attachment", "attachments"),
 							new DropdownItem("tags", "tag", "Tag", "tags"),
 							new DropdownItem("timeline", "history", "Histórico", null),
 							new DropdownItem("calendar", "calendar", "Calendar", null),

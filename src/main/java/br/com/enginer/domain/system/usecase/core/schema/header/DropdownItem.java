@@ -8,7 +8,7 @@ public class DropdownItem {
 	private String key;
 	private String icon;
 	private String label;
-	private String badgeType; // "api" | "help" | "files" | "tags" | "timeline" | "calendar"
+	private String badgeType; // "api" | "help" | "attachments" | "tags" | "timeline" | "calendar"
 
 	public DropdownItem() {
 		super();

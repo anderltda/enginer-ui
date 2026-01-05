@@ -57,6 +57,7 @@ public abstract class Base {
 
 	private Class<?> provider;
 
+	private List<UploadFile> attachments;
 	private List<UploadFile> files;
 	private List<?> options;
 	
@@ -316,6 +317,14 @@ public abstract class Base {
 
 	public void setProvider(Class<?> provider) {
 		this.provider = provider;
+	}
+
+	public List<UploadFile> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<UploadFile> attachments) {
+		this.attachments = attachments;
 	}
 
 	public List<UploadFile> getFiles() {
