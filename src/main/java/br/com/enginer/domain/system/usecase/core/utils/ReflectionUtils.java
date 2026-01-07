@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import br.com.enginer.domain.system.usecase.core.AbstractUseCase;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIIdPart;
 import br.com.enginer.domain.system.usecase.core.exception.CheckedException;
+import br.com.enginer.domain.system.usecase.core.exception.UncheckedException;
 import br.com.enginer.domain.system.usecase.core.registry.DependencyInjectorRegistry;
 import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.core.schema.instance.DomainId;
@@ -47,6 +48,13 @@ public class ReflectionUtils {
     private static final Map<Class<?>, Object> USECASE_CACHE = new ConcurrentHashMap<>();
 
     /**
+     * Construtor privado para nao instancia
+     */
+    private ReflectionUtils() {
+		super();
+	}
+
+	/**
      * Limpa o cache de UseCases — útil em ambiente de testes ou recarga de contexto.
      */
     public static void clearUseCaseCache() {
@@ -101,9 +109,8 @@ public class ReflectionUtils {
         injector.registerOutboundPorts(outboundPorts);
 
         // 4 - Injeta os Outbounds no UseCase raiz e processa dependências internas
-        if (useCaseInstance instanceof AbstractUseCase<?>) {
-            AbstractUseCase<?> root = (AbstractUseCase<?>) useCaseInstance;
-            DependencyInjector.addOutboundPort(root, outboundPorts);
+        if (useCaseInstance instanceof AbstractUseCase<?> abstractUseCase) {
+            DependencyInjector.addOutboundPort(abstractUseCase, outboundPorts);
         }
 
         // 5 - Retorna o UseCase pronto para uso
@@ -126,14 +133,14 @@ public class ReflectionUtils {
     /**
      * Cria uma instância de uma classe pelo nome completo.
      */
-    private static Object createInstance(String className) throws Exception {
+    private static Object createInstance(String className) throws UncheckedException {
         try {
             Class<?> clazz = Class.forName(className);
-            Constructor<?> ctor = clazz.getDeclaredConstructor();
-            ctor.setAccessible(true);
-            return ctor.newInstance();
-        } catch (ClassNotFoundException ex) {
-            throw new CheckedException("Classe UseCase não encontrada: " + className, ex);
+            Constructor<?> constructor = clazz.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            return constructor.newInstance();
+        } catch (Exception ex) {
+            throw new UncheckedException("Classe UseCase não encontrada: " + className, ex);
         }
     }
 
@@ -169,14 +176,18 @@ public class ReflectionUtils {
 	 * @return Lista de campos refletidos
 	 * @throws NoSuchFieldException se algum campo não existir na classe
 	 */
-	public static Field[] getFieldsByName(Class<?> clazz, String[] fieldNames) throws Exception {
-		List<Field> fields = new ArrayList<>();
-		for (String name : fieldNames) {
-			Field field = clazz.getDeclaredField(name);
-			field.setAccessible(true);
-			fields.add(field);
-		}
-		return fields.toArray(new Field[0]);
+	public static Field[] getFieldsByName(Class<?> clazz, String[] fieldNames) throws UncheckedException {
+		try {
+			List<Field> fields = new ArrayList<>();
+			for (String name : fieldNames) {
+				Field field = clazz.getDeclaredField(name);
+				field.setAccessible(true);
+				fields.add(field);
+			}
+			return fields.toArray(new Field[0]);
+        } catch (Exception ex) {
+            throw new UncheckedException("Pegar lista de fields de uma classe " + clazz.getName(), ex);
+        }
 	}
 	
 	/**

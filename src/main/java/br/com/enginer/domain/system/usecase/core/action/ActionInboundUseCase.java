@@ -82,9 +82,9 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
         try {
         	
         	/** Injected Dependency */
-        	Object UseCase = injectedDependency(domain);
+        	Object useCase = injectedDependency(domain);
         	
-            return (Domain<?>) ReflectionUtils.execute(UseCase, ActionUseCase.buscarPorId, domain);
+            return (Domain<?>) ReflectionUtils.execute(useCase, ActionUseCase.buscarPorId, domain);
             
         } catch (Exception ex) {
             loggerOutboundPort.error(ActionInboundUseCase.class, ex);
@@ -105,9 +105,9 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
 		try {
 			
         	/** Injected Dependency */
-        	Object UseCase = injectedDependency(domain);
+        	Object useCase = injectedDependency(domain);
         	
-			return (Domain<?>) ReflectionUtils.execute(UseCase, ActionUseCase.buscarPorRegistroUnico, domain, filter);
+			return (Domain<?>) ReflectionUtils.execute(useCase, ActionUseCase.buscarPorRegistroUnico, domain, filter);
 			
 		} catch (Exception ex) {
 			loggerOutboundPort.error(ActionInboundUseCase.class, ex);
@@ -129,9 +129,9 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
         try {
         	
         	/** Injected Dependency */
-        	Object UseCase = injectedDependency(domain);
+        	Object useCase = injectedDependency(domain);
         	
-            return (List<Domain<?>>) ReflectionUtils.execute(UseCase, ActionUseCase.buscarTodos, domain, filter);
+            return (List<Domain<?>>) ReflectionUtils.execute(useCase, ActionUseCase.buscarTodos, domain, filter);
             
         } catch (Exception ex) {
             loggerOutboundPort.error(ActionInboundUseCase.class, ex);
@@ -153,9 +153,9 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
         try {
         	
         	/** Injected Dependency */
-        	Object UseCase = injectedDependency(domain);
+        	Object useCase = injectedDependency(domain);
             
-            return (PageResult<Domain<?>>) ReflectionUtils.execute(UseCase, ActionUseCase.buscarTodosPaginado, domain, filter);
+            return (PageResult<Domain<?>>) ReflectionUtils.execute(useCase, ActionUseCase.buscarTodosPaginado, domain, filter);
             
         } catch (Exception ex) {
             loggerOutboundPort.error(ActionInboundUseCase.class, ex);
@@ -178,9 +178,9 @@ public class ActionInboundUseCase<T extends Domain<?>> implements ActionInboundP
         try {
         	
         	/** Injected Dependency */
-        	Object UseCase = injectedDependency(domain);
+        	Object useCase = injectedDependency(domain);
             
-            return (PageResult<Domain<?>>) ReflectionUtils.execute(UseCase, ActionUseCase.buscarTodosPaginado, domain, filter, method);
+            return (PageResult<Domain<?>>) ReflectionUtils.execute(useCase, ActionUseCase.buscarTodosPaginado, domain, filter, method);
             
         } catch (Exception ex) {
             loggerOutboundPort.error(ActionInboundUseCase.class, ex);
