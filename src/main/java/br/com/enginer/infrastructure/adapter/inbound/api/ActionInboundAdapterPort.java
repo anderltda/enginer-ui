@@ -32,6 +32,8 @@ import br.com.enginer.domain.system.dto.entity.logger.ActionLogger;
 import br.com.enginer.domain.system.dto.entity.tag.SearchOverlay;
 import br.com.enginer.domain.system.dto.entity.tag.TagType;
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
+import br.com.enginer.domain.system.dto.entity.user.UserAccount;
+import br.com.enginer.domain.system.dto.entity.user.UserAccountIdentity;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.UIDomain;
 import br.com.enginer.domain.system.usecase.core.constants.Constants;
 import br.com.enginer.domain.system.usecase.core.exception.CheckedException;
@@ -64,6 +66,50 @@ public class ActionInboundAdapterPort {
 		this.objectMapper = objectMapper;
 		this.logger = logger;
 	}
+	
+	// ============================================================================================
+	// LOGIN
+	// Status codes esperados
+	// •	200 OK: login ok
+	// •	401 Unauthorized: provider/subject inválido (ou usuário inativo)
+	// •	403 Forbidden: usuário bloqueado / sem permissão
+	// •	422 Unprocessable Entity: payload inválido (faltando provider/subject)
+	// •	500: erro inesperado
+	// ============================================================================================
+	/**
+	 * @return
+	 * @throws CheckedException
+	 */
+	@PostMapping("/login")
+    public ResponseEntity<UserAccount> login(@UIDomain Domain<?> domain, @RequestBody JsonNode json) throws CheckedException {
+		
+		logger.info(ActionInboundAdapterPort.class, "Executando login: " + domain);
+		
+		JsonNode normalizedNode = NormalizeUtils.normalizer(json);
+		
+		logger.info(ActionInboundAdapterPort.class, "Payload normalizado: \n" + normalizedNode.toPrettyString());
+        
+		Map<String, Object> filters = new HashMap<>();
+		filters.put("provider", normalizedNode.get("provider"));
+		filters.put("providerSubject", normalizedNode.get("subject"));
+		filters.put("providerTenant", normalizedNode.get("tenant"));
+
+		UserAccountIdentity userAccountIdentity = (UserAccountIdentity) actionInboundPort.searchWithBySingleConditions(new UserAccountIdentity(), filters);
+        
+		filters.clear();
+		filters.put("id", userAccountIdentity.getUserId());
+		
+		UserAccount userAccount = (UserAccount) actionInboundPort.searchWithBySingleConditions(domain, filters);
+		
+		filters.clear();
+		filters.put("id", userAccount.getUploadFile().getId());
+		
+		UploadFile uploadFile = (UploadFile) actionInboundPort.searchWithBySingleConditions(userAccount.getUploadFile(), filters);
+		
+		userAccount.setUploadFile(uploadFile);
+
+        return ResponseEntity.ok(userAccount);
+    }
 	
 	// ============================================================================================
 	// CALENDAR

@@ -35,6 +35,8 @@ public class TraceFilter extends OncePerRequestFilter {
             String userid = request.getHeader("X-User-Id");
             String mobile = request.getHeader("X-Is-Mobile");
             String mode = request.getHeader("X-UI-Mode");
+            String source = request.getHeader("X-Source");
+            String auth = request.getHeader("Authorization");
             Boolean isDisabled = DomainResolver.parseDisabled(mode);
 
             MDC.put("url", url);
@@ -45,6 +47,8 @@ public class TraceFilter extends OncePerRequestFilter {
             MDC.put("modal", modal);
             MDC.put("disabled", isDisabled.toString());
             MDC.put("mobile", mobile);
+            MDC.put("source", source);
+            MDC.put("auth", auth);
             
             System.out.println("MDC TRACE FILTER: " + MDC.getCopyOfContextMap());
 
