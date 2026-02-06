@@ -18,11 +18,20 @@ import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.core.schema.instance.DomainId;
 import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 import br.com.enginer.domain.system.usecase.core.utils.StringsUtils;
-import br.com.enginer.infrastructure.utils.PackageScannerUtils;
+import br.com.enginer.infrastructure.configuration.scanner.PackageScannerCache;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class DomainResolver implements HandlerMethodArgumentResolver {
+	
+	private final PackageScannerCache scanner;
+	
+	/**
+	 * @param scanner
+	 */
+	public DomainResolver(PackageScannerCache scanner) {
+		this.scanner = scanner;
+	}
 
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
@@ -54,8 +63,8 @@ public class DomainResolver implements HandlerMethodArgumentResolver {
 
 		String id = extractIdFromUri(request.getRequestURI());
 
-		Object found = PackageScannerUtils.findClassBySimpleName(Constants.PACKAGE_NAME_DOMAIN, StringsUtils.firstUpper(domainName));
-
+		Object found = scanner.newInstance(domainName);
+		
 		if (found == null) {
 			throw new IllegalArgumentException("Domínio não encontrado: " + domainName);
 		}

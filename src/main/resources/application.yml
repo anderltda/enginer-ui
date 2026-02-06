@@ -5,6 +5,9 @@ logging:
   config: classpath:logback-spring.xml
 datasource:
   api: http://localhost:8080/v1/enginer-data
+enginer:
+  scanner:
+    base-packages: br.com.enginer.domain
 spring:
   profiles:
     default: local

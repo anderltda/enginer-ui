@@ -91,8 +91,8 @@ public class ActionInboundAdapterPort {
         
 		Map<String, Object> filters = new HashMap<>();
 		filters.put("provider", normalizedNode.get("provider"));
-		filters.put("providerSubject", normalizedNode.get("subject"));
 		filters.put("providerTenant", normalizedNode.get("tenant"));
+		filters.put("providerSubject", normalizedNode.get("subject"));
 
 		UserAccountIdentity userAccountIdentity = (UserAccountIdentity) actionInboundPort.searchWithBySingleConditions(new UserAccountIdentity(), filters);
         
