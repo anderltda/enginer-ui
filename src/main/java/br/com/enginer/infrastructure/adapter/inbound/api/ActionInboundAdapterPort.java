@@ -13,7 +13,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +35,10 @@ import br.com.enginer.domain.system.dto.entity.logger.ActionLogger;
 import br.com.enginer.domain.system.dto.entity.tag.SearchOverlay;
 import br.com.enginer.domain.system.dto.entity.tag.TagType;
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
+import br.com.enginer.domain.system.dto.entity.user.LoginRequest;
+import br.com.enginer.domain.system.dto.entity.user.LoginResponse;
+import br.com.enginer.domain.system.dto.entity.user.RefreshRequest;
+import br.com.enginer.domain.system.dto.entity.user.RefreshResponse;
 import br.com.enginer.domain.system.dto.entity.user.UserAccount;
 import br.com.enginer.domain.system.dto.entity.user.UserAccountIdentity;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.UIDomain;
@@ -42,6 +49,8 @@ import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 import br.com.enginer.domain.system.usecase.port.inbound.api.ActionInboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
+import br.com.enginer.infrastructure.service.JwtUnsafeReader;
+import br.com.enginer.infrastructure.service.KeycloakTokenService;
 import br.com.enginer.infrastructure.utils.NormalizeUtils;
 
 /**
@@ -53,16 +62,19 @@ import br.com.enginer.infrastructure.utils.NormalizeUtils;
 public class ActionInboundAdapterPort {
 	
 	private final ActionInboundPort<?> actionInboundPort;
+	private final KeycloakTokenService keycloakTokenService;
 	private final ObjectMapper objectMapper;
 	private final LoggerOutboundPort logger;
 
 	/**
 	 * @param actionInboundPort
+	 * @param keycloakTokenService
 	 * @param objectMapper
 	 * @param logger
 	 */
-	public ActionInboundAdapterPort(ActionInboundPort<?> actionInboundPort, ObjectMapper objectMapper, LoggerOutboundPort logger) {
+	public ActionInboundAdapterPort(ActionInboundPort<?> actionInboundPort, KeycloakTokenService keycloakTokenService, ObjectMapper objectMapper, LoggerOutboundPort logger) {
 		this.actionInboundPort = actionInboundPort;
+		this.keycloakTokenService = keycloakTokenService;
 		this.objectMapper = objectMapper;
 		this.logger = logger;
 	}
@@ -81,31 +93,95 @@ public class ActionInboundAdapterPort {
 	 * @throws CheckedException
 	 */
 	@PostMapping("/login")
-    public ResponseEntity<UserAccount> login(@UIDomain Domain<?> domain, @RequestBody JsonNode json) throws CheckedException {
+    public ResponseEntity<LoginResponse> login(@UIDomain Domain<?> domain, @RequestBody LoginRequest req) throws CheckedException {
 		
 		logger.info(ActionInboundAdapterPort.class, "Executando login: " + domain);
 		
-		JsonNode normalizedNode = NormalizeUtils.normalizer(json);
+		// 1) autentica no provider (Keycloak) e pega token
+		if (!"KEYCLOAK".equalsIgnoreCase(req.provider())) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
 		
-		logger.info(ActionInboundAdapterPort.class, "Payload normalizado: \n" + normalizedNode.toPrettyString());
-        
-		Map<String, Object> filters = new HashMap<>();
-		filters.put("provider", normalizedNode.get("provider"));
-		filters.put("providerTenant", normalizedNode.get("tenant"));
-		filters.put("providerSubject", normalizedNode.get("subject"));
+	    KeycloakTokenService.TokenResponse token = keycloakTokenService.passwordGrant(req.username(), req.password());
 
-		UserAccountIdentity userAccountIdentity = (UserAccountIdentity) actionInboundPort.searchWithBySingleConditions(new UserAccountIdentity(), filters);
+	    // 2) extrai subject (sub) do access token
+	    String subject = JwtUnsafeReader.readSub(token.accessToken());
+
+	    // 3) acha identidade no seu banco (provider + tenant + subject)
+		Map<String, Object> filters = new HashMap<>();
+		filters.put("provider", req.provider());
+		filters.put("providerTenant", req.tenant());
+		filters.put("providerSubject", subject);
+
+		UserAccountIdentity identity = (UserAccountIdentity) actionInboundPort.searchWithBySingleConditions(new UserAccountIdentity(), filters);
         
+	    if (identity == null) {
+	        // aqui você decide:
+	        // - criar automaticamente user/identity (provisioning), OU
+	        // - bloquear login
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+	    }
+		
+	    // 4) carrega UserAccount do seu sistema
 		filters.clear();
-		filters.put("id", userAccountIdentity.getUserId());
+		filters.put("id", identity.getUserId());
 		
 		UserAccount userAccount = (UserAccount) actionInboundPort.searchWithBySingleConditions(domain, filters);
 		
-		filters.clear();
-		filters.put("id", userAccount.getUploadFile().getId());
-		
-        return ResponseEntity.ok(userAccount);
+		// 5) devolve o contrato recomendado
+		LoginResponse response = new LoginResponse(
+				token.accessToken(), 
+				token.refreshToken(), 
+				token.expiresIn(),
+				token.tokenType(), 
+				userAccount);
+	    
+        return ResponseEntity.ok(response);
     }
+	
+	/**
+	 * @param req
+	 * @return
+	 */
+	@PostMapping("/refresh")
+	public ResponseEntity<RefreshResponse> refresh(@RequestBody RefreshRequest req) {
+
+	    if (req == null || req.refreshToken() == null || req.refreshToken().isBlank()) {
+	        return ResponseEntity.unprocessableEntity().build(); // 422
+	    }
+
+	    try {
+	    	
+	        KeycloakTokenService.TokenResponse token = keycloakTokenService.refreshGrant(req.refreshToken());
+
+	        RefreshResponse response = new RefreshResponse(
+	            token.accessToken(),
+	            token.refreshToken(), 
+	            token.expiresIn(),
+	            token.tokenType()
+	        );
+
+	        return ResponseEntity.ok(response);
+
+	    } catch (Exception e) {
+	        // refresh inválido/expirado => 401
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+	    }
+	}
+	
+	/**
+	 * @param jwt
+	 * @return
+	 */
+	@GetMapping("/secure-test")
+	public Map<String, Object> secureTest(@AuthenticationPrincipal Jwt jwt) {
+	    return Map.of(
+	        "sub", jwt.getSubject(),
+	        "preferred_username", jwt.getClaimAsString("preferred_username"),
+	        "iss", jwt.getIssuer().toString(),
+	        "exp", jwt.getExpiresAt()
+	    );
+	}
 	
 	// ============================================================================================
 	// CALENDAR

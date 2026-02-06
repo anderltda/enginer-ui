@@ -3,12 +3,25 @@ server:
   address: 0.0.0.0
 logging:
   config: classpath:logback-spring.xml
+  level:
+    org.springframework.security: DEBUG
 datasource:
   api: http://localhost:8080/v1/enginer-data
 enginer:
   scanner:
     base-packages: br.com.enginer.domain
+security:
+  keycloak:
+    base-url: "http://localhost:9090"
+    realm: "enginer"
+    client-id: "enginer-web"
+    client-secret: ""
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9090/realms/enginer
   profiles:
     default: local
   servlet:
