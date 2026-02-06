@@ -104,10 +104,6 @@ public class ActionInboundAdapterPort {
 		filters.clear();
 		filters.put("id", userAccount.getUploadFile().getId());
 		
-		UploadFile uploadFile = (UploadFile) actionInboundPort.searchWithBySingleConditions(userAccount.getUploadFile(), filters);
-		
-		userAccount.setUploadFile(uploadFile);
-
         return ResponseEntity.ok(userAccount);
     }
 	
@@ -272,7 +268,7 @@ public class ActionInboundAdapterPort {
 	 * @throws IOException
 	 */
 	@GetMapping("/download")
-	public ResponseEntity<byte[]> download(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws IOException {
+	public ResponseEntity<byte[]> download(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter, @RequestParam(defaultValue = "true") boolean inline) throws IOException {
 
 		if(filter != null && filter.isEmpty()) {
 			return ResponseEntity.badRequest().build();
@@ -283,10 +279,12 @@ public class ActionInboundAdapterPort {
 	    Path path = Path.of(file.getPath());
 
 	    byte[] content = Files.readAllBytes(path);
+	    
+	    String dispositionType = inline ? "inline" : "attachment";
 
 	    return ResponseEntity.ok()
-	            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getName() + "\"")
-	            .header(HttpHeaders.CONTENT_TYPE, file.getType())
+	            .contentType(org.springframework.http.MediaType.parseMediaType(file.getType()))
+	            .header(HttpHeaders.CONTENT_DISPOSITION, dispositionType + "; filename=\"" + file.getName() + "\"")
 	            .body(content);
 	}	
 

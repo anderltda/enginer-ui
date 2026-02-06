@@ -107,6 +107,13 @@
 			<artifactId>commons-codec</artifactId>
 		</dependency>
 		<!-- upload de arquivos -->
+		<!-- para gerar thumbs -->
+		<dependency>
+			<groupId>net.coobird</groupId>
+			<artifactId>thumbnailator</artifactId>
+			<version>0.4.19</version>
+		</dependency>
+		<!-- para gerar thumbs -->
 		<!-- javapoet -->
 		<dependency>
 			<groupId>com.squareup</groupId>

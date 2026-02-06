@@ -64,6 +64,7 @@ public class UploadFile extends DomainAbstract<Long> {
 	private String domainId;
 	private Boolean isPublic;
 	private Instant createdAt;
+	private transient String purpose; // SEM USO
 	private transient String uid;
 	private transient String status;
 	private transient byte[] bytes;
@@ -184,6 +185,14 @@ public class UploadFile extends DomainAbstract<Long> {
 	public void setCreatedAt(Instant createdAt) {
 		this.createdAt = createdAt;
 	}
+	
+	public String getPurpose() {
+		return purpose;
+	}
+	
+	public void setPurpose(String purpose) {
+		this.purpose = purpose;
+	}
 
 	public String getUid() {
 		return uid;
@@ -231,6 +240,7 @@ public class UploadFile extends DomainAbstract<Long> {
 		return "UploadFile [id=" + id + ", name=" + name + ", storageName=" + storageName + ", type=" + type + ", size="
 				+ size + ", path=" + path + ", storageType=" + storageType + ", checksumSha256=" + checksumSha256
 				+ ", domain=" + domain + ", domainId=" + domainId + ", isPublic=" + isPublic + ", createdAt="
-				+ createdAt + ", uid=" + uid + ", status=" + status + ", bytes=" + Arrays.toString(bytes);
+				+ createdAt + ", purpose=" + purpose + ", uid=" + uid + ", status=" + status + ", bytes="
+				+ Arrays.toString(bytes) + "]";
 	}
 }
