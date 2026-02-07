@@ -1,33 +1,41 @@
 server:
   port: 8081
   address: 0.0.0.0
+
 logging:
   config: classpath:logback-spring.xml
   level:
     org.springframework.security: DEBUG
-datasource:
+
+datasource: # Configurações do banco de dados
   api: http://localhost:8080/v1/enginer-data
-enginer:
+
+enginer: # Caminho para os arquivos de configuração do Enginer
   scanner:
     base-packages: br.com.enginer.domain
-security:
-  keycloak:
-    base-url: "http://localhost:9090"
-    realm: "enginer"
-    client-id: "enginer-web"
-    client-secret: ""
-spring:
+
+
+security: # CORS usado pelo SecurityCorsProperties (prefix = security.cors)
+  cors:
+    allowed-origins:
+      - "http://localhost:4200"
+      - "http://192.168.68.101:4200"
+
+spring: # Configurações do Spring Security para validação de tokens JWT emitidos pelo Keycloak
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:9090/realms/enginer
-  profiles:
+          issuer-uri: "http://localhost:9090/realms/enginer" # backend valida o token emitido pelo Keycloak
+
+  profiles: # Define o perfil ativo para a aplicação. Pode ser 'local', 'dev', 'prod', etc. O perfil 'local' é usado para desenvolvimento local.
     default: local
+
   servlet:
     multipart:
       max-file-size: 250MB
       max-request-size: 250MB
+
 management: # http://localhost:8081/actuator
   server:
     port: 8081
@@ -38,4 +46,4 @@ management: # http://localhost:8081/actuator
         include: health,info,beans,mappings,metrics,startup
   endpoint:
     startup:
-      enabled: true 
+      enabled: true

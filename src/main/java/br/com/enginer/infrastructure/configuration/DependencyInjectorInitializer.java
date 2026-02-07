@@ -16,7 +16,7 @@ import jakarta.annotation.PostConstruct;
  * mantendo a arquitetura hexagonal limpa.
  */
 @Component
-public class InjectorInitializer {
+public class DependencyInjectorInitializer {
 
     // --- Cores ANSI para console ---
     private static final String RESET = "\u001B[0m";
