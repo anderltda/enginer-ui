@@ -1,6 +1,7 @@
 package br.com.enginer.domain.system.dto.entity.user;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import br.com.enginer.domain.system.usecase.core.annotation.instance.UIHeader;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIButtonAction;
@@ -45,18 +46,12 @@ import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 public class UserAccountIdentity extends DomainAbstract<Long> {
 
 	private Long id;
-
-	private Long userId;
-
 	private String provider;
-
 	private String providerSubject;
-
 	private String providerTenant;
-
 	private Instant createdAt;
-
 	private UserAccount userAccount;
+	private Long idSystemUserAccount;
 
 	/**
 	 * 
@@ -100,20 +95,6 @@ public class UserAccountIdentity extends DomainAbstract<Long> {
 	 */
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	/**
-	 * @return the userId
-	 */
-	public Long getUserId() {
-		return userId;
-	}
-
-	/**
-	 * @param userId the userId to set
-	 */
-	public void setUserId(Long userId) {
-		this.userId = userId;
 	}
 
 	/**
@@ -185,4 +166,38 @@ public class UserAccountIdentity extends DomainAbstract<Long> {
 	public void setUserAccount(UserAccount userAccount) {
 		this.userAccount = userAccount;
 	}
+	
+	/**
+	 * @param idSystemUserAccount the idSystemUserAccount to set
+	 */
+	public void setIdSystemUserAccount(Long idSystemUserAccount) {
+		this.userAccount = new UserAccount(idSystemUserAccount);
+		this.idSystemUserAccount = idSystemUserAccount;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserAccountIdentity other = (UserAccountIdentity) obj;
+		return Objects.equals(id, other.id);
+	}
+
+	@Override
+	public String toString() {
+		return "UserAccountIdentity [id=" + id + ", provider=" + provider + ", providerSubject=" + providerSubject
+				+ ", providerTenant=" + providerTenant + ", createdAt=" + createdAt + ", userAccount=" + userAccount
+				+ ", idSystemUserAccount=" + idSystemUserAccount + "]";
+	}
+
+	
 }

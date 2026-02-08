@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import br.com.enginer.infrastructure.configuration.DomainResolver;
+import br.com.enginer.infrastructure.configuration.resolver.DomainResolver;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**

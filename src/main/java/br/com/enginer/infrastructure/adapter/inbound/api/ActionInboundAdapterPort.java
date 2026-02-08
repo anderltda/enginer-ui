@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpHeaders;
@@ -37,20 +36,22 @@ import br.com.enginer.domain.system.dto.entity.tag.SearchOverlay;
 import br.com.enginer.domain.system.dto.entity.tag.TagType;
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.dto.entity.user.UserAccount;
-import br.com.enginer.domain.system.dto.entity.user.UserAccountIdentity;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.UIDomain;
 import br.com.enginer.domain.system.usecase.core.constants.Constants;
 import br.com.enginer.domain.system.usecase.core.exception.CheckedException;
 import br.com.enginer.domain.system.usecase.core.page.PageResult;
 import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
+import br.com.enginer.domain.system.usecase.core.utils.StringsUtils;
 import br.com.enginer.domain.system.usecase.port.inbound.api.ActionInboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
+import br.com.enginer.domain.system.usecase.user.vo.JwtVo;
+import br.com.enginer.infrastructure.configuration.security.KeycloakTenantResolver;
 import br.com.enginer.infrastructure.utils.NormalizeUtils;
 
 /**
- * Adaptador REST responsável por receber requisições externas
- * e delegar a execução de ações aos casos de uso (UseCases) correspondentes.
+ * Adaptador REST responsável por receber requisições externas e delegar a
+ * execução de ações aos casos de uso (UseCases) correspondentes.
  */
 @RestController
 @RequestMapping("/v1/enginer-ui/action")
@@ -77,90 +78,38 @@ public class ActionInboundAdapterPort {
 	/**
 	 * Resolve o usuário do seu sistema baseado no JWT (Keycloak).
 	 *
-	 * Fluxo esperado:
-	 * - Front autentica direto no Keycloak (Authorization Code + PKCE)
-	 * - Front chama GET /me com Authorization: Bearer <token>
-	 * - Backend valida o token automaticamente via Resource Server e retorna UserAccount
+	 * Fluxo esperado: - Front autentica direto no Keycloak (Authorization Code +
+	 * PKCE) - Front chama GET /me com Authorization: Bearer <token> - Backend
+	 * valida o token automaticamente via Resource Server e retorna UserAccount
 	 */
 	@GetMapping("/me")
 	public ResponseEntity<UserAccount> me(@AuthenticationPrincipal Jwt jwt, @RequestHeader(value = "X-Tenant", required = false) String tenantHeader) throws CheckedException {
 
 		try {
-			
-			// tenant pode vir do header ou cair no default
-			final String tenant = (tenantHeader == null || tenantHeader.isBlank()) ? "dev" : tenantHeader.trim();
-			final String provider = "KEYCLOAK";
 
-			final String subject = jwt.getSubject(); // sub
-			final String username = jwt.getClaimAsString("preferred_username");
+			// tenant pode vir do header ou cair no default
+			final String provider = "KEYCLOAK";
+			final String subject = jwt.getSubject();
+			final String tenant = KeycloakTenantResolver.fromIssuer(jwt.getIssuer() != null ? jwt.getIssuer().toString() : null);
 			final String email = jwt.getClaimAsString("email");
-			final String name = jwt.getClaimAsString("name");
+			// claims úteis (podem variar conforme seu Keycloak)
+			final String username = StringsUtils.firstNonBlank(jwt.getClaimAsString("preferred_username"), jwt.getClaimAsString("username"));
+			final String name = StringsUtils.firstNonBlank(jwt.getClaimAsString("name"), jwt.getClaimAsString("given_name"), username, subject);
+
+			JwtVo jwtVo = new JwtVo(provider, subject, tenant, email, username, name);
 
 			logger.info(ActionInboundAdapterPort.class, "Executando /me - sub=" + subject + ", username=" + username + ", tenant=" + tenant);
 
-			// 1) tenta achar identity (provider + tenant + subject)
-			Map<String, Object> filters = new HashMap<>();
-			filters.put("provider", provider);
-			filters.put("providerTenant", tenant);
-			filters.put("providerSubject", subject);
+			UserAccount userAccount = (UserAccount) actionInboundPort.methodName(new UserAccount(), "login", jwtVo);
 
-			UserAccountIdentity identity = (UserAccountIdentity) actionInboundPort.searchWithBySingleConditions(new UserAccountIdentity(), filters);
-
-			UserAccount userAccount;
-
-			// 2) se identity existir, carrega UserAccount pelo userId
-			if (identity != null) {
-				filters.clear();
-				filters.put("id", identity.getUserId());
-				userAccount = (UserAccount) actionInboundPort.searchWithBySingleConditions(new UserAccount(), filters);
-
-				if (userAccount == null) {
-					// identity aponta pra um user inexistente (inconsistência)
-					return ResponseEntity.status(401).build();
-				}
-
-				return ResponseEntity.ok(userAccount);
-			}
-
-			// 3) identity NÃO existe -> provisioning (opcional)
-			// 3.1) tenta achar usuário existente pelo username
-			// (ajuste esse filtro caso seu UserAccount use outro campo)
-			filters.clear();
-			filters.put("username", username);
-
-			userAccount = (UserAccount) actionInboundPort.searchWithBySingleConditions(new UserAccount(), filters);
-
-			// 3.2) se não existe usuário, cria um
 			if (userAccount == null) {
-				
-				UserAccount newUser = new UserAccount();
-				newUser.setUsername(username);
-				newUser.setEmail(email);
-				newUser.setDisplayName((name != null && !name.isBlank()) ? name : username);
-				// publicId: você pode usar subject como identificador público, se fizer sentido
-				newUser.setPublicId(UUID.fromString(subject));
-
-				ActionLogger actionLogger = new ActionLogger();
-				actionLogger.setDomain(newUser.getClass().getSimpleName());
-				actionLogger.setDatelocal(LocalDateTime.now());
-				actionLogger.setAction("save");
-				newUser.setActionLogger(actionLogger);
-				
-				userAccount = (UserAccount) actionInboundPort.methodName(newUser);
-				
-				if (userAccount == null || userAccount.getId() == null) {
-					return ResponseEntity.status(500).build();
-				}
+				userAccount = (UserAccount) actionInboundPort.methodName(new UserAccount(), "onboard", jwtVo);
 			}
 
-			// 3.3) cria identity vinculando provider/tenant/subject ao userId
-			UserAccountIdentity newIdentity = new UserAccountIdentity();
-			newIdentity.setProvider(provider);
-			newIdentity.setProviderTenant(tenant);
-			newIdentity.setProviderSubject(subject);
-			newIdentity.setUserId(userAccount.getId());
-
-			actionInboundPort.methodName(newIdentity);
+			if (userAccount == null) {
+				// identity aponta pra um user inexistente (inconsistência)
+				return ResponseEntity.status(401).build();
+			}
 
 			return ResponseEntity.ok(userAccount);
 
@@ -170,15 +119,33 @@ public class ActionInboundAdapterPort {
 		}
 	}
 
+	/**
+	 * @param jwt
+	 */
+	private void credentials(Jwt jwt) {
+		String subject = jwt.getSubject(); // sub (id único do usuário no Keycloak)
+		String username = jwt.getClaimAsString("preferred_username"); // username
+		String email = jwt.getClaimAsString("email"); // email (se existir)
+
+		// Exemplo: roles do realm
+		Map<String, Object> realmAccess = jwt.getClaim("realm_access");
+		// realmAccess.get("roles") -> lista
+
+		logger.info(ActionInboundAdapterPort.class, "User authenticated: sub=" + subject + " username=" + username + " email=" + email);
+	}
+
 	// ============================================================================================
 	// CALENDAR
 	// ============================================================================================
 
 	@GetMapping("/calendar")
-	public ResponseEntity<List<Domain<?>>> calendar(@UIDomain Domain<?> domain, @RequestParam String year, @RequestParam String month, @RequestParam String day) {
+	public ResponseEntity<List<Domain<?>>> calendar(@UIDomain Domain<?> domain, @RequestParam String year,
+			@RequestParam String month, @RequestParam String day, @AuthenticationPrincipal Jwt jwt) {
 
 		try {
-			
+
+			credentials(jwt);
+
 			logger.info(ActionInboundAdapterPort.class, "Executando calendar: " + domain);
 
 			if (year == null || year.trim().isEmpty() || month == null || month.trim().isEmpty()) {
@@ -211,10 +178,13 @@ public class ActionInboundAdapterPort {
 	// ============================================================================================
 
 	@GetMapping("/search")
-	public ResponseEntity<SearchOverlay> search(@UIDomain Domain<?> domain, @RequestParam(required = false) String params) {
+	public ResponseEntity<SearchOverlay> search(@UIDomain Domain<?> domain,
+			@RequestParam(required = false) String params, @AuthenticationPrincipal Jwt jwt) {
 
 		try {
-			
+
+			credentials(jwt);
+
 			logger.info(ActionInboundAdapterPort.class, "Executando search: " + domain);
 
 			if (params == null || params.trim().isEmpty()) {
@@ -227,9 +197,7 @@ public class ActionInboundAdapterPort {
 					? Arrays.stream(params.split(";")).map(String::trim).filter(s -> !s.isBlank()).toList()
 					: Arrays.stream(params.trim().split("\\s+")).map(String::trim).filter(s -> !s.isBlank()).toList();
 
-			String result = parts.stream()
-					.map(ReflectionUtils::normalizeAlphaNumeric)
-					.distinct()
+			String result = parts.stream().map(ReflectionUtils::normalizeAlphaNumeric).distinct()
 					.collect(Collectors.joining(","));
 
 			Map<String, Object> filters = new HashMap<>();
@@ -255,28 +223,31 @@ public class ActionInboundAdapterPort {
 	// ============================================================================================
 
 	@PostMapping("/session")
-	public ResponseEntity<Map<String, String>> startSession() throws CheckedException {
+	public ResponseEntity<Map<String, String>> startSession(@AuthenticationPrincipal Jwt jwt) throws CheckedException {
+		credentials(jwt);
 		String uploadId = (String) actionInboundPort.methodName(new UploadFile(), "startSession");
 		return ResponseEntity.ok(Map.of("uploadId", Objects.toString(uploadId, "")));
 	}
 
 	@PostMapping("/chunk")
-	public ResponseEntity<Void> uploadChunk(
-			@RequestParam String uploadId,
-			@RequestParam int chunkIndex,
-			@RequestParam("file") MultipartFile part) throws Exception {
-
+	public ResponseEntity<Void> uploadChunk(@RequestParam String uploadId, @RequestParam int chunkIndex, @RequestParam("file") MultipartFile part, @AuthenticationPrincipal Jwt jwt) throws Exception {
+		
+		credentials(jwt);
+		
 		actionInboundPort.methodName(new UploadFile(), "uploadChunk", uploadId, chunkIndex, part.getInputStream());
+		
 		return ResponseEntity.ok().build();
 	}
 
 	@PostMapping("/finalize")
-	public ResponseEntity<UploadFile> finalizeUpload(
-			@RequestParam String uploadId,
-			@RequestPart("meta") String jsonMeta) throws Exception {
+	public ResponseEntity<UploadFile> finalizeUpload(@RequestParam String uploadId, @RequestPart("meta") String jsonMeta, @AuthenticationPrincipal Jwt jwt) throws Exception {
+		
+		credentials(jwt);
 
 		UploadFile uploadFile = objectMapper.readValue(jsonMeta, UploadFile.class);
+		
 		uploadFile.setUid(uploadId);
+		
 		uploadFile = (UploadFile) actionInboundPort.methodName(uploadFile);
 
 		return ResponseEntity.ok(uploadFile);
@@ -287,7 +258,9 @@ public class ActionInboundAdapterPort {
 	// ============================================================================================
 
 	@GetMapping("/download")
-	public ResponseEntity<byte[]> download(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter, @RequestParam(defaultValue = "true") boolean inline) throws IOException {
+	public ResponseEntity<byte[]> download(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter, @RequestParam(defaultValue = "true") boolean inline, @AuthenticationPrincipal Jwt jwt) throws IOException {
+
+		credentials(jwt);
 
 		if (filter != null && filter.isEmpty()) {
 			return ResponseEntity.badRequest().build();
@@ -300,8 +273,7 @@ public class ActionInboundAdapterPort {
 
 		String dispositionType = inline ? "inline" : "attachment";
 
-		return ResponseEntity.ok()
-				.contentType(org.springframework.http.MediaType.parseMediaType(file.getType()))
+		return ResponseEntity.ok().contentType(org.springframework.http.MediaType.parseMediaType(file.getType()))
 				.header(HttpHeaders.CONTENT_DISPOSITION, dispositionType + "; filename=\"" + file.getName() + "\"")
 				.body(content);
 	}
@@ -311,10 +283,14 @@ public class ActionInboundAdapterPort {
 	// ============================================================================================
 
 	@PostMapping("/validate/{method}/async")
-	public ResponseEntity<Map<String, Boolean>> validate(@UIDomain Domain<?> domain, @PathVariable String method, @RequestBody String value) throws CheckedException {
+	public ResponseEntity<Map<String, Boolean>> validate(@UIDomain Domain<?> domain, @PathVariable String method, @RequestBody String value, @AuthenticationPrincipal Jwt jwt) throws CheckedException {
 
 		try {
+
+			credentials(jwt);
+
 			logger.info(ActionInboundAdapterPort.class, "Executando domínio no validate: " + domain);
+
 			logger.info(ActionInboundAdapterPort.class, "Executando método: " + method + " com valor: " + value);
 
 			List<String> blockedUsers = List.of("johndoe", "admin", "user123");
@@ -334,14 +310,16 @@ public class ActionInboundAdapterPort {
 	// ============================================================================================
 
 	@GetMapping("/autocomplete")
-	public ResponseEntity<List<Domain<?>>> autocomplete(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws CheckedException {
+	public ResponseEntity<List<Domain<?>>> autocomplete(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter, @AuthenticationPrincipal Jwt jwt) throws CheckedException {
 
 		try {
-			
+
+			credentials(jwt);
+
 			logger.info(ActionInboundAdapterPort.class, "Executando domínio no autocomplete: " + domain);
 
 			List<Domain<?>> list = actionInboundPort.searchByConditions(domain, filter);
-			
+
 			return ResponseEntity.ok(list);
 
 		} catch (Exception ex) {
@@ -355,15 +333,18 @@ public class ActionInboundAdapterPort {
 	// ============================================================================================
 
 	@GetMapping("/research")
-	public ResponseEntity<PageResult<?>> research(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter) throws Exception {
+	public ResponseEntity<PageResult<?>> research(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter, @AuthenticationPrincipal Jwt jwt) throws Exception {
 
 		try {
-			
+
+			credentials(jwt);
+
 			logger.info(ActionInboundAdapterPort.class, "Executando domínio no paginator: " + domain);
+
 			logger.info(ActionInboundAdapterPort.class, "Valores do filtro no paginator:\n" + objectMapper.writeValueAsString(filter));
 
 			PageResult<?> pageResult = actionInboundPort.searchPaginated(domain, filter);
-			
+
 			return ResponseEntity.ok(pageResult);
 
 		} catch (Exception ex) {
@@ -377,11 +358,14 @@ public class ActionInboundAdapterPort {
 	// ============================================================================================
 
 	@PostMapping
-	public ResponseEntity<?> action(@UIDomain Domain<?> domain, @RequestBody JsonNode json) throws CheckedException {
+	public ResponseEntity<?> action(@UIDomain Domain<?> domain, @RequestBody JsonNode json, @AuthenticationPrincipal Jwt jwt) throws CheckedException {
 
 		try {
-			
+
+			credentials(jwt);
+
 			logger.info(ActionInboundAdapterPort.class, "Executando domínio no save: " + domain);
+
 			logger.info(ActionInboundAdapterPort.class, "Payload recebido: \n" + json.toPrettyString());
 
 			List<Domain<?>> newDomains = new ArrayList<>();
@@ -391,9 +375,10 @@ public class ActionInboundAdapterPort {
 				ArrayNode dataArray = (ArrayNode) json.get("data");
 
 				for (JsonNode itemNode : dataArray) {
-					
+
 					JsonNode normalizedNode = NormalizeUtils.normalizer(itemNode);
-					logger.info(ActionInboundAdapterPort.class, "Payload normalizado: \n" + normalizedNode.toPrettyString());
+					logger.info(ActionInboundAdapterPort.class,
+							"Payload normalizado: \n" + normalizedNode.toPrettyString());
 
 					Domain<?> itemDomain = objectMapper.convertValue(normalizedNode, domain.getClass());
 					newDomains.add(itemDomain);

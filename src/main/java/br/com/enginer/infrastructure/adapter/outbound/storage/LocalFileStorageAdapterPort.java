@@ -24,7 +24,7 @@ import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOut
 @Component
 public class LocalFileStorageAdapterPort implements FileStorageOutboundPort {
 
-    private static final Path UPLOAD_DIR = Path.of("/Users/anderson/Downloads/uploads/");
+    private static final Path UPLOAD_DIR = Path.of("/Users/anderson/Downloads/uploads/final");
     private static final Path TEMP_UPLOAD_DIR = Path.of("/Users/anderson/Downloads/uploads/temp");
 
     /** 

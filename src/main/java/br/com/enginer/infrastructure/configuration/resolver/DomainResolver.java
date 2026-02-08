@@ -1,4 +1,4 @@
-package br.com.enginer.infrastructure.configuration;
+package br.com.enginer.infrastructure.configuration.resolver;
 
 import java.lang.reflect.Modifier;
 import java.net.URI;

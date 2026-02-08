@@ -1,20 +1,127 @@
 package br.com.enginer.domain.system.usecase.user;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.dto.entity.user.UserAccount;
+import br.com.enginer.domain.system.dto.entity.user.UserAccountIdentity;
 import br.com.enginer.domain.system.usecase.core.AbstractUseCase;
+import br.com.enginer.domain.system.usecase.core.annotation.AutoDependencyInjector;
 import br.com.enginer.domain.system.usecase.core.exception.UncheckedException;
+import br.com.enginer.domain.system.usecase.core.utils.StringsUtils;
+import br.com.enginer.domain.system.usecase.upload.UploadFileUseCase;
+import br.com.enginer.domain.system.usecase.user.vo.JwtVo;
 
 /**
  * 
  */
 public class UserAccountUseCase extends AbstractUseCase<UserAccount> implements br.com.enginer.domain.system.usecase.port.UserAccountUseCase {
+
+	@AutoDependencyInjector
+	private UserAccountIdentityUseCase userAccountIdentityUseCase;
 	
+	@AutoDependencyInjector
+	private UploadFileUseCase uploadFileUseCase;
+
+	/**
+	 *
+	 */
 	@Override
 	public UserAccount salvar(UserAccount domain) throws UncheckedException {
+		
 		UploadFile uploadFile = domain.getFiles().getFirst();
-		domain.setUploadFile(uploadFile);
+
+		UploadFile uploadFileNew = uploadFileUseCase.buscarFormPorId(uploadFile);
+
+		domain.setUploadFile(uploadFileNew);
+
 		return super.salvar(domain);
+	}
+
+	/**
+	 * @param jwtVo
+	 * @return
+	 * @throws UncheckedException
+	 */
+	@Override
+	public UserAccount login(JwtVo jwtVo) throws UncheckedException {
+
+		Map<String, Object> filters = new HashMap<>();
+		filters.put("provider", jwtVo.provider());
+		filters.put("providerTenant", jwtVo.tenant());
+		filters.put("providerSubject", jwtVo.subject());
+
+		UserAccountIdentity identity = userAccountIdentityUseCase.buscarPorRegistroUnico(new UserAccountIdentity(), filters);
+
+		if (identity == null) return null;
+
+		filters.clear();
+		filters.put("id", identity.getUserAccount().getId());
+
+		UserAccount userAccount = (UserAccount) buscarPorRegistroUnico(new UserAccount(), filters);
+
+		// opcional: sincronizar dados do perfil
+		boolean changed = false;
+
+		if (StringsUtils.isBlank(userAccount.getDisplayName()) && !StringsUtils.isBlank(jwtVo.name())) {
+			userAccount.setDisplayName(jwtVo.name());
+			changed = true;
+		}
+		
+		if (!StringsUtils.isBlank(jwtVo.username()) && (StringsUtils.isBlank(userAccount.getUsername()) || !userAccount.getUsername().equals(jwtVo.username()))) {
+			userAccount.setUsername(jwtVo.username());
+			changed = true;
+		}
+		
+		if (!StringsUtils.isBlank(jwtVo.email()) && (StringsUtils.isBlank(userAccount.getEmail()) || !userAccount.getEmail().equals(jwtVo.email()))) {
+			userAccount.setEmail(jwtVo.email());
+			userAccount.setEmailNormalized(jwtVo.email().trim().toLowerCase(Locale.ROOT));
+			changed = true;
+		}
+
+		if (changed) {
+			super.salvar(userAccount);
+		}
+
+		// se estiver inativo
+		if (Boolean.FALSE.equals(userAccount.getActive())) {
+			throw new UncheckedException("Usuário inativo no sistema");
+		}
+
+		return userAccount;
+	}
+
+	/**
+	 *
+	 */
+	@Override
+	public UserAccount onboard(JwtVo jwtVo) throws UncheckedException {
+
+		UserAccount userAccount = new UserAccount();
+		userAccount.setPublicId(UUID.randomUUID());
+		userAccount.setDisplayName(jwtVo.name());
+		userAccount.setUsername(jwtVo.username());
+		userAccount.setEmail(jwtVo.email());
+		userAccount.setActive(true);
+
+		if (!StringsUtils.isBlank(jwtVo.email())) {
+			userAccount.setEmailNormalized(jwtVo.email().trim().toLowerCase(Locale.ROOT));
+		}
+
+		UserAccount userAccountNew = super.salvar(userAccount);
+
+		UserAccountIdentity identity = new UserAccountIdentity();
+		identity.setProvider(jwtVo.provider());
+		identity.setProviderTenant(jwtVo.tenant());
+		identity.setProviderSubject(jwtVo.subject());
+		identity.setUserAccount(userAccountNew);
+
+		userAccountIdentityUseCase.salvar(identity);
+
+		return userAccountNew;
 	}
 
 }

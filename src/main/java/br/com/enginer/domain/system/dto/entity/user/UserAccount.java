@@ -10,16 +10,15 @@ import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIFile;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIHidden;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIIgnore;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIText;
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.UIPosition;
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.validation.UIFieldValidation;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.UIHeader;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIButtonAction;
-import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.UIButtonBack;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.UIButtonClear;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.filter.UIButtonFilterFormNew;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.filter.UIButtonFilterSearch;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.filter.UIButtonFilterTabNew;
-import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.form.UIButtonFormDelete;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.form.UIButtonFormEdit;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.form.UIButtonFormSave;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.button.paginator.UIButtonPaginatorDelete;
@@ -34,13 +33,11 @@ import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 @UIHeader(title = "User-Account")
 @UIButtonAction(includes = {
 	UIButtonClear.class, 
-	UIButtonBack.class, 
 	// FILTER
 	UIButtonFilterTabNew.class, 
 	UIButtonFilterFormNew.class, 
 	UIButtonFilterSearch.class, 
 	// FORM
-	UIButtonFormDelete.class,
 	UIButtonFormEdit.class, 
 	UIButtonFormSave.class,
 })
@@ -58,19 +55,21 @@ public class UserAccount extends DomainAbstract<Long> {
 	@UIHidden
 	private Long id;
 
+	@UIText(label = "Public ID", disable = true)
 	@UIPosition(x = 1, y = 2)
 	private UUID publicId;
 
-	@UIPosition(x = 1, y = 3)
+	@UIText(label = "Username", disable = true)
+	@UIPosition(x = 2, y = 2)
 	private String username;
 
-	@UIPosition(x = 2, y = 3)
+	@UIPosition(x = 1, y = 3)
 	private String displayName;
 
-	@UIPosition(x = 1, y = 4)
+	@UIPosition(x = 2, y = 3)
 	private String email;
 
-	@UIPosition(x = 2, y = 4)
+	@UIHidden
 	private String emailNormalized;
 
 	@UIHidden

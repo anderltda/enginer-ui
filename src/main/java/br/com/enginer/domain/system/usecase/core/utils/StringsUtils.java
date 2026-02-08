@@ -10,7 +10,12 @@ import java.util.Map;
 
 import br.com.enginer.domain.system.usecase.core.exception.CheckedException;
 
-public class StringsUtils {
+public final class StringsUtils {
+	
+	/**
+	 * 
+	 */
+	private StringsUtils() {}
 
 	/**
 	 * @param value
@@ -27,16 +32,17 @@ public class StringsUtils {
 	public static String getMethod(String value) {
 		return "get".concat(firstUpper(value));
 	}
-	
+
 	/**
 	 * @param str
 	 * @return
 	 */
 	public static String capitalize(String str) {
-		if (str == null || str.isEmpty()) return str;
+		if (str == null || str.isEmpty())
+			return str;
 		return str.substring(0, 1).toUpperCase() + str.substring(1);
 	}
-	
+
 	/**
 	 * @param value
 	 * @return
@@ -57,7 +63,7 @@ public class StringsUtils {
 			returnValue += name.substring(1);
 		return returnValue;
 	}
-	
+
 	/**
 	 * @param name
 	 * @return
@@ -68,7 +74,7 @@ public class StringsUtils {
 			returnValue += name.substring(1);
 		return returnValue;
 	}
-	
+
 	/**
 	 * @param className
 	 * @return
@@ -81,30 +87,30 @@ public class StringsUtils {
 			throw new CheckedException(ex.getMessage(), ex);
 		}
 	}
-	
+
 	/**
 	 * @param clazz
 	 * @return
 	 */
 	public static String convertDtoToUseCasePackage(Class<?> clazz) {
-	    String fullClassName = clazz.getName();
-	    int dtoIndex = fullClassName.indexOf(".dto.");
-	    if (dtoIndex == -1) {
-	        throw new IllegalArgumentException("Pacote 'dto' não encontrado na classe: " + fullClassName);
-	    }
-	    String basePackage = fullClassName.substring(0, dtoIndex);
-	    return getNameUseCase(basePackage.concat(".usecase.").concat(removeIdSuffix(clazz.getSimpleName())));
+		String fullClassName = clazz.getName();
+		int dtoIndex = fullClassName.indexOf(".dto.");
+		if (dtoIndex == -1) {
+			throw new IllegalArgumentException("Pacote 'dto' não encontrado na classe: " + fullClassName);
+		}
+		String basePackage = fullClassName.substring(0, dtoIndex);
+		return getNameUseCase(basePackage.concat(".usecase.").concat(removeIdSuffix(clazz.getSimpleName())));
 	}
-	
+
 	/**
 	 * @param className
 	 * @return
 	 */
 	public static String removeIdSuffix(String className) {
-	    if (className.endsWith("Id")) {
-	        return className.substring(0, className.length() - 2);
-	    }
-	    return className;
+		if (className.endsWith("Id")) {
+			return className.substring(0, className.length() - 2);
+		}
+		return className;
 	}
 
 	/**
@@ -115,9 +121,10 @@ public class StringsUtils {
 	 * @return
 	 */
 	public static String normalizeToCamelCaseFromPascalCase(String input) {
-	    if (input == null || input.isEmpty()) return input;
+		if (input == null || input.isEmpty())
+			return input;
 
-	    return input.substring(0, 1).toLowerCase() + input.substring(1);
+		return input.substring(0, 1).toLowerCase() + input.substring(1);
 	}
 
 	/**
@@ -143,20 +150,21 @@ public class StringsUtils {
 		}
 		return builder.toString().trim();
 	}
-	
+
 	/**
 	 * @param value
 	 * @return
 	 */
 	public static List<?> toList(Object value) {
-	    if (value == null) return Collections.emptyList();
-	    if (value instanceof List<?>) {
-	        return (List<?>) value;
-	    }
-	    if (value.getClass().isArray()) {
-	        return Arrays.asList((Object[]) value);
-	    }
-	    throw new IllegalArgumentException("Não é possível converter para List: " + value.getClass().getName());
+		if (value == null)
+			return Collections.emptyList();
+		if (value instanceof List<?>) {
+			return (List<?>) value;
+		}
+		if (value.getClass().isArray()) {
+			return Arrays.asList((Object[]) value);
+		}
+		throw new IllegalArgumentException("Não é possível converter para List: " + value.getClass().getName());
 	}
 
 	/**
@@ -165,22 +173,22 @@ public class StringsUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Map<String, Object> toMap(Object value) {
-	    if (value instanceof Map<?, ?> map) {
-	        return (Map<String, Object>) map;
-	    }
-	    throw new IllegalArgumentException("Não é possível converter para Map: " + value.getClass().getName());
+		if (value instanceof Map<?, ?> map) {
+			return (Map<String, Object>) map;
+		}
+		throw new IllegalArgumentException("Não é possível converter para Map: " + value.getClass().getName());
 	}
-	
+
 	/**
 	 * @param value
 	 * @return
 	 */
 	public static LocalDate toLocalDate(Object value) {
-		DateTimeFormatter dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE; 
-	    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-	    return LocalDate.parse(value.toString(), value.toString().contains("T") ? dateTimeFormatter : dateFormatter);
+		DateTimeFormatter dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+		return LocalDate.parse(value.toString(), value.toString().contains("T") ? dateTimeFormatter : dateFormatter);
 	}
-	
+
 	/**
 	 * @param value
 	 * @return
@@ -188,30 +196,30 @@ public class StringsUtils {
 	public static LocalDateTime toLocalDateTime(Object value) {
 		return LocalDateTime.parse(value.toString(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 	}
-	
+
 	/**
 	 * Remove todos os caracteres não numéricos de uma String.
 	 *
 	 * @param value texto de entrada (ex: "CPF: 123.456.789-00")
-	 * @return apenas os números (ex: "12345678900"), 
-	 *         ou null se o valor for nulo ou vazio.
+	 * @return apenas os números (ex: "12345678900"), ou null se o valor for nulo ou
+	 *         vazio.
 	 */
 	public static String onlyNumbers(String value) {
-	    if (value == null || value.trim().isEmpty()) {
-	        return null;
-	    }
-	    return value.replaceAll("\\D", ""); // \\D = tudo que não é dígito
+		if (value == null || value.trim().isEmpty()) {
+			return null;
+		}
+		return value.replaceAll("\\D", ""); // \\D = tudo que não é dígito
 	}
-	
+
 	/**
 	 * Verifica se uma String deve ser considerada logicamente nula.
 	 *
 	 * <p>
 	 * Retorna {@code true} quando o valor é:
 	 * <ul>
-	 *   <li>{@code null}</li>
-	 *   <li>uma String vazia ou composta apenas por espaços</li>
-	 *   <li>a String literal "null" (ignora maiúsculas/minúsculas)</li>
+	 * <li>{@code null}</li>
+	 * <li>uma String vazia ou composta apenas por espaços</li>
+	 * <li>a String literal "null" (ignora maiúsculas/minúsculas)</li>
 	 * </ul>
 	 *
 	 * <p>
@@ -220,8 +228,28 @@ public class StringsUtils {
 	 * </p>
 	 */
 	public static boolean isNullOrBlank(String value) {
-	    return value == null 
-	        || value.isBlank() 
-	        || "null".equalsIgnoreCase(value);
+		return value == null || value.isBlank() || "null".equalsIgnoreCase(value);
+	}
+
+	/**
+	 * @param s
+	 * @return
+	 */
+	public static boolean isBlank(String s) {
+		return s == null || s.trim().isEmpty();
+	}
+
+	/**
+	 * @param values
+	 * @return
+	 */
+	public static String firstNonBlank(String... values) {
+		if (values == null)
+			return null;
+		for (String v : values) {
+			if (!isBlank(v))
+				return v;
+		}
+		return null;
 	}
 }

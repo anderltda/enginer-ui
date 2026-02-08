@@ -3,6 +3,7 @@ package br.com.enginer.domain.system.dto.entity.calendar;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
+import br.com.enginer.domain.system.dto.entity.user.UserAccount;
 import br.com.enginer.domain.system.usecase.core.enums.TypeEvent;
 import br.com.enginer.domain.system.usecase.core.schema.instance.DomainAbstract;
 import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
@@ -15,7 +16,8 @@ public class EventCalendar extends DomainAbstract<Long> {
 	private Long id;
 	private String title;
 	private String style;
-	private String userId = "1";
+	private UserAccount userAccount;
+	private Long idSystemUserAccount;
 	private TypeEvent type;
 	private LocalDateTime startDateTime;
 	private LocalDateTime endDateTime;
@@ -97,17 +99,25 @@ public class EventCalendar extends DomainAbstract<Long> {
 	}
 
 	/**
-	 * @return the userId
+	 * @return the userAccount
 	 */
-	public String getUserId() {
-		return userId;
+	public UserAccount getUserAccount() {
+		return userAccount;
+	}
+	
+	/**
+	 * @param userAccount the userAccount to set
+	 */
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
 	}
 
 	/**
-	 * @param userId the userId to set
+	 * @param idSystemUserAccount the idSystemUserAccount to set
 	 */
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setIdSystemUserAccount(Long idSystemUserAccount) {
+		this.userAccount = new UserAccount(idSystemUserAccount);
+		this.idSystemUserAccount = idSystemUserAccount;
 	}
 
 	/**
@@ -266,9 +276,10 @@ public class EventCalendar extends DomainAbstract<Long> {
 
 	@Override
 	public String toString() {
-		return "EventCalendar [id=" + id + ", title=" + title + ", style=" + style + ", userId=" + userId + ", type="
-				+ type + ", startDateTime=" + startDateTime + ", endDateTime=" + endDateTime + ", allDay=" + allDay
-				+ ", readOnly=" + readOnly + ", location=" + location + ", code=" + code + ", note=" + note
-				+ ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
+		return "EventCalendar [id=" + id + ", title=" + title + ", style=" + style + ", userAccount=" + userAccount
+				+ ", idSystemUserAccount=" + idSystemUserAccount + ", type=" + type + ", startDateTime=" + startDateTime
+				+ ", endDateTime=" + endDateTime + ", allDay=" + allDay + ", readOnly=" + readOnly + ", location="
+				+ location + ", code=" + code + ", note=" + note + ", createdAt=" + createdAt + ", updatedAt="
+				+ updatedAt + "]";
 	}
 }

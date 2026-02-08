@@ -6,7 +6,7 @@ import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import br.com.enginer.infrastructure.configuration.DomainResolver;
+import br.com.enginer.infrastructure.configuration.resolver.DomainResolver;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

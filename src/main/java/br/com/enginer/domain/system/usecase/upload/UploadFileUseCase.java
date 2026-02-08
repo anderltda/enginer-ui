@@ -338,7 +338,7 @@ public class UploadFileUseCase extends AbstractUseCase<UploadFile> implements br
 			uploadFile.setStorageName(optimizedName);
 
 			// Opcional: remover original para não acumular lixo
-			// Files.deleteIfExists(originalPath);
+			fileStorageOutboundPort.deleteFile(originalPath);
 
 			return optimizedPath;
 
