@@ -57,6 +57,42 @@ import net.coobird.thumbnailator.Thumbnails;
  * </ul>
  */
 public class UploadFileUseCase extends AbstractUseCase<UploadFile> implements br.com.enginer.domain.system.usecase.port.UploadFileUseCase {
+	
+	/**
+	 * Exclui o arquivo fisicamente e remove o registro no banco.
+	 *
+	 * <p>
+	 * O fluxo garante que o uploadFile exista via {@code buscarPorId} antes de
+	 * apagar.
+	 * </p>
+	 *
+	 * @param uploadFile referência do arquivo (contendo id)
+	 * @throws UncheckedException em caso de erro de IO ou exclusão
+	 */
+	@Override
+	public void excluir(UploadFile uploadFile) throws UncheckedException {
+
+		try {
+
+			loggerOutboundPort.info(getClass(), "Exclusão iniciada para arquivo: " + uploadFile.getName());
+
+			// Garante os dados reais (principalmente path)
+			uploadFile = buscarPorId(uploadFile);
+
+			// Apaga fisicamente via porta de storage
+			Path path = Path.of(uploadFile.getPath());
+			fileStorageOutboundPort.deleteFile(path);
+
+			// Remove metadados no banco
+			super.excluir(uploadFile);
+
+			loggerOutboundPort.info(getClass(), "Arquivo excluído com sucesso: " + uploadFile.getPath());
+
+		} catch (IOException ex) {
+			loggerOutboundPort.error(getClass(), "Erro ao excluir arquivo: " + uploadFile.getName(), ex);
+			throw new UncheckedException("Erro ao excluir o arquivo: " + ex.getMessage(), ex);
+		}
+	}
 
 	/**
 	 * Inicia uma sessão de upload (idempotente).
@@ -96,11 +132,11 @@ public class UploadFileUseCase extends AbstractUseCase<UploadFile> implements br
 			// Salva o chunk (implementação concreta fica no adapter)
 			fileStorageOutboundPort.saveChunk(uploadId, chunkIndex, content);
 
-		} catch (IOException e) {
-			throw new UncheckedException("Falha ao salvar chunk: " + e.getMessage(), e);
+		} catch (IOException ex) {
+			throw new UncheckedException("Falha ao salvar chunk: " + ex.getMessage(), ex);
 		}
 	}
-
+	
 	/**
 	 * Finaliza o upload:
 	 * <ul>
@@ -184,82 +220,10 @@ public class UploadFileUseCase extends AbstractUseCase<UploadFile> implements br
 
 			return saved;
 
-		} catch (UncheckedException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new UncheckedException("Falha ao finalizar upload: " + e.getMessage(), e);
-		}
-	}
-
-	/**
-	 * Exclui o arquivo fisicamente e remove o registro no banco.
-	 *
-	 * <p>
-	 * O fluxo garante que o uploadFile exista via {@code buscarPorId} antes de
-	 * apagar.
-	 * </p>
-	 *
-	 * @param uploadFile referência do arquivo (contendo id)
-	 * @throws UncheckedException em caso de erro de IO ou exclusão
-	 */
-	@Override
-	public void excluir(UploadFile uploadFile) throws UncheckedException {
-
-		try {
-
-			loggerOutboundPort.info(getClass(), "Exclusão iniciada para arquivo: " + uploadFile.getName());
-
-			// Garante os dados reais (principalmente path)
-			uploadFile = buscarPorId(uploadFile);
-
-			// Apaga fisicamente via porta de storage
-			Path path = Path.of(uploadFile.getPath());
-			fileStorageOutboundPort.deleteFile(path);
-
-			// Remove metadados no banco
-			super.excluir(uploadFile);
-
-			loggerOutboundPort.info(getClass(), "Arquivo excluído com sucesso: " + uploadFile.getPath());
-
-		} catch (IOException e) {
-			loggerOutboundPort.error(getClass(), "Erro ao excluir arquivo: " + uploadFile.getName(), e);
-			throw new UncheckedException("Erro ao excluir o arquivo: " + e.getMessage(), e);
-		}
-	}
-
-	/**
-	 * Calcula checksum SHA-256 e tamanho do arquivo via streaming (sem carregar
-	 * tudo na memória).
-	 *
-	 * <p>
-	 * Bom para arquivos grandes, pois evita {@code byte[]} gigante.
-	 * </p>
-	 *
-	 * @param path caminho do arquivo no filesystem
-	 * @return map contendo: "checksum" (String), "size" (Long)
-	 * @throws IOException se falhar leitura ou algoritmo indisponível
-	 */
-	private Map<String, Object> calculateChecksumAndSize(Path path) throws IOException {
-
-		try {
-
-			MessageDigest md = MessageDigest.getInstance("SHA-256");
-
-			long size;
-
-			// DigestInputStream acumula hash enquanto lê a stream
-			try (InputStream in = Files.newInputStream(path); DigestInputStream dis = new DigestInputStream(in, md)) {
-
-				// Conta bytes e lê tudo sem armazenar
-				size = dis.transferTo(OutputStream.nullOutputStream());
-			}
-
-			String sha256 = HexFormat.of().formatHex(md.digest());
-
-			return Map.of("checksum", sha256, "size", size);
-
-		} catch (Exception e) {
-			throw new IOException("Algoritmo SHA-256 não disponível.", e);
+		} catch (UncheckedException ex) {
+			throw ex;
+		} catch (Exception ex) {
+			throw new UncheckedException("Falha ao finalizar upload: " + ex.getMessage(), ex);
 		}
 	}
 
@@ -289,6 +253,7 @@ public class UploadFileUseCase extends AbstractUseCase<UploadFile> implements br
 	private Path optimizeAvatarIfNeeded(UploadFile uploadFile, Path originalPath) {
 
 		try {
+			
 			// Não é avatar => não otimiza
 			if (!isAvatar(uploadFile))
 				return null;
@@ -306,7 +271,9 @@ public class UploadFileUseCase extends AbstractUseCase<UploadFile> implements br
 			}
 
 			String optimizedName = "avatar_" + UUID.randomUUID().toString().replace("-", "").toUpperCase() + ".jpg";
-			Path optimizedPath = dir.resolve(optimizedName);
+			
+			Path optimizedPath = fileStorageOutboundPort.resolveFinalPath("avatar", optimizedName);
+			fileStorageOutboundPort.mergeChunks(uploadFile.getUid(), optimizedPath);
 
 			// Lê imagem para BufferedImage
 			BufferedImage src = ImageIO.read(originalPath.toFile());
@@ -342,10 +309,46 @@ public class UploadFileUseCase extends AbstractUseCase<UploadFile> implements br
 
 			return optimizedPath;
 
-		} catch (Exception e) {
+		} catch (Exception ex) {
 			// best-effort: falhou otimização => loga e segue com original
-			loggerOutboundPort.warn(getClass(), "Falha ao otimizar avatar. Usando original. Motivo: " + e.getMessage());
+			loggerOutboundPort.warn(getClass(), "Falha ao otimizar avatar. Usando original. Motivo: " + ex.getMessage());
 			return null;
+		}
+	}
+	
+	/**
+	 * Calcula checksum SHA-256 e tamanho do arquivo via streaming (sem carregar
+	 * tudo na memória).
+	 *
+	 * <p>
+	 * Bom para arquivos grandes, pois evita {@code byte[]} gigante.
+	 * </p>
+	 *
+	 * @param path caminho do arquivo no filesystem
+	 * @return map contendo: "checksum" (String), "size" (Long)
+	 * @throws IOException se falhar leitura ou algoritmo indisponível
+	 */
+	private Map<String, Object> calculateChecksumAndSize(Path path) throws IOException {
+
+		try {
+
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+			long size;
+
+			// DigestInputStream acumula hash enquanto lê a stream
+			try (InputStream in = Files.newInputStream(path); DigestInputStream dis = new DigestInputStream(in, md)) {
+
+				// Conta bytes e lê tudo sem armazenar
+				size = dis.transferTo(OutputStream.nullOutputStream());
+			}
+
+			String sha256 = HexFormat.of().formatHex(md.digest());
+
+			return Map.of("checksum", sha256, "size", size);
+
+		} catch (Exception ex) {
+			throw new IOException("Algoritmo SHA-256 não disponível.", ex);
 		}
 	}
 
@@ -377,6 +380,7 @@ public class UploadFileUseCase extends AbstractUseCase<UploadFile> implements br
 	 * @return imagem RGB sem alpha
 	 */
 	private BufferedImage removeAlphaIfNeeded(BufferedImage src) {
+		
 		if (!src.getColorModel().hasAlpha()) {
 			return src;
 		}

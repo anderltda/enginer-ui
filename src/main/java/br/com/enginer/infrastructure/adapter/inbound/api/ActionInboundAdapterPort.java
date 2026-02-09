@@ -127,30 +127,6 @@ public class ActionInboundAdapterPort {
 		}
 	}
 
-	/**
-	 * @param jwt
-	 */
-	private void addCredentials(Domain<?> domain, Jwt jwt) {
-
-		ProviderIdentity identity = ProviderIdentity.fromJwt("KEYCLOAK", jwt);
-
-		String sessionUserAccount = SerializableLambda.extractMethodName((SerializableTriConsumer<String, String, String>) userAccountUseCase::sessionUserAccount);
-
-		UserAccount userAccount = (UserAccount) actionInboundPort.methodName(new UserAccount(), sessionUserAccount,
-				identity.provider(), identity.providerTenant(), identity.providerSubject());
-		
-		if(domain.getActionLogger() == null) {
-			ActionLogger actionLogger = new ActionLogger();
-			actionLogger.setUserId(userAccount.getId().toString());
-			actionLogger.setUsername(userAccount.getUsername());
-			domain.setActionLogger(actionLogger);
-		} else {
-			domain.getActionLogger().setUserId(userAccount.getId().toString());
-			domain.getActionLogger().setUsername(userAccount.getUsername());			
-		}
-
-	}
-
 	// ============================================================================================
 	// CALENDAR
 	// ============================================================================================
@@ -159,8 +135,6 @@ public class ActionInboundAdapterPort {
 	public ResponseEntity<List<Domain<?>>> calendar(@UIDomain Domain<?> domain, @RequestParam String year, @RequestParam String month, @RequestParam String day, @AuthenticationPrincipal Jwt jwt) {
 
 		try {
-
-			addCredentials(domain, jwt);
 
 			logger.info(ActionInboundAdapterPort.class, "Executando calendar: " + domain);
 
@@ -179,6 +153,8 @@ public class ActionInboundAdapterPort {
 			filters.put("endDateTime", endDateTime);
 			filters.put("endDateTime_op", Constants.MENOR_OU_IGUAL);
 			filters.put("idSystemUserAccount", Long.parseLong(domain.getActionLogger().getUserId()));
+
+			addCredentials(domain, jwt);
 
 			List<Domain<?>> events = actionInboundPort.searchByConditions(domain, filters);
 
@@ -213,7 +189,10 @@ public class ActionInboundAdapterPort {
 					? Arrays.stream(params.split(";")).map(String::trim).filter(s -> !s.isBlank()).toList()
 					: Arrays.stream(params.trim().split("\\s+")).map(String::trim).filter(s -> !s.isBlank()).toList();
 
-			String result = parts.stream().map(ReflectionUtils::normalizeAlphaNumeric).distinct()
+			String result = parts
+					.stream()
+					.map(ReflectionUtils::normalizeAlphaNumeric)
+					.distinct()
 					.collect(Collectors.joining(","));
 
 			Map<String, Object> filters = new HashMap<>();
@@ -422,5 +401,29 @@ public class ActionInboundAdapterPort {
 			logger.error(ActionInboundAdapterPort.class, ex);
 			throw ex;
 		}
+	}
+	
+	/**
+	 * @param jwt
+	 */
+	private void addCredentials(Domain<?> domain, Jwt jwt) {
+
+		ProviderIdentity identity = ProviderIdentity.fromJwt("KEYCLOAK", jwt);
+
+		String sessionUserAccount = SerializableLambda.extractMethodName((SerializableTriConsumer<String, String, String>) userAccountUseCase::sessionUserAccount);
+
+		UserAccount userAccount = (UserAccount) actionInboundPort.methodName(new UserAccount(), sessionUserAccount,
+				identity.provider(), identity.providerTenant(), identity.providerSubject());
+		
+		if(domain.getActionLogger() == null) {
+			ActionLogger actionLogger = new ActionLogger();
+			actionLogger.setUserId(userAccount.getId().toString());
+			actionLogger.setUsername(userAccount.getUsername());
+			domain.setActionLogger(actionLogger);
+		} else {
+			domain.getActionLogger().setUserId(userAccount.getId().toString());
+			domain.getActionLogger().setUsername(userAccount.getUsername());			
+		}
+
 	}
 }

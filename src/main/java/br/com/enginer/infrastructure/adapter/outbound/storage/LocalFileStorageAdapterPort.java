@@ -24,7 +24,7 @@ import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOut
 @Component
 public class LocalFileStorageAdapterPort implements FileStorageOutboundPort {
 
-    private static final Path UPLOAD_DIR = Path.of("/Users/anderson/Downloads/uploads/final");
+    private static final Path UPLOAD_DIR = Path.of("/Users/anderson/Downloads/uploads");
     private static final Path TEMP_UPLOAD_DIR = Path.of("/Users/anderson/Downloads/uploads/temp");
 
     /** 
@@ -158,6 +158,30 @@ public class LocalFileStorageAdapterPort implements FileStorageOutboundPort {
         
         return UPLOAD_DIR.resolve(clean);
     }
+    
+    /** 
+     * Resolve o caminho final (no storage) para um storageName passando um novo subdir. 
+     */
+	@Override
+	public Path resolveFinalPath(String subdir, String storageName) throws IOException {
+
+		Files.createDirectories(UPLOAD_DIR);
+
+		String cleanName = StringUtils.cleanPath(storageName);
+
+		Path base = UPLOAD_DIR;
+		
+		if (subdir != null && !subdir.isBlank()) {
+		
+			String cleanSubdir = StringUtils.cleanPath(subdir);
+			
+			base = UPLOAD_DIR.resolve(cleanSubdir);
+			
+			Files.createDirectories(base);
+		}
+
+		return base.resolve(cleanName);
+	}
     
     /**
      * Move um arquivo existente para um novo diretório dentro do storage.

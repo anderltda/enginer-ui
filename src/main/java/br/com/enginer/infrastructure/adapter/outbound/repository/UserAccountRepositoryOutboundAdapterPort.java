@@ -49,7 +49,7 @@ public class UserAccountRepositoryOutboundAdapterPort extends DelegatingReposito
 
 		try {
 
-			if (domain == null || domain instanceof UserAccount || domain.getActionLogger() == null)
+			if (domain == null || domain instanceof UserAccount || domain.getActionLogger() == null || domain.getActionLogger().getUserId() == null)
 				return;
 
 			ReflectionUtils.execute(domain, "setIdSystemUserAccount", Long.valueOf(domain.getActionLogger().getUserId()));
