@@ -147,14 +147,14 @@ public class ActionInboundAdapterPort {
 			LocalDateTime startDateTime = LocalDateTime.of(2025, 1, 1, 0, 0);
 			LocalDateTime endDateTime = LocalDateTime.of(2035, 12, 31, 23, 59, 59);
 
+			addCredentials(domain, jwt);
+
 			Map<String, Object> filters = new HashMap<>();
 			filters.put("startDateTime", startDateTime);
 			filters.put("startDateTime_op", Constants.MAIOR_OU_IGUAL);
 			filters.put("endDateTime", endDateTime);
 			filters.put("endDateTime_op", Constants.MENOR_OU_IGUAL);
 			filters.put("idSystemUserAccount", Long.parseLong(domain.getActionLogger().getUserId()));
-
-			addCredentials(domain, jwt);
 
 			List<Domain<?>> events = actionInboundPort.searchByConditions(domain, filters);
 
