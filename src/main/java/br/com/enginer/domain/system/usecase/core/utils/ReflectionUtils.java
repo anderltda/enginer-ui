@@ -248,7 +248,6 @@ public class ReflectionUtils {
 	    return value;
 	}	
 
-	
 	/**
 	 * Verifica se o objeto informado possui pelo menos um campo não nulo.
 	 * <p>
@@ -285,8 +284,6 @@ public class ReflectionUtils {
 	    }
 	    return false;
 	}
-	
-
 
 	/**
 	 * Verifica se o objeto informado possui algum campo {@code null}, vazio ou em branco,

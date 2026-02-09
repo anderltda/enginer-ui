@@ -11,9 +11,10 @@ import br.com.enginer.domain.system.dto.entity.user.UserAccountIdentity;
 import br.com.enginer.domain.system.usecase.core.AbstractUseCase;
 import br.com.enginer.domain.system.usecase.core.annotation.AutoDependencyInjector;
 import br.com.enginer.domain.system.usecase.core.exception.UncheckedException;
+import br.com.enginer.domain.system.usecase.core.exception.UserInactiveException;
 import br.com.enginer.domain.system.usecase.core.utils.StringsUtils;
 import br.com.enginer.domain.system.usecase.upload.UploadFileUseCase;
-import br.com.enginer.domain.system.usecase.user.vo.JwtVo;
+import br.com.enginer.domain.system.usecase.user.vo.ProviderIdentityVo;
 
 /**
  * 
@@ -25,6 +26,27 @@ public class UserAccountUseCase extends AbstractUseCase<UserAccount> implements 
 	
 	@AutoDependencyInjector
 	private UploadFileUseCase uploadFileUseCase;
+	
+	/**
+	 *
+	 */
+	@Override
+	public UserAccount sessionUserAccount(String provider, String providerTenant, String providerSubject) throws UncheckedException {
+
+		Map<String, Object> filters = new HashMap<>();
+		filters.put("provider", provider);
+		filters.put("providerTenant", providerTenant);
+		filters.put("providerSubject", providerSubject);
+		
+		UserAccountIdentity identity = userAccountIdentityUseCase.buscarPorRegistroUnico(new UserAccountIdentity(), filters);
+		
+		filters.clear();
+		filters.put("id", identity.getUserAccount().getId());
+
+		UserAccount userAccount = (UserAccount) buscarPorRegistroUnico(new UserAccount(), filters);
+		
+		return userAccount;
+	}
 
 	/**
 	 *
@@ -47,7 +69,7 @@ public class UserAccountUseCase extends AbstractUseCase<UserAccount> implements 
 	 * @throws UncheckedException
 	 */
 	@Override
-	public UserAccount login(JwtVo jwtVo) throws UncheckedException {
+	public UserAccount login(ProviderIdentityVo jwtVo) throws UncheckedException {
 
 		Map<String, Object> filters = new HashMap<>();
 		filters.put("provider", jwtVo.provider());
@@ -88,7 +110,7 @@ public class UserAccountUseCase extends AbstractUseCase<UserAccount> implements 
 
 		// se estiver inativo
 		if (Boolean.FALSE.equals(userAccount.getActive())) {
-			throw new UncheckedException("Usuário inativo no sistema");
+			throw new UserInactiveException();
 		}
 
 		return userAccount;
@@ -98,7 +120,7 @@ public class UserAccountUseCase extends AbstractUseCase<UserAccount> implements 
 	 *
 	 */
 	@Override
-	public UserAccount onboard(JwtVo jwtVo) throws UncheckedException {
+	public UserAccount onboard(ProviderIdentityVo jwtVo) throws UncheckedException {
 
 		UserAccount userAccount = new UserAccount();
 		userAccount.setPublicId(UUID.randomUUID());

@@ -13,6 +13,7 @@ import br.com.enginer.domain.system.usecase.port.outbound.publisher.PublisherOut
 import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.TagRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.UploadFileRepositoryOutboundPort;
+import br.com.enginer.domain.system.usecase.port.outbound.repository.UserAccountRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
 import br.com.enginer.infrastructure.adapter.outbound.repository.TypeRepository;
 
@@ -50,6 +51,9 @@ public interface ActionUseCase<T extends Domain<?>> {
 	
 	TagRepositoryOutboundPort getTagRepositoryOutboundPort();
     void setTagRepositoryOutboundPort(TagRepositoryOutboundPort tagRepositoryOutboundPort);
+    
+    UserAccountRepositoryOutboundPort getUserAccountRepositoryOutboundPort();
+    void setUserAccountRepositoryOutboundPort(UserAccountRepositoryOutboundPort userAccountRepositoryOutboundPort);
 	
 	// ------------------- Ações principais -------------------
 	T formBuscarPorId(T domain) throws Exception;

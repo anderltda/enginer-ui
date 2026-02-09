@@ -29,6 +29,7 @@ import br.com.enginer.domain.system.usecase.port.outbound.publisher.PublisherOut
 import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.TagRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.UploadFileRepositoryOutboundPort;
+import br.com.enginer.domain.system.usecase.port.outbound.repository.UserAccountRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
 import br.com.enginer.infrastructure.adapter.outbound.repository.TypeRepository;
 import br.com.enginer.infrastructure.injector.DependencyInjector;
@@ -68,6 +69,11 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements UIUseCase<
 	 * Port de acesso a dados para Tags.
 	 */
     protected TagRepositoryOutboundPort tagRepositoryOutboundPort;
+    
+    /**
+     * Port de acesso a dados para UserAccount.
+     */
+    protected UserAccountRepositoryOutboundPort userAccountRepositoryOutboundPort;
 
     /** 
 	 * 
@@ -142,6 +148,16 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements UIUseCase<
     public TagRepositoryOutboundPort getTagRepositoryOutboundPort() {
         return tagRepositoryOutboundPort;
     }
+	
+	@Override
+	public UserAccountRepositoryOutboundPort getUserAccountRepositoryOutboundPort() {
+		return userAccountRepositoryOutboundPort;
+	}
+	
+	@Override
+	public void setUserAccountRepositoryOutboundPort(UserAccountRepositoryOutboundPort userAccountRepositoryOutboundPort) {
+		this.userAccountRepositoryOutboundPort = userAccountRepositoryOutboundPort;
+	}
 
 	/** 
 	 * --------------------------------------------------------------------------------------------
@@ -355,6 +371,8 @@ public abstract class AbstractUseCase<T extends Domain<?>> implements UIUseCase<
 		tagRepositoryOutboundPort.pull(domain);
 		
 		uploadFileRepositoryOutboundPort.pull(domain);
+		
+		userAccountRepositoryOutboundPort.pull(domain);
 	}
 
 	@PostAction

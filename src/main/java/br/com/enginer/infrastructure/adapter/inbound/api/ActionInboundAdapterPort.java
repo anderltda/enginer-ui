@@ -1,6 +1,7 @@
 package br.com.enginer.infrastructure.adapter.inbound.api;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -39,14 +40,19 @@ import br.com.enginer.domain.system.dto.entity.user.UserAccount;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.UIDomain;
 import br.com.enginer.domain.system.usecase.core.constants.Constants;
 import br.com.enginer.domain.system.usecase.core.exception.CheckedException;
+import br.com.enginer.domain.system.usecase.core.fn.SerializableLambda;
+import br.com.enginer.domain.system.usecase.core.fn.SerializableConsumer;
+import br.com.enginer.domain.system.usecase.core.fn.SerializableRunnable;
+import br.com.enginer.domain.system.usecase.core.fn.SerializableTriConsumer;
 import br.com.enginer.domain.system.usecase.core.page.PageResult;
 import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
-import br.com.enginer.domain.system.usecase.core.utils.StringsUtils;
 import br.com.enginer.domain.system.usecase.port.inbound.api.ActionInboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
-import br.com.enginer.domain.system.usecase.user.vo.JwtVo;
-import br.com.enginer.infrastructure.configuration.security.KeycloakTenantResolver;
+import br.com.enginer.domain.system.usecase.upload.UploadFileUseCase;
+import br.com.enginer.domain.system.usecase.user.UserAccountUseCase;
+import br.com.enginer.domain.system.usecase.user.vo.ProviderIdentityVo;
+import br.com.enginer.infrastructure.configuration.security.ProviderIdentity;
 import br.com.enginer.infrastructure.utils.NormalizeUtils;
 
 /**
@@ -56,10 +62,12 @@ import br.com.enginer.infrastructure.utils.NormalizeUtils;
 @RestController
 @RequestMapping("/v1/enginer-ui/action")
 public class ActionInboundAdapterPort {
-
+	
 	private final ActionInboundPort<?> actionInboundPort;
 	private final ObjectMapper objectMapper;
 	private final LoggerOutboundPort logger;
+	private final UserAccountUseCase userAccountUseCase;
+	private final UploadFileUseCase uploadFileUseCase;
 
 	/**
 	 * @param actionInboundPort
@@ -70,6 +78,8 @@ public class ActionInboundAdapterPort {
 		this.actionInboundPort = actionInboundPort;
 		this.objectMapper = objectMapper;
 		this.logger = logger;
+		this.userAccountUseCase = new UserAccountUseCase();
+		this.uploadFileUseCase = new UploadFileUseCase();
 	}
 
 	// ============================================================================================
@@ -86,24 +96,22 @@ public class ActionInboundAdapterPort {
 	public ResponseEntity<UserAccount> me(@AuthenticationPrincipal Jwt jwt, @RequestHeader(value = "X-Tenant", required = false) String tenantHeader) throws CheckedException {
 
 		try {
+			
+			ProviderIdentity identity = ProviderIdentity.fromJwt("KEYCLOAK", jwt);
+			
+			ProviderIdentityVo providerIdentity = new ProviderIdentityVo(identity.provider(), identity.providerSubject(),
+					identity.providerTenant(), identity.email(), identity.username(), identity.name());
+			
+			String login = SerializableLambda.extractMethodName((SerializableConsumer<ProviderIdentityVo>) userAccountUseCase::login);
 
-			// tenant pode vir do header ou cair no default
-			final String provider = "KEYCLOAK";
-			final String subject = jwt.getSubject();
-			final String tenant = KeycloakTenantResolver.fromIssuer(jwt.getIssuer() != null ? jwt.getIssuer().toString() : null);
-			final String email = jwt.getClaimAsString("email");
-			// claims úteis (podem variar conforme seu Keycloak)
-			final String username = StringsUtils.firstNonBlank(jwt.getClaimAsString("preferred_username"), jwt.getClaimAsString("username"));
-			final String name = StringsUtils.firstNonBlank(jwt.getClaimAsString("name"), jwt.getClaimAsString("given_name"), username, subject);
-
-			JwtVo jwtVo = new JwtVo(provider, subject, tenant, email, username, name);
-
-			logger.info(ActionInboundAdapterPort.class, "Executando /me - sub=" + subject + ", username=" + username + ", tenant=" + tenant);
-
-			UserAccount userAccount = (UserAccount) actionInboundPort.methodName(new UserAccount(), "login", jwtVo);
+			UserAccount userAccount = (UserAccount) actionInboundPort.methodName(new UserAccount(), login, providerIdentity);
 
 			if (userAccount == null) {
-				userAccount = (UserAccount) actionInboundPort.methodName(new UserAccount(), "onboard", jwtVo);
+
+				String onboard = SerializableLambda.extractMethodName((SerializableConsumer<ProviderIdentityVo>) userAccountUseCase::onboard);
+				
+				userAccount = (UserAccount) actionInboundPort.methodName(new UserAccount(), onboard, providerIdentity);
+
 			}
 
 			if (userAccount == null) {
@@ -122,16 +130,25 @@ public class ActionInboundAdapterPort {
 	/**
 	 * @param jwt
 	 */
-	private void credentials(Jwt jwt) {
-		String subject = jwt.getSubject(); // sub (id único do usuário no Keycloak)
-		String username = jwt.getClaimAsString("preferred_username"); // username
-		String email = jwt.getClaimAsString("email"); // email (se existir)
+	private void addCredentials(Domain<?> domain, Jwt jwt) {
 
-		// Exemplo: roles do realm
-		Map<String, Object> realmAccess = jwt.getClaim("realm_access");
-		// realmAccess.get("roles") -> lista
+		ProviderIdentity identity = ProviderIdentity.fromJwt("KEYCLOAK", jwt);
 
-		logger.info(ActionInboundAdapterPort.class, "User authenticated: sub=" + subject + " username=" + username + " email=" + email);
+		String sessionUserAccount = SerializableLambda.extractMethodName((SerializableTriConsumer<String, String, String>) userAccountUseCase::sessionUserAccount);
+
+		UserAccount userAccount = (UserAccount) actionInboundPort.methodName(new UserAccount(), sessionUserAccount,
+				identity.provider(), identity.providerTenant(), identity.providerSubject());
+		
+		if(domain.getActionLogger() == null) {
+			ActionLogger actionLogger = new ActionLogger();
+			actionLogger.setUserId(userAccount.getId().toString());
+			actionLogger.setUsername(userAccount.getUsername());
+			domain.setActionLogger(actionLogger);
+		} else {
+			domain.getActionLogger().setUserId(userAccount.getId().toString());
+			domain.getActionLogger().setUsername(userAccount.getUsername());			
+		}
+
 	}
 
 	// ============================================================================================
@@ -139,12 +156,11 @@ public class ActionInboundAdapterPort {
 	// ============================================================================================
 
 	@GetMapping("/calendar")
-	public ResponseEntity<List<Domain<?>>> calendar(@UIDomain Domain<?> domain, @RequestParam String year,
-			@RequestParam String month, @RequestParam String day, @AuthenticationPrincipal Jwt jwt) {
+	public ResponseEntity<List<Domain<?>>> calendar(@UIDomain Domain<?> domain, @RequestParam String year, @RequestParam String month, @RequestParam String day, @AuthenticationPrincipal Jwt jwt) {
 
 		try {
 
-			credentials(jwt);
+			addCredentials(domain, jwt);
 
 			logger.info(ActionInboundAdapterPort.class, "Executando calendar: " + domain);
 
@@ -162,6 +178,7 @@ public class ActionInboundAdapterPort {
 			filters.put("startDateTime_op", Constants.MAIOR_OU_IGUAL);
 			filters.put("endDateTime", endDateTime);
 			filters.put("endDateTime_op", Constants.MENOR_OU_IGUAL);
+			filters.put("idSystemUserAccount", Long.parseLong(domain.getActionLogger().getUserId()));
 
 			List<Domain<?>> events = actionInboundPort.searchByConditions(domain, filters);
 
@@ -178,12 +195,11 @@ public class ActionInboundAdapterPort {
 	// ============================================================================================
 
 	@GetMapping("/search")
-	public ResponseEntity<SearchOverlay> search(@UIDomain Domain<?> domain,
-			@RequestParam(required = false) String params, @AuthenticationPrincipal Jwt jwt) {
+	public ResponseEntity<SearchOverlay> search(@UIDomain Domain<?> domain, @RequestParam(required = false) String params, @AuthenticationPrincipal Jwt jwt) {
 
 		try {
 
-			credentials(jwt);
+			addCredentials(domain, jwt);
 
 			logger.info(ActionInboundAdapterPort.class, "Executando search: " + domain);
 
@@ -224,17 +240,20 @@ public class ActionInboundAdapterPort {
 
 	@PostMapping("/session")
 	public ResponseEntity<Map<String, String>> startSession(@AuthenticationPrincipal Jwt jwt) throws CheckedException {
-		credentials(jwt);
-		String uploadId = (String) actionInboundPort.methodName(new UploadFile(), "startSession");
+		
+		String startSession = SerializableLambda.extractMethodName((SerializableRunnable) uploadFileUseCase::startSession);
+		
+		String uploadId = (String) actionInboundPort.methodName(new UploadFile(), startSession);
+		
 		return ResponseEntity.ok(Map.of("uploadId", Objects.toString(uploadId, "")));
 	}
 
 	@PostMapping("/chunk")
 	public ResponseEntity<Void> uploadChunk(@RequestParam String uploadId, @RequestParam int chunkIndex, @RequestParam("file") MultipartFile part, @AuthenticationPrincipal Jwt jwt) throws Exception {
 		
-		credentials(jwt);
+		String uploadChunk = SerializableLambda.extractMethodName((SerializableTriConsumer<String, Integer, InputStream>) uploadFileUseCase::uploadChunk);
 		
-		actionInboundPort.methodName(new UploadFile(), "uploadChunk", uploadId, chunkIndex, part.getInputStream());
+		actionInboundPort.methodName(new UploadFile(), uploadChunk, uploadId, chunkIndex, part.getInputStream());
 		
 		return ResponseEntity.ok().build();
 	}
@@ -242,8 +261,6 @@ public class ActionInboundAdapterPort {
 	@PostMapping("/finalize")
 	public ResponseEntity<UploadFile> finalizeUpload(@RequestParam String uploadId, @RequestPart("meta") String jsonMeta, @AuthenticationPrincipal Jwt jwt) throws Exception {
 		
-		credentials(jwt);
-
 		UploadFile uploadFile = objectMapper.readValue(jsonMeta, UploadFile.class);
 		
 		uploadFile.setUid(uploadId);
@@ -260,7 +277,7 @@ public class ActionInboundAdapterPort {
 	@GetMapping("/download")
 	public ResponseEntity<byte[]> download(@UIDomain Domain<?> domain, @RequestParam Map<String, Object> filter, @RequestParam(defaultValue = "true") boolean inline, @AuthenticationPrincipal Jwt jwt) throws IOException {
 
-		credentials(jwt);
+		addCredentials(domain, jwt);
 
 		if (filter != null && filter.isEmpty()) {
 			return ResponseEntity.badRequest().build();
@@ -287,7 +304,7 @@ public class ActionInboundAdapterPort {
 
 		try {
 
-			credentials(jwt);
+			addCredentials(domain, jwt);
 
 			logger.info(ActionInboundAdapterPort.class, "Executando domínio no validate: " + domain);
 
@@ -314,7 +331,7 @@ public class ActionInboundAdapterPort {
 
 		try {
 
-			credentials(jwt);
+			addCredentials(domain, jwt);
 
 			logger.info(ActionInboundAdapterPort.class, "Executando domínio no autocomplete: " + domain);
 
@@ -337,7 +354,7 @@ public class ActionInboundAdapterPort {
 
 		try {
 
-			credentials(jwt);
+			addCredentials(domain, jwt);
 
 			logger.info(ActionInboundAdapterPort.class, "Executando domínio no paginator: " + domain);
 
@@ -361,8 +378,6 @@ public class ActionInboundAdapterPort {
 	public ResponseEntity<?> action(@UIDomain Domain<?> domain, @RequestBody JsonNode json, @AuthenticationPrincipal Jwt jwt) throws CheckedException {
 
 		try {
-
-			credentials(jwt);
 
 			logger.info(ActionInboundAdapterPort.class, "Executando domínio no save: " + domain);
 
@@ -395,8 +410,11 @@ public class ActionInboundAdapterPort {
 			logger.info(ActionInboundAdapterPort.class, "Payload normalizado: \n" + normalizedNode.toPrettyString());
 
 			Domain<?> newDomain = objectMapper.convertValue(normalizedNode, domain.getClass());
+			
+			addCredentials(newDomain, jwt);
+			
 			Domain<?> resultDomain = actionInboundPort.methodName(newDomain);
-
+			
 			logger.info(ActionInboundAdapterPort.class, "Payload processado com sucesso: " + resultDomain);
 			return ResponseEntity.ok(resultDomain);
 

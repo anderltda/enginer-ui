@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
-import br.com.enginer.domain.system.dto.entity.user.UserAccount;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIAttachment;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UICheckbox;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIColumn;
@@ -911,11 +910,14 @@ public class FormTemplate {
 
 		if (domain.getId() != null) {
 			
-			Object uploadFile = ReflectionUtils.execute(domain, StringsUtils.getMethod(StringsUtils.firstLower(UploadFile.class.getSimpleName())));
+			UploadFile uploadFile = (UploadFile) ReflectionUtils.execute(domain, StringsUtils.getMethod(StringsUtils.firstLower(UploadFile.class.getSimpleName())));
 			
-			Map<String, Object> filter = Map.of("id", uploadFile, "domain", domain.getClass().getSimpleName());
-		
-			files = (List<UploadFile>) ReflectionUtils.execute(this.useCase, UIUseCase.buscarTodos, new UploadFile(), filter);
+			if (uploadFile.getId() != null) {
+
+				Map<String, Object> filter = Map.of("id", uploadFile.getId(), "domain", domain.getClass().getSimpleName());
+
+				files = (List<UploadFile>) ReflectionUtils.execute(this.useCase, UIUseCase.buscarTodos, new UploadFile(), filter);
+			}
 		}
 		
 		File file = default_.getFile(files);
