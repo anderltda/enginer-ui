@@ -3,6 +3,8 @@ package br.com.enginer.infrastructure.adapter.outbound.repository;
 import org.springframework.stereotype.Component;
 
 import br.com.enginer.domain.system.dto.entity.user.UserAccount;
+import br.com.enginer.domain.system.usecase.core.fn.SerializableConsumer;
+import br.com.enginer.domain.system.usecase.core.fn.SerializableLambda;
 import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
 import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
@@ -49,10 +51,14 @@ public class UserAccountRepositoryOutboundAdapterPort extends DelegatingReposito
 
 		try {
 
-			if (domain == null || domain instanceof UserAccount || domain.getActionLogger() == null || domain.getActionLogger().getUserId() == null)
+			if (domain == null || domain instanceof UserAccount || domain.getActionLogger() == null
+					|| domain.getActionLogger().getUserId() == null)
 				return;
 
-			ReflectionUtils.execute(domain, "setIdSystemUserAccount", Long.valueOf(domain.getActionLogger().getUserId()));
+			String setCreatedById = SerializableLambda.extractMethodName((SerializableConsumer<Long>) domain.getActionLogger()::setCreatedById);
+			String setUpdatedById = SerializableLambda.extractMethodName((SerializableConsumer<Long>) domain.getActionLogger()::setUpdatedById);
+
+			ReflectionUtils.execute(domain, (domain.isIdNull() ? setCreatedById : setUpdatedById), Long.valueOf(domain.getActionLogger().getUserId()));
 
 		} catch (Exception ex) {
 			ex.printStackTrace();

@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
+import br.com.enginer.domain.system.dto.entity.user.UserAccount;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIAttachment;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UICheckbox;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIColumn;
@@ -240,7 +241,7 @@ public class FormTemplate {
 
 						if (annotation instanceof UIId) {
 
-							Hidden hidden = getHidden(f, default_, annotations);
+							Hidden hidden = getHidden(domain, f, default_, annotations);
 							field.setHidden(hidden);
 							hidden.setValue(domain.getId());
 
@@ -251,7 +252,7 @@ public class FormTemplate {
 							boolean containsTemplate = checkTemplate(uiHidden);
 
 							if (containsTemplate) {
-								field.setHidden(getHidden(f, default_, annotations));
+								field.setHidden(getHidden(domain, f, default_, annotations));
 							}
 
 							identity = true;
@@ -827,8 +828,7 @@ public class FormTemplate {
 
 				Domain<?> key = (Domain<?>) ReflectionUtils.newInstance(typeClass);
 
-				Object keyValue = ReflectionUtils.execute(domain,
-						StringsUtils.getMethod("id" + typeClass.getSimpleName()));
+				Object keyValue = ReflectionUtils.execute(domain, StringsUtils.getMethod("id" + typeClass.getSimpleName()));
 
 				if (keyValue != null) {
 					value = (Domain<?>) ReflectionUtils.execute(useCase.getRepositoryOutboundPort(), RepositoryOutboundPort.FIND_BY_ID, key, keyValue);
@@ -1129,14 +1129,52 @@ public class FormTemplate {
 	}
 
 	/**
+	 * @param domain
 	 * @param f
 	 * @param default_
 	 * @param annotations
 	 * @return
+	 * @throws Exception 
 	 */
-	private Hidden getHidden(java.lang.reflect.Field f, Default default_, Annotation[] annotations) {
+	private Hidden getHidden(Domain<?> domain, java.lang.reflect.Field f, Default default_, Annotation[] annotations) throws Exception {
+		
 		Hidden hidden = default_.getHidden();
+		
+		if("createdBy".equals(f.getName())) {
+			
+			UserAccount createdBy = (UserAccount) ReflectionUtils.get(StringsUtils.getMethod(f.getName()), domain);
+			
+			if(createdBy != null && createdBy.getId() != null) {
+				
+				createdBy = (UserAccount) ReflectionUtils.execute(this.useCase, UIUseCase.buscarFormPorId, createdBy);
+
+				UploadFile uploadFile = (UploadFile) ReflectionUtils.execute(this.useCase, UIUseCase.buscarFormPorId, createdBy.getUploadFile());
+				
+				createdBy.setUploadFile(uploadFile);
+				
+				domain.setCreatedBy(createdBy);
+				hidden.setValue(createdBy);
+			}
+			
+		} else if("updatedBy".equals(f.getName())) {
+			
+			UserAccount updatedBy = (UserAccount) ReflectionUtils.get(StringsUtils.getMethod(f.getName()), domain);
+			
+			if(updatedBy != null && updatedBy.getId() != null) {
+
+				updatedBy = (UserAccount) ReflectionUtils.execute(this.useCase, UIUseCase.buscarFormPorId, updatedBy);
+				
+				UploadFile uploadFile = (UploadFile) ReflectionUtils.execute(this.useCase, UIUseCase.buscarFormPorId, updatedBy.getUploadFile());
+
+				updatedBy.setUploadFile(uploadFile);
+				
+				domain.setUpdatedBy(updatedBy);
+				hidden.setValue(updatedBy);
+			}
+		}
+		
 		addBehaviorAnnotation(hidden, f, annotations);
+		
 		return hidden;
 	}
 
