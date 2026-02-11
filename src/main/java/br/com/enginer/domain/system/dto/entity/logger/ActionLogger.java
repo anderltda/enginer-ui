@@ -1,11 +1,13 @@
 package br.com.enginer.domain.system.dto.entity.logger;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+import br.com.enginer.domain.system.dto.entity.user.UserAccount;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIColumn;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIDate;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIFilter;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.UIHeader;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIAction;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.action.UIActionDomain;
@@ -25,6 +27,7 @@ import br.com.enginer.domain.system.usecase.core.annotation.instance.action.butt
 import br.com.enginer.domain.system.usecase.core.annotation.instance.paginator.UIConfig;
 import br.com.enginer.domain.system.usecase.core.annotation.instance.paginator.UIPaginator;
 import br.com.enginer.domain.system.usecase.core.enums.TypeButtonState;
+import br.com.enginer.domain.system.usecase.core.enums.TypeDateFormat;
 import br.com.enginer.domain.system.usecase.core.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.core.schema.instance.DomainAbstract;
 import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
@@ -78,12 +81,10 @@ public class ActionLogger extends DomainAbstract<Long> {
 	@UIColumn(label = "Type", initial = true)
 	private String type;
 	
-	@UIColumn(label = "UserId", initial = false)
-	private String userId;
-	
-	@UIColumn(label = "Username", initial = true)
-	private String username;
-	
+	@UIFilter(label = "User Account", field = "displayName", template = { TypeTemplate.FILTER, TypeTemplate.TAB, TypeTemplate.FORM, TypeTemplate.ROW, TypeTemplate.MODAL })
+	@UIColumn(label = "User Account", fields = { "displayName", "username" }, initial = false)
+	private UserAccount userAccount;
+
 	@UIColumn(label = "Source", initial = true)
 	private String source;
 	
@@ -114,9 +115,7 @@ public class ActionLogger extends DomainAbstract<Long> {
 	@UIColumn(label = "Request-Id", initial = true)
 	private UUID requestId;
 	
-	@UIColumn(label = "Data Local", initial = true)
-	private LocalDateTime datelocal;
-	
+	@UIDate(label = "Data Local", format = TypeDateFormat.DATE_TIME_FORMAT, showtime = true)
 	@UIColumn(label = "Date Create", initial = true)
 	private Instant createdAt;
 
@@ -211,31 +210,24 @@ public class ActionLogger extends DomainAbstract<Long> {
 	}
 
 	/**
-	 * @return the userId
+	 * @return the userAccount
 	 */
-	public String getUserId() {
-		return userId;
+	public UserAccount getUserAccount() {
+		return userAccount;
 	}
 
 	/**
-	 * @param userId the userId to set
+	 * @param userAccount the userAccount to set
 	 */
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
 	}
 
 	/**
-	 * @return the username
+	 * @param idUserAccount the idUserAccount to set
 	 */
-	public String getUsername() {
-		return username;
-	}
-
-	/**
-	 * @param username the username to set
-	 */
-	public void setUsername(String username) {
-		this.username = username;
+	public void setIdUserAccount(Long idUserAccount) {
+		this.userAccount = new UserAccount(idUserAccount);
 	}
 
 	/**
@@ -379,20 +371,6 @@ public class ActionLogger extends DomainAbstract<Long> {
 	}
 
 	/**
-	 * @return the datelocal
-	 */
-	public LocalDateTime getDatelocal() {
-		return datelocal;
-	}
-
-	/**
-	 * @param datelocal the datelocal to set
-	 */
-	public void setDatelocal(LocalDateTime datelocal) {
-		this.datelocal = datelocal;
-	}
-	
-	/**
 	 * @return the createdAt
 	 */
 	public Instant getCreatedAt() {
@@ -426,10 +404,9 @@ public class ActionLogger extends DomainAbstract<Long> {
 	@Override
 	public String toString() {
 		return "ActionLogger [id=" + id + ", domain=" + domain + ", domainId=" + domainId + ", action=" + action
-				+ ", type=" + type + ", userId=" + userId + ", username=" + username + ", source=" + source
-				+ ", ipAddress=" + ipAddress + ", userAgent=" + userAgent + ", success=" + success + ", errorMessage="
-				+ errorMessage + ", durationMs=" + durationMs + ", newValue=" + newValue
-				+ ", url=" + url + ", modal=" + modal + ", requestId=" + requestId
-				+ ", datelocal=" + datelocal + "]";
+				+ ", type=" + type + ", userAccount=" + userAccount + ", source=" + source + ", ipAddress=" + ipAddress
+				+ ", userAgent=" + userAgent + ", success=" + success + ", errorMessage=" + errorMessage
+				+ ", durationMs=" + durationMs + ", newValue=" + newValue + ", url=" + url + ", modal=" + modal
+				+ ", requestId=" + requestId + ", createdAt=" + createdAt + "]";
 	}
 }

@@ -58,7 +58,7 @@ public class ActionLoggerInboundAuditAspect {
 	@Around("execution(* br.com.enginer.infrastructure.adapter.inbound.api.ActionInboundAdapterPort.action(..))")
 	public Object auditActionEndpoint(ProceedingJoinPoint pjp) throws Throwable {
 
-		long start = System.currentTimeMillis();
+		long start = System.nanoTime();
 
 		Object result = null;
 		Throwable error = null;
@@ -84,7 +84,6 @@ public class ActionLoggerInboundAuditAspect {
 
 		String userAgent = request != null ? request.getHeader("User-Agent") : null;
 
-		String username = request != null ? userResolver.username(request).orElse(null) : null;
 		String userId = request != null ? userResolver.userId(request).orElse(null) : null;
 
 		String source = requestContext.source(request).orElse("WEB");
@@ -170,13 +169,12 @@ public class ActionLoggerInboundAuditAspect {
 						logger.setModal(isModal);
 						logger.setUrl(url);
 						logger.setDisabled(isDisabled);
-						logger.setUsername(username);
-						logger.setUserId(userId);
+						logger.setIdUserAccount(Long.valueOf(userId));
 						logger.setSource(source);
 						logger.setIpAddress(ip);
 						logger.setUserAgent(userAgent);
 						logger.setRequestId(requestId);
-						logger.setDurationMs(System.currentTimeMillis() - start);
+						logger.setDurationMs(System.nanoTime() - start);
 						logger.setSuccess(success);
 						logger.setErrorMessage(success ? null : safeErrorMessage(error));
 						logger.setDomainId(domainId);

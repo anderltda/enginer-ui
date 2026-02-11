@@ -40,7 +40,7 @@ public class UIInboundAdapterPort {
 	@GetMapping({ "/tab", "/tab/{id}" })
 	public ResponseEntity<Form> tab(@UIDomain Domain<?> domain) throws Exception {
 		
-		long start = System.currentTimeMillis();
+		long start = System.nanoTime();
 		
 		ResponseEntity<Form> response;
 		
@@ -54,11 +54,11 @@ public class UIInboundAdapterPort {
 			logger.error(UIInboundAdapterPort.class, "Erro ao criar [template-tab]", ex);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		} finally {
-			long duration = System.currentTimeMillis() - start;
+			long duration = System.nanoTime() - start;
 	        logger.info(RepositoryOutboundAdapterPort.class, "[template-tab] concluído em " + duration + "ms ");
 		}
 		
-		long duration = System.currentTimeMillis() - start;
+		long duration = System.nanoTime() - start;
 		
 		logger.info(UIInboundAdapterPort.class, "[template-tab] processado em " + duration + "ms ");
 		
@@ -73,7 +73,7 @@ public class UIInboundAdapterPort {
 	@GetMapping({ "/row", "/row/{id}" })
 	public ResponseEntity<Form> row(@UIDomain Domain<?> domain) throws Exception {
 		
-		long start = System.currentTimeMillis();
+		long start = System.nanoTime();
 		
 		ResponseEntity<Form> response;
 		
@@ -87,11 +87,11 @@ public class UIInboundAdapterPort {
 			logger.error(UIInboundAdapterPort.class, "Erro ao criar [template-row]", ex);
 			throw ex;
 		} finally {
-			long duration = System.currentTimeMillis() - start;
+			long duration = System.nanoTime() - start;
 	        logger.info(RepositoryOutboundAdapterPort.class, "[template-row] concluído em " + duration + "ms ");
 		}
 		
-		long duration = System.currentTimeMillis() - start;
+		long duration = System.nanoTime() - start;
 		
 		logger.info(UIInboundAdapterPort.class, "[template-row] processado em " + duration + "ms ");
 		
@@ -107,7 +107,7 @@ public class UIInboundAdapterPort {
 	@GetMapping({ "/form", "/form/{id}" })
 	public ResponseEntity<Form> form(@UIDomain Domain<?> domain) throws Exception {
 		
-		long start = System.currentTimeMillis();
+		long start = System.nanoTime();
 		
 		ResponseEntity<Form> response;
 		
@@ -121,11 +121,11 @@ public class UIInboundAdapterPort {
 			logger.error(UIInboundAdapterPort.class, "Erro ao criar [template-form]", ex);
 			throw ex;
 		} finally {
-			long duration = System.currentTimeMillis() - start;
+			long duration = System.nanoTime() - start;
 	        logger.info(RepositoryOutboundAdapterPort.class, "[template-form] concluído em " + duration + "ms ");
 		}
 		
-		long duration = System.currentTimeMillis() - start;
+		long duration = System.nanoTime() - start;
 		
 		logger.info(UIInboundAdapterPort.class, "[template-form] processado em " + duration + "ms ");
 		
@@ -140,7 +140,7 @@ public class UIInboundAdapterPort {
 	@GetMapping({ "/filter", "/filter/{id}" })
 	public ResponseEntity<Form> filter(@UIDomain Domain<?> domain) throws Exception {
 		
-		long start = System.currentTimeMillis();
+		long start = System.nanoTime();
 		
 		ResponseEntity<Form> response;
 		
@@ -154,11 +154,11 @@ public class UIInboundAdapterPort {
 			logger.error(UIInboundAdapterPort.class, "Erro ao criar [template-filter]", ex);
 			throw ex;
 		} finally {
-			long duration = System.currentTimeMillis() - start;
+			long duration = System.nanoTime() - start;
 	        logger.info(RepositoryOutboundAdapterPort.class, "[template-filter] concluído em " + duration + "ms ");
 		}
 		
-		long duration = System.currentTimeMillis() - start;
+		long duration = System.nanoTime() - start;
 		
 		logger.info(UIInboundAdapterPort.class, "[template-filter] processado em " + duration + "ms ");
 		

@@ -154,7 +154,7 @@ public class ActionInboundAdapterPort {
 			filters.put("startDateTime_op", Constants.MAIOR_OU_IGUAL);
 			filters.put("endDateTime", endDateTime);
 			filters.put("endDateTime_op", Constants.MENOR_OU_IGUAL);
-			filters.put("idSystemUserAccount", Long.parseLong(domain.getActionLogger().getUserId()));
+			filters.put("userAccount.id", domain.getActionLogger().getUserAccount().getId());
 
 			List<Domain<?>> events = actionInboundPort.searchByConditions(domain, filters);
 
@@ -417,12 +417,10 @@ public class ActionInboundAdapterPort {
 		
 		if(domain.getActionLogger() == null) {
 			ActionLogger actionLogger = new ActionLogger();
-			actionLogger.setUserId(userAccount.getId().toString());
-			actionLogger.setUsername(userAccount.getUsername());
+			actionLogger.setUserAccount(userAccount);
 			domain.setActionLogger(actionLogger);
 		} else {
-			domain.getActionLogger().setUserId(userAccount.getId().toString());
-			domain.getActionLogger().setUsername(userAccount.getUsername());			
+			domain.getActionLogger().setUserAccount(userAccount);
 		}
 
 	}

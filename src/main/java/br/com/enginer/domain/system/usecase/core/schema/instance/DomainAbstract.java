@@ -233,7 +233,7 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 	 * @param createdById the createdById to set
 	 */
 	public void setCreatedById(Long createdById) {
-		this.createdBy = new UserAccount(createdById);
+		this.createdBy = createdById != null ? new UserAccount(createdById) : null;
 		this.createdById = createdById;
 	}
 	
@@ -248,7 +248,7 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 	 * @param updatedById the updatedById to set
 	 */
 	public void setUpdatedById(Long updatedById) {
-		this.updatedBy = new UserAccount(updatedById);
+		this.updatedBy = updatedById != null ? new UserAccount(updatedById) : null;
 		this.updatedById = updatedById;
 	}
 

@@ -82,7 +82,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@SuppressWarnings("unchecked")
 	public T findById(T domain, Object id) throws UncheckedException {
 
-	    long start = System.currentTimeMillis();
+	    long start = System.nanoTime();
 	    
 		T object = null;
 
@@ -103,10 +103,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 
 			object = mono.block();
 			
-	        long duration = System.currentTimeMillis() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[findById] concluído em " + duration + "ms ");
-			
-
 		} catch (CheckedException ex) {
 			if (ex.getMessage().contains("Nenhum registro encontrado")) {
 				logger.info(RepositoryOutboundAdapterPort.class, ex.getMessage());
@@ -121,6 +117,9 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		} catch (Exception ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[Erro busca por id] - " + ex.getMessage(), ex);
 			throw new UncheckedException(ex.getMessage(), ex);
+		} finally {
+	        long duration = System.nanoTime() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[findById] processo finalizado em " + duration + "ms ");
 		}
 
 		return object;
@@ -134,7 +133,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@SuppressWarnings("unchecked")
 	public T findByIdComposite(T domain, Map<String, Object> ids) throws UncheckedException {
 		
-	    long start = System.currentTimeMillis();
+	    long start = System.nanoTime();
 	    
 		T object = null;
 
@@ -156,9 +155,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 
 			object = mono.block();
 			
-	        long duration = System.currentTimeMillis() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[findByIdComposite] concluído em " + duration + "ms ");
-
 		} catch (CheckedException ex) {
 			if (ex.getMessage().contains("Nenhum registro encontrado")) {
 				logger.info(RepositoryOutboundAdapterPort.class, ex.getMessage());
@@ -173,6 +169,9 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		} catch (Exception ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[Erro busca por id composto] - " + ex.getMessage(), ex);
 			throw new UncheckedException(ex.getMessage(), ex);
+		} finally {
+	        long duration = System.nanoTime() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[findByIdComposite] processo finalizado em " + duration + "ms ");
 		}
 
 		return object;
@@ -185,7 +184,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@SuppressWarnings("unchecked")
 	public T findBySingle(T domain, Map<String, Object> filter, String... method) throws UncheckedException {
 
-	    long start = System.currentTimeMillis();
+	    long start = System.nanoTime();
 	    
 		T object = null;
 
@@ -207,9 +206,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 
 			object = mono.block();
 			
-	        long duration = System.currentTimeMillis() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[findBySingle] concluído em " + duration + "ms ");
-
 		} catch (CheckedException ex) {
 			if (ex.getMessage().contains("Nenhum registro encontrado")) {
 				logger.info(RepositoryOutboundAdapterPort.class, ex.getMessage());
@@ -224,6 +220,9 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		} catch (Exception ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[Erro busca por unico valor filtrado] - " + ex.getMessage(), ex);
 			throw new UncheckedException(ex.getMessage(), ex);
+		} finally {
+	        long duration = System.nanoTime() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[findBySingle] processo finalizado em " + duration + "ms ");
 		}
 
 		return object;
@@ -236,7 +235,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@SuppressWarnings("unchecked")
 	public T findBySingle(T domain, Map<String, Object> filter, TypeRepository typeRepository, String queryName) throws UncheckedException {
 
-	    long start = System.currentTimeMillis();
+	    long start = System.nanoTime();
 	    
 		T object = null;
 
@@ -258,9 +257,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 
 			object = mono.block();
 			
-	        long duration = System.currentTimeMillis() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[findBySingle] concluído em " + duration + "ms ");			
-
 		} catch (CheckedException ex) {
 			if (ex.getMessage().contains("Nenhum registro encontrado")) {
 				logger.info(RepositoryOutboundAdapterPort.class, ex.getMessage());
@@ -275,6 +271,9 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		} catch (Exception ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[Erro busca por unico valor filtrado e com queryName] - " + ex.getMessage(), ex);
 			throw new UncheckedException(ex.getMessage(), ex);
+		} finally {
+	        long duration = System.nanoTime() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[findBySingle] processo finalizado em " + duration + "ms ");
 		}
 
 		return object;
@@ -287,7 +286,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@SuppressWarnings("unchecked")
 	public List<T> findAll(T domain, Map<String, Object> filter, String... method) throws UncheckedException {
 
-	    long start = System.currentTimeMillis();
+	    long start = System.nanoTime();
 	    
 	    List<T> list = new ArrayList<>();
 
@@ -314,9 +313,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 				}
 			}
 			
-	        long duration = System.currentTimeMillis() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[findAll] concluído em " + duration + "ms ");
-
 		} catch (CheckedException ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[4XX or 5XX ERROR]", ex);
 			throw ex;
@@ -326,6 +322,9 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		} catch (Exception ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[Erro busca pelo findAll] - " + ex.getMessage(), ex);
 			throw new UncheckedException(ex.getMessage(), ex);
+		} finally {
+	        long duration = System.nanoTime() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[findAll] processo finalizado em " + duration + "ms ");
 		}
 
 		return list;
@@ -338,7 +337,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@SuppressWarnings("unchecked")
 	public List<T> findAll(T domain, Map<String, Object> filter, TypeRepository typeRepository, String queryName) throws UncheckedException {
 
-	    long start = System.currentTimeMillis();
+	    long start = System.nanoTime();
 	    
 		List<T> list = new ArrayList<>();
 
@@ -365,9 +364,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 				}
 			}
 			
-	        long duration = System.currentTimeMillis() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[findAll] concluído em " + duration + "ms ");
-
 		} catch (CheckedException ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[4XX or 5XX ERROR]", ex);
 			throw ex;
@@ -377,6 +373,9 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		} catch (Exception ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[Erro busca pelo findAll com queryName] - " + ex.getMessage(), ex);
 			throw new UncheckedException(ex.getMessage(), ex);
+		} finally {
+	        long duration = System.nanoTime() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[findAll] processo finalizado em " + duration + "ms ");
 		}
 
 		return list;
@@ -396,7 +395,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@SuppressWarnings("unchecked")
 	public List<T> findAllById(T domain, Object... id) throws UncheckedException {
 		
-	    long start = System.currentTimeMillis();
+	    long start = System.nanoTime();
 
 		List<T> list = new ArrayList<>();
 
@@ -425,9 +424,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 				}
 			}
 			
-	        long duration = System.currentTimeMillis() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[findAllById] concluído em " + duration + "ms ");
-
 		} catch (CheckedException ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[4XX or 5XX ERROR]", ex);
 			throw ex;
@@ -437,6 +433,9 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		} catch (Exception ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[Erro findAllById] - " + ex.getMessage(), ex);
 			throw new UncheckedException(ex.getMessage(), ex);
+		} finally {
+	        long duration = System.nanoTime() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[findAllById] processo finalizado em " + duration + "ms ");
 		}
 
 		return list;
@@ -449,7 +448,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@SuppressWarnings("unchecked")
 	public PageResult<T> paginator(T domain, Map<String, Object> filter, String... method) throws UncheckedException {
 		
-	    long start = System.currentTimeMillis();
+	    long start = System.nanoTime();
 	    
 	    PageResult<T> result = null;
 
@@ -480,9 +479,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	            result.setPage(rawPage.getPage());
 	        }
 
-	        long duration = System.currentTimeMillis() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[Paginator] concluído em " + duration + "ms - total itens: " + (result != null && result.getContent() != null ? result.getContent().size() : 0));
-
 	    } catch (CheckedException ex) {
 	        logger.error(RepositoryOutboundAdapterPort.class, "[4XX or 5XX ERROR]", ex);
 	        throw ex;
@@ -492,7 +488,10 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	    } catch (Exception ex) {
 	        logger.error(RepositoryOutboundAdapterPort.class, "[Erro ao paginar] - " + ex.getMessage(), ex);
 	        throw new UncheckedException(ex.getMessage(), ex);
-	    }
+		} finally {
+	        long duration = System.nanoTime() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[Paginator] processo finalizado em " + duration + "ms ");
+		}
 
 	    return result;
 	}
@@ -504,7 +503,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@SuppressWarnings("unchecked")
 	public PageResult<T> paginator(T domain, Map<String, Object> filter, TypeRepository typeRepository, String queryName) throws UncheckedException {
 
-	    long start = System.currentTimeMillis();
+	    long start = System.nanoTime();
 	    
 	    PageResult<T> result = null;
 
@@ -535,9 +534,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	            result.setPage(rawPage.getPage());
 	        }
 
-	        long duration = System.currentTimeMillis() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[Paginator] concluído em " + duration + "ms - total itens: " + (result != null && result.getContent() != null ? result.getContent().size() : 0));
-
 		} catch (CheckedException ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[4XX or 5XX ERROR]", ex);
 			throw ex;
@@ -547,6 +543,9 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		} catch (Exception ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[Erro ao paginar com queryName] - " + ex.getMessage(), ex);
 			throw new UncheckedException(ex.getMessage(), ex);
+		} finally {
+	        long duration = System.nanoTime() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[Paginator] processo finalizado em " + duration + "ms ");
 		}
 
 		return result;
@@ -558,7 +557,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@Override
 	public Integer count(T domain, Map<String, Object> filter, String... method) throws UncheckedException {
 		
-	    long start = System.currentTimeMillis();
+	    long start = System.nanoTime();
 
 		Integer count = 0;
 
@@ -578,9 +577,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 
 			count = mono.block();
 			
-	        long duration = System.currentTimeMillis() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[count] concluído em " + duration + "ms ");
-
 		} catch (CheckedException ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[4XX or 5XX ERROR]", ex);
 			throw ex;
@@ -590,6 +586,9 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		} catch (Exception ex) {
             logger.error(getClass(), "[Erro ao contar registros] - " + ex.getMessage(), ex);
             throw new UncheckedException(ex.getMessage(), ex);
+		} finally {
+	        long duration = System.nanoTime() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[count] concluído em " + duration + "ms ");
 		}
 
 		return count;
@@ -601,7 +600,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@Override
 	public Integer count(T domain, Map<String, Object> filter, TypeRepository typeRepository, String queryName) throws UncheckedException {
 		
-	    long start = System.currentTimeMillis();
+	    long start = System.nanoTime();
 		
 		Integer count = 0;
 
@@ -620,9 +619,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 					.bodyToMono(Integer.class);
 
 			count = mono.block();
-			
-	        long duration = System.currentTimeMillis() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[count] concluído em " + duration + "ms ");
 
 		} catch (CheckedException ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[4XX or 5XX ERROR]", ex);
@@ -633,6 +629,9 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		} catch (Exception ex) {
             logger.error(getClass(), "[Erro ao contar registros com queryName] - " + ex.getMessage(), ex);
             throw new UncheckedException(ex.getMessage(), ex);
+		} finally {
+	        long duration = System.nanoTime() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[count] concluído em " + duration + "ms ");
 		}
 
 		return count;
@@ -644,7 +643,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@Override
 	public boolean existsById(T domain, Object id) throws UncheckedException {
 		
-	    long start = System.currentTimeMillis();
+	    long start = System.nanoTime();
 
 		Boolean exist = false;
 
@@ -664,9 +663,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 
 			exist = mono.block();
 			
-	        long duration = System.currentTimeMillis() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[existsById] concluído em " + duration + "ms ");
-
 		} catch (CheckedException ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[4XX or 5XX ERROR]", ex);
 			throw ex;
@@ -676,6 +672,9 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		} catch (Exception ex) {
             logger.error(getClass(), "[Erro ao verificar existência] - " + ex.getMessage(), ex);
             throw new UncheckedException(ex.getMessage(), ex);
+		} finally {
+	        long duration = System.nanoTime() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[existsById] concluído em " + duration + "ms ");
 		}
 
 		return exist;
@@ -687,7 +686,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@Override
 	public void delete(T domain, Object id) throws UncheckedException {
 		
-	    long start = System.currentTimeMillis();
+	    long start = System.nanoTime();
 
 		try {
 
@@ -704,9 +703,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 				.toBodilessEntity()
 				.block();
 			
-	        long duration = System.currentTimeMillis() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[delete] concluído em " + duration + "ms ");
-
 		} catch (CheckedException ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[CheckedException] " + ex.getMessage(), ex);
 			throw ex;
@@ -717,6 +713,9 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		} catch (Exception ex) {
             logger.error(getClass(), "[Erro ao excluir registro por id] - " + ex.getMessage(), ex);
             throw new UncheckedException(ex.getMessage(), ex);
+		} finally {
+	        long duration = System.nanoTime() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[delete] concluído em " + duration + "ms ");
 		}
 	}
 	
@@ -726,7 +725,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@Override
 	public void delete(T domain, Map<String, Object> ids) throws UncheckedException {
 		
-	    long start = System.currentTimeMillis();
+	    long start = System.nanoTime();
 		
 		try {
 
@@ -743,9 +742,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 				.toBodilessEntity()
 				.block();
 			
-	        long duration = System.currentTimeMillis() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[delete] concluído em " + duration + "ms ");			
-
 		} catch (CheckedException ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[CheckedException] " + ex.getMessage(), ex);
 			throw ex;
@@ -755,6 +751,9 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		} catch (Exception ex) {
             logger.error(getClass(), "[Erro ao excluir registro por um map de ids] - " + ex.getMessage(), ex);
             throw new UncheckedException(ex.getMessage(), ex);
+		} finally {
+	        long duration = System.nanoTime() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[delete] concluído em " + duration + "ms ");
 		}
 	}
 
@@ -765,7 +764,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@SuppressWarnings("unchecked")
 	public T save(T domain, Boolean... flush) throws UncheckedException {
 		
-	    long start = System.currentTimeMillis();
+	    long start = System.nanoTime();
 		
 		T result = null;
 
@@ -790,8 +789,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 
 			result = mono.block();
 			
-	        long duration = System.currentTimeMillis() - start;
-
 		} catch (CheckedException ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[4XX or 5XX ERROR]", ex);
 			throw ex;
@@ -801,6 +798,9 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		} catch (Exception ex) {
             logger.error(getClass(), "[Erro ao salvar] - " + ex.getMessage(), ex);
             throw new UncheckedException(ex.getMessage(), ex);
+		} finally {
+	        long duration = System.nanoTime() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[save] concluído em " + duration + "ms ");
 		}
 
 		return result;
@@ -814,7 +814,7 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 	@SuppressWarnings("unchecked")
 	public List<T> save(List<T> entities, Boolean... flush) throws UncheckedException {
 		
-	    long start = System.currentTimeMillis();
+	    long start = System.nanoTime();
 		
         if (entities == null || entities.isEmpty()) return List.of();
         
@@ -843,8 +843,6 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 
 			savedList = (List<T>) flux.collectList().blockOptional().orElse(List.of());	
 			
-	        long duration = System.currentTimeMillis() - start;
-
 		} catch (CheckedException ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[CheckedException] " + ex.getMessage(), ex);
 			throw ex;
@@ -854,6 +852,9 @@ public class RepositoryOutboundAdapterPort<T extends Domain<?>> implements Repos
 		} catch (Exception ex) {
 			logger.error(RepositoryOutboundAdapterPort.class, "[Erro ao salvar uma lista] - " + ex.getMessage(), ex);
             throw new UncheckedException(ex.getMessage(), ex);
+		} finally {
+	        long duration = System.nanoTime() - start;
+	        logger.info(RepositoryOutboundAdapterPort.class, "[save] Lista concluída em " + duration + "ms - total itens salvos: " + (savedList != null ? savedList.size() : 0));
 		}
 		
 		return savedList;

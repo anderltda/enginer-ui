@@ -52,14 +52,20 @@ public class UserAccountRepositoryOutboundAdapterPort extends DelegatingReposito
 		try {
 
 			if (domain == null || domain instanceof UserAccount || domain.getActionLogger() == null
-					|| domain.getActionLogger().getUserId() == null)
+					|| domain.getActionLogger().getUserAccount() == null || domain.getActionLogger().getUserAccount().getId() == null)
 				return;
 
 			String setCreatedById = SerializableLambda.extractMethodName((SerializableConsumer<Long>) domain.getActionLogger()::setCreatedById);
 			String setUpdatedById = SerializableLambda.extractMethodName((SerializableConsumer<Long>) domain.getActionLogger()::setUpdatedById);
 
-			ReflectionUtils.execute(domain, (domain.isIdNull() ? setCreatedById : setUpdatedById), Long.valueOf(domain.getActionLogger().getUserId()));
-
+			if(domain.isIdNull()) {
+				ReflectionUtils.execute(domain, setCreatedById, domain.getActionLogger().getUserAccount().getId());
+				ReflectionUtils.setNullViaSetter(setUpdatedById, domain);
+			} else {
+				ReflectionUtils.execute(domain, setUpdatedById, domain.getActionLogger().getUserAccount().getId());
+				ReflectionUtils.setNullViaSetter(setCreatedById, domain);
+			}
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

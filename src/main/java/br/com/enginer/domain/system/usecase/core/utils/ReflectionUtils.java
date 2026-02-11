@@ -730,6 +730,37 @@ public class ReflectionUtils {
 		method.setAccessible(true);
 		return method.invoke(object, paramValue);
 	}
+		
+	/**
+	 * @param setterName
+	 * @param target
+	 */
+	public static void setNullViaSetter(String setterName, Object target) {
+		
+	    if (target == null || setterName == null || setterName.isBlank()) {
+	        return;
+	    }
+
+	    Class<?> clazz = target.getClass();
+
+	    while (clazz != null) {
+	        for (Method method : clazz.getDeclaredMethods()) {
+	            if (method.getName().equals(setterName)
+	                    && method.getParameterCount() == 1) {
+	                try {
+	                    method.setAccessible(true);
+	                    method.invoke(target, new Object[]{ null });
+	                    return;
+	                } catch (Exception e) {
+	                    throw new RuntimeException("Erro ao setar null no campo: " + setterName, e);
+	                }
+	            }
+	        }
+	        clazz = clazz.getSuperclass();
+	    }
+
+	    throw new RuntimeException("Setter não encontrado para: " + setterName);
+	}
 	
 	/**
 	 * @param <T>

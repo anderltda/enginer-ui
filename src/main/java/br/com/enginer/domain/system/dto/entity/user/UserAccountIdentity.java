@@ -51,7 +51,6 @@ public class UserAccountIdentity extends DomainAbstract<Long> {
 	private String providerTenant;
 	private Instant createdAt;
 	private UserAccount userAccount;
-	private Long idSystemUserAccount;
 
 	/**
 	 * 
@@ -170,9 +169,8 @@ public class UserAccountIdentity extends DomainAbstract<Long> {
 	/**
 	 * @param idSystemUserAccount the idSystemUserAccount to set
 	 */
-	public void setIdSystemUserAccount(Long idSystemUserAccount) {
+	public void setIdUserAccount(Long idSystemUserAccount) {
 		this.userAccount = new UserAccount(idSystemUserAccount);
-		this.idSystemUserAccount = idSystemUserAccount;
 	}
 
 	@Override
@@ -196,8 +194,6 @@ public class UserAccountIdentity extends DomainAbstract<Long> {
 	public String toString() {
 		return "UserAccountIdentity [id=" + id + ", provider=" + provider + ", providerSubject=" + providerSubject
 				+ ", providerTenant=" + providerTenant + ", createdAt=" + createdAt + ", userAccount=" + userAccount
-				+ ", idSystemUserAccount=" + idSystemUserAccount + "]";
+				+ "]";
 	}
-
-	
 }
