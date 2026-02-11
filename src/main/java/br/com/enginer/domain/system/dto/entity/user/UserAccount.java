@@ -71,9 +71,12 @@ public class UserAccount extends DomainAbstract<Long> {
 
 	@UIHidden
 	private String emailNormalized;
+	
+	@UIIgnore
+	private UploadFile uploadFile;
 
 	@UIHidden
-	private Long avatarFileId;
+	private Long idUploadFile;
 
 	@UIPosition(x = 2, y = 1)
 	private Boolean active;
@@ -81,9 +84,6 @@ public class UserAccount extends DomainAbstract<Long> {
 	private Instant createdAt;
 
 	private Instant updatedAt;
-
-	@UIIgnore
-	private UploadFile uploadFile;
 
 	@UIPosition(x = 1, y = 1)
 	@UIFieldValidation(required = false)
@@ -205,22 +205,16 @@ public class UserAccount extends DomainAbstract<Long> {
 	}
 
 	/**
-	 * @return the avatarFileId
+	 * @param idUploadFile the idUploadFile to set
 	 */
-	public Long getAvatarFileId() {
-		return avatarFileId;
-	}
-
-	/**
-	 * @param avatarFileId the avatarFileId to set
-	 */
-	public void setAvatarFileId(Long avatarFileId) {
+	public void setIdUploadFile(Long idUploadFile) {
 		if(this.files == null) {
 			this.files = new ArrayList<>();
 		}
 		this.uploadFile = new UploadFile();
-		this.uploadFile.setId(avatarFileId);
+		this.uploadFile.setId(idUploadFile);
 		this.files.add(uploadFile);
+		this.idUploadFile = idUploadFile;
 	}
 
 	/**
@@ -312,10 +306,9 @@ public class UserAccount extends DomainAbstract<Long> {
 
 	@Override
 	public String toString() {
-		return "UserAccount [id=" + id + ", publicId=" + publicId + ", displayName=" + displayName + ", username="
-				+ username + ", email=" + email + ", emailNormalized=" + emailNormalized + ", avatarFileId="
-				+ avatarFileId + ", active=" + active + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt
-				+ ", uploadFile=" + uploadFile + "]";
+		return "UserAccount [id=" + id + ", publicId=" + publicId + ", username=" + username + ", displayName="
+				+ displayName + ", email=" + email + ", emailNormalized=" + emailNormalized + ", uploadFile="
+				+ uploadFile + ", idUploadFile=" + idUploadFile + ", active=" + active + ", createdAt=" + createdAt
+				+ ", updatedAt=" + updatedAt + "]";
 	}
-
 }

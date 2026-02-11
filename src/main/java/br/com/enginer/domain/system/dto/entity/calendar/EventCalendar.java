@@ -17,7 +17,7 @@ public class EventCalendar extends DomainAbstract<Long> {
 	private String title;
 	private String style;
 	private UserAccount userAccount;
-	private Long idSystemUserAccount;
+	private Long idUserAccount;
 	private TypeEvent type;
 	private LocalDateTime startDateTime;
 	private LocalDateTime endDateTime;
@@ -111,13 +111,13 @@ public class EventCalendar extends DomainAbstract<Long> {
 	public void setUserAccount(UserAccount userAccount) {
 		this.userAccount = userAccount;
 	}
-
+	
 	/**
-	 * @param idSystemUserAccount the idSystemUserAccount to set
+	 * @param idUserAccount the idUserAccount to set
 	 */
-	public void setIdSystemUserAccount(Long idSystemUserAccount) {
-		this.userAccount = new UserAccount(idSystemUserAccount);
-		this.idSystemUserAccount = idSystemUserAccount;
+	public void setIdUserAccount(Long idUserAccount) {
+		this.userAccount = new UserAccount(idUserAccount);
+		this.idUserAccount = idUserAccount;
 	}
 
 	/**
@@ -277,7 +277,7 @@ public class EventCalendar extends DomainAbstract<Long> {
 	@Override
 	public String toString() {
 		return "EventCalendar [id=" + id + ", title=" + title + ", style=" + style + ", userAccount=" + userAccount
-				+ ", idSystemUserAccount=" + idSystemUserAccount + ", type=" + type + ", startDateTime=" + startDateTime
+				+ ", idUserAccount=" + idUserAccount + ", type=" + type + ", startDateTime=" + startDateTime
 				+ ", endDateTime=" + endDateTime + ", allDay=" + allDay + ", readOnly=" + readOnly + ", location="
 				+ location + ", code=" + code + ", note=" + note + ", createdAt=" + createdAt + ", updatedAt="
 				+ updatedAt + "]";
