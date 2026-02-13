@@ -73,8 +73,8 @@ public class UserAccountUseCase extends AbstractUseCase<UserAccount> implements 
 
 		Map<String, Object> filters = new HashMap<>();
 		filters.put("provider", jwtVo.provider());
-		filters.put("providerTenant", jwtVo.tenant());
-		filters.put("providerSubject", jwtVo.subject());
+		filters.put("providerTenant", jwtVo.providerTenant());
+		filters.put("providerSubject", jwtVo.providerSubject());
 
 		UserAccountIdentity identity = userAccountIdentityUseCase.buscarPorRegistroUnico(new UserAccountIdentity(), filters);
 
@@ -85,28 +85,24 @@ public class UserAccountUseCase extends AbstractUseCase<UserAccount> implements 
 
 		UserAccount userAccount = (UserAccount) buscarPorRegistroUnico(new UserAccount(), filters);
 
-		// opcional: sincronizar dados do perfil
-		boolean changed = false;
-
 		if (StringsUtils.isBlank(userAccount.getDisplayName()) && !StringsUtils.isBlank(jwtVo.name())) {
 			userAccount.setDisplayName(jwtVo.name());
-			changed = true;
 		}
 		
 		if (!StringsUtils.isBlank(jwtVo.username()) && (StringsUtils.isBlank(userAccount.getUsername()) || !userAccount.getUsername().equals(jwtVo.username()))) {
 			userAccount.setUsername(jwtVo.username());
-			changed = true;
 		}
 		
 		if (!StringsUtils.isBlank(jwtVo.email()) && (StringsUtils.isBlank(userAccount.getEmail()) || !userAccount.getEmail().equals(jwtVo.email()))) {
 			userAccount.setEmail(jwtVo.email());
 			userAccount.setEmailNormalized(jwtVo.email().trim().toLowerCase(Locale.ROOT));
-			changed = true;
 		}
+		
+		userAccount.setLastLoginAt(jwtVo.lastLoginAt());
+		userAccount.setLastLoginIp(jwtVo.lastLoginIp());
+		userAccount.setLastLoginUserAgent(jwtVo.lastLoginUserAgent());
 
-		if (changed) {
-			super.salvar(userAccount);
-		}
+		super.salvar(userAccount);
 
 		// se estiver inativo
 		if (Boolean.FALSE.equals(userAccount.getActive())) {
@@ -127,6 +123,9 @@ public class UserAccountUseCase extends AbstractUseCase<UserAccount> implements 
 		userAccount.setDisplayName(jwtVo.name());
 		userAccount.setUsername(jwtVo.username());
 		userAccount.setEmail(jwtVo.email());
+		userAccount.setLastLoginAt(jwtVo.lastLoginAt());
+		userAccount.setLastLoginIp(jwtVo.lastLoginIp());
+		userAccount.setLastLoginUserAgent(jwtVo.lastLoginUserAgent());
 		userAccount.setActive(true);
 
 		if (!StringsUtils.isBlank(jwtVo.email())) {
@@ -137,8 +136,8 @@ public class UserAccountUseCase extends AbstractUseCase<UserAccount> implements 
 
 		UserAccountIdentity identity = new UserAccountIdentity();
 		identity.setProvider(jwtVo.provider());
-		identity.setProviderTenant(jwtVo.tenant());
-		identity.setProviderSubject(jwtVo.subject());
+		identity.setProviderTenant(jwtVo.providerTenant());
+		identity.setProviderSubject(jwtVo.providerSubject());
 		identity.setUserAccount(userAccountNew);
 
 		userAccountIdentityUseCase.salvar(identity);

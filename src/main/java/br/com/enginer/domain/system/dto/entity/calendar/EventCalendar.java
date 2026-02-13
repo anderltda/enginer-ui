@@ -117,7 +117,6 @@ public class EventCalendar extends DomainAbstract<Long> {
 	 */
 	public void setIdUserAccount(Long idUserAccount) {
 		this.userAccount = new UserAccount(idUserAccount);
-		this.idUserAccount = idUserAccount;
 	}
 
 	/**

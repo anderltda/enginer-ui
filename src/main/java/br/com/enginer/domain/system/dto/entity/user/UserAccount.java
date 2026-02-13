@@ -74,9 +74,12 @@ public class UserAccount extends DomainAbstract<Long> {
 	
 	@UIIgnore
 	private UploadFile uploadFile;
+	
+	private Instant lastLoginAt;
 
-	@UIHidden
-	private Long idUploadFile;
+	private String lastLoginIp;
+
+	private String lastLoginUserAgent;
 
 	@UIPosition(x = 2, y = 1)
 	private Boolean active;
@@ -214,7 +217,6 @@ public class UserAccount extends DomainAbstract<Long> {
 		this.uploadFile = new UploadFile();
 		this.uploadFile.setId(idUploadFile);
 		this.files.add(uploadFile);
-		this.idUploadFile = idUploadFile;
 	}
 
 	/**
@@ -286,6 +288,48 @@ public class UserAccount extends DomainAbstract<Long> {
 	public void setFiles(List<UploadFile> files) {
 		this.files = files;
 	}
+	
+	/**
+	 * @return the lastLoginAt
+	 */
+	public Instant getLastLoginAt() {
+		return lastLoginAt;
+	}
+
+	/**
+	 * @param lastLoginAt the lastLoginAt to set
+	 */
+	public void setLastLoginAt(Instant lastLoginAt) {
+		this.lastLoginAt = lastLoginAt;
+	}
+
+	/**
+	 * @return the lastLoginIp
+	 */
+	public String getLastLoginIp() {
+		return lastLoginIp;
+	}
+
+	/**
+	 * @param lastLoginIp the lastLoginIp to set
+	 */
+	public void setLastLoginIp(String lastLoginIp) {
+		this.lastLoginIp = lastLoginIp;
+	}
+
+	/**
+	 * @return the lastLoginUserAgent
+	 */
+	public String getLastLoginUserAgent() {
+		return lastLoginUserAgent;
+	}
+
+	/**
+	 * @param lastLoginUserAgent the lastLoginUserAgent to set
+	 */
+	public void setLastLoginUserAgent(String lastLoginUserAgent) {
+		this.lastLoginUserAgent = lastLoginUserAgent;
+	}
 
 	@Override
 	public int hashCode() {
@@ -308,7 +352,8 @@ public class UserAccount extends DomainAbstract<Long> {
 	public String toString() {
 		return "UserAccount [id=" + id + ", publicId=" + publicId + ", username=" + username + ", displayName="
 				+ displayName + ", email=" + email + ", emailNormalized=" + emailNormalized + ", uploadFile="
-				+ uploadFile + ", idUploadFile=" + idUploadFile + ", active=" + active + ", createdAt=" + createdAt
-				+ ", updatedAt=" + updatedAt + "]";
+				+ uploadFile + ", lastLoginAt=" + lastLoginAt + ", lastLoginIp=" + lastLoginIp + ", lastLoginUserAgent="
+				+ lastLoginUserAgent + ", active=" + active + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt
+				+ "]";
 	}
 }

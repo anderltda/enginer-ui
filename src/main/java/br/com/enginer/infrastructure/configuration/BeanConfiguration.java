@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -36,11 +37,13 @@ import br.com.enginer.domain.system.usecase.port.outbound.repository.UploadFileR
 import br.com.enginer.domain.system.usecase.port.outbound.repository.UserAccountRepositoryOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.storage.FileStorageOutboundPort;
 import br.com.enginer.infrastructure.adapter.inbound.audit.ActionLoggerRepositoryOutboundAdapterPort;
+import br.com.enginer.infrastructure.configuration.cache.UserAccountCacheProperties;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalDateDeserializer;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalDateTimeDeserializer;
 import br.com.enginer.infrastructure.configuration.deserializer.SafeLocalTimeDeserializer;
 
 @Configuration
+@EnableConfigurationProperties(UserAccountCacheProperties.class)
 public class BeanConfiguration {
 	
 	/**

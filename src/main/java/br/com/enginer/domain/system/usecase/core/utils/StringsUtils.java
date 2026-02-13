@@ -1,5 +1,6 @@
 package br.com.enginer.domain.system.usecase.core.utils;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -7,15 +8,57 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import br.com.enginer.domain.system.usecase.core.exception.CheckedException;
 
+// ======================================================================
+// Helpers
+// ======================================================================
 public final class StringsUtils {
 	
 	/**
 	 * 
 	 */
 	private StringsUtils() {}
+
+    /**
+     * @param s
+     * @return
+     */
+	public static String trimToNull(String s) {
+        if (s == null) return null;
+        String t = s.trim();
+        return t.isEmpty() ? null : t;
+    }
+
+    /**
+     * @param value
+     * @param defaultValue
+     * @return
+     */
+    public static boolean parseBoolean(String value, boolean defaultValue) {
+        return value == null ? defaultValue : Boolean.parseBoolean(value);
+    }
+
+    /**
+     * @param urlOrPath
+     * @return
+     */
+    public static Optional<String> thirdSegment(String urlOrPath) {
+    	
+        String path;
+        try {
+            path = URI.create(urlOrPath).getPath();
+        } catch (Exception e) {
+            path = urlOrPath;
+        }
+
+        return Arrays.stream(path.split("/"))
+                .filter(s -> !s.isBlank())
+                .skip(2)
+                .findFirst();
+    }
 
 	/**
 	 * @param value

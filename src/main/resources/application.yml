@@ -13,7 +13,9 @@ datasource: # Configurações do banco de dados
 enginer: # Caminho para os arquivos de configuração do Enginer
   scanner:
     base-packages: br.com.enginer.domain
-
+  cache:
+    user-account:
+      ttl-ms: 180000 # 3 minutos
 
 security: # CORS usado pelo SecurityCorsProperties (prefix = security.cors)
   cors:

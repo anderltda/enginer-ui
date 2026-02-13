@@ -1,167 +1,72 @@
 package br.com.enginer.infrastructure.adapter.inbound.api;
 
-import org.springframework.http.HttpStatus;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.enginer.domain.system.usecase.core.annotation.instance.UIDomain;
+import br.com.enginer.domain.system.usecase.core.enums.TypeTemplate;
 import br.com.enginer.domain.system.usecase.core.schema.Form;
 import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
-import br.com.enginer.domain.system.usecase.port.inbound.api.UIInboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
-import br.com.enginer.infrastructure.adapter.outbound.repository.RepositoryOutboundAdapterPort;
 
 /**
- * 
+ * Endpoint único para renderização de templates via registry.
+ *
+ * Exemplos:
+ *  GET /v1/enginer-ui/module/tab
+ *  GET /v1/enginer-ui/module/form/123
  */
 @RestController
 @RequestMapping("/v1/enginer-ui/module")
 public class UIInboundAdapterPort {
 
-	private final UIInboundPort<Domain<?>> uIInboundPort;
-	private final LoggerOutboundPort logger;
+    private final UIInboundTemplateRegistry registry;
+    private final LoggerOutboundPort logger;
 
-	/**
-	 * @param uIInboundPort
-	 * @param logger
-	 */
-	public UIInboundAdapterPort(UIInboundPort<Domain<?>> uIInboundPort, LoggerOutboundPort logger) {
-		this.uIInboundPort = uIInboundPort;
-		this.logger = logger;
-	}
+    public UIInboundAdapterPort(UIInboundTemplateRegistry registry, LoggerOutboundPort logger) {
+        this.registry = registry;
+        this.logger = logger;
+    }
 
-	/**
-	 * @param domain
-	 * @return ResponseEntity<Form>
-	 * @throws Exception
-	 */
-	@GetMapping({ "/tab", "/tab/{id}" })
-	public ResponseEntity<Form> tab(@UIDomain Domain<?> domain) throws Exception {
-		
-		long start = System.nanoTime();
-		
-		ResponseEntity<Form> response;
-		
-		try {
-		
-			Form form = uIInboundPort.tab(domain);
-		
-			response = ResponseEntity.ok(form);
-		
-		} catch (Exception ex) {
-			logger.error(UIInboundAdapterPort.class, "Erro ao criar [template-tab]", ex);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		} finally {
-			long duration = System.nanoTime() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[template-tab] concluído em " + duration + "ms ");
-		}
-		
-		long duration = System.nanoTime() - start;
-		
-		logger.info(UIInboundAdapterPort.class, "[template-tab] processado em " + duration + "ms ");
-		
-		return response;
-	}
+    @GetMapping({ "/{template}", "/{template}/{id}" })
+    public ResponseEntity<Form> render(@PathVariable String template, @UIDomain Domain<?> domain) {
 
-	/**
-	 * @param domain
-	 * @return ResponseEntity<Form>
-	 * @throws Exception
-	 */
-	@GetMapping({ "/row", "/row/{id}" })
-	public ResponseEntity<Form> row(@UIDomain Domain<?> domain) throws Exception {
-		
-		long start = System.nanoTime();
-		
-		ResponseEntity<Form> response;
-		
-		try {
-			
-			Form form = uIInboundPort.row(domain);
-			
-			response = ResponseEntity.ok(form);
-			
-		} catch (Exception ex) {
-			logger.error(UIInboundAdapterPort.class, "Erro ao criar [template-row]", ex);
-			throw ex;
-		} finally {
-			long duration = System.nanoTime() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[template-row] concluído em " + duration + "ms ");
-		}
-		
-		long duration = System.nanoTime() - start;
-		
-		logger.info(UIInboundAdapterPort.class, "[template-row] processado em " + duration + "ms ");
-		
-		return response;
-	}	
+        TypeTemplate type = TypeTemplate.from(template);
+        
+        if (type == null) {
+            return ResponseEntity.badRequest().build();
+        }
 
+        Function<Domain<?>, Form> handler = registry.get(type);
+        if (handler == null) {
+            return ResponseEntity.notFound().build();
+        }
 
-	/**
-	 * @param domain
-	 * @return ResponseEntity<Form>
-	 * @throws Exception
-	 */
-	@GetMapping({ "/form", "/form/{id}" })
-	public ResponseEntity<Form> form(@UIDomain Domain<?> domain) throws Exception {
-		
-		long start = System.nanoTime();
-		
-		ResponseEntity<Form> response;
-		
-		try {
-			
-			Form form = uIInboundPort.form(domain);
-			
-			response = ResponseEntity.ok(form);
-			
-		} catch (Exception ex) {
-			logger.error(UIInboundAdapterPort.class, "Erro ao criar [template-form]", ex);
-			throw ex;
-		} finally {
-			long duration = System.nanoTime() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[template-form] concluído em " + duration + "ms ");
-		}
-		
-		long duration = System.nanoTime() - start;
-		
-		logger.info(UIInboundAdapterPort.class, "[template-form] processado em " + duration + "ms ");
-		
-		return response;
-	}
-	
-	/**
-	 * @param domain
-	 * @return ResponseEntity<Form>
-	 * @throws Exception
-	 */
-	@GetMapping({ "/filter", "/filter/{id}" })
-	public ResponseEntity<Form> filter(@UIDomain Domain<?> domain) throws Exception {
-		
-		long start = System.nanoTime();
-		
-		ResponseEntity<Form> response;
-		
-		try {
-			
-			Form form = uIInboundPort.filter(domain);
-			
-			response = ResponseEntity.ok(form);
-			
-		} catch (Exception ex) {
-			logger.error(UIInboundAdapterPort.class, "Erro ao criar [template-filter]", ex);
-			throw ex;
-		} finally {
-			long duration = System.nanoTime() - start;
-	        logger.info(RepositoryOutboundAdapterPort.class, "[template-filter] concluído em " + duration + "ms ");
-		}
-		
-		long duration = System.nanoTime() - start;
-		
-		logger.info(UIInboundAdapterPort.class, "[template-filter] processado em " + duration + "ms ");
-		
-		return response;
-	}
+        String label = "template-" + type.name().toLowerCase();
+        return execute(label, () -> handler.apply(domain));
+    }
+
+    private ResponseEntity<Form> execute(String label, Supplier<Form> supplier) {
+    	
+        long startNs = System.nanoTime();
+
+        try {
+            Form form = supplier.get();
+            return ResponseEntity.ok(form);
+
+        } catch (Exception ex) {
+            logger.error(UIInboundAdapterPort.class, "Erro ao criar [" + label + "]", ex);
+            return ResponseEntity.internalServerError().build();
+
+        } finally {
+            long durationMs = (System.nanoTime() - startNs) / 1_000_000L;
+            logger.info(UIInboundAdapterPort.class, "[" + label + "] processado em " + durationMs + "ms ");
+        }
+    }
 }
