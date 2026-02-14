@@ -7,6 +7,7 @@ import br.com.enginer.domain.system.dto.entity.logger.ActionLogger;
 import br.com.enginer.domain.system.dto.entity.upload.UploadFile;
 import br.com.enginer.domain.system.dto.entity.user.UserAccount;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIAttachment;
+import br.com.enginer.domain.system.usecase.core.annotation.field.UIColumn;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIHidden;
 import br.com.enginer.domain.system.usecase.core.annotation.field.UIIgnore;
 import br.com.enginer.domain.system.usecase.core.annotation.field.behavior.UITag;
@@ -35,21 +36,19 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 	private TypeTemplate typeTemplate;
 
 	@UIHidden
+	@UIColumn(label = "Usuario Criação", initial = false, hidden = true)
 	private UserAccount createdBy;
 
 	@UIHidden
+	@UIColumn(label = "Usuario Atualização", initial = false, hidden = true)
 	private UserAccount updatedBy;
 
 	@UIHidden
-	private Long createdById;
-
-	@UIHidden
-	private Long updatedById;
-
-	@UIHidden
+	@UIColumn(label = "Data Criação", initial = false, hidden = true)
 	private Instant createdAt;
 
 	@UIHidden
+	@UIColumn(label = "Data Atualização", initial = false, hidden = true)
 	private Instant updatedAt;
 
 	@UITag(label = "Tags", disable = false)
@@ -223,25 +222,10 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 	}
 
 	/**
-	 * @return the createdById
-	 */
-	public Long getCreatedById() {
-		return createdById;
-	}
-
-	/**
 	 * @param createdById the createdById to set
 	 */
 	public void setCreatedById(Long createdById) {
 		this.createdBy = createdById != null ? new UserAccount(createdById) : null;
-		this.createdById = createdById;
-	}
-	
-	/**
-	 * @return the updatedById
-	 */
-	public Long getUpdatedById() {
-		return updatedById;
 	}
 
 	/**
@@ -249,7 +233,6 @@ public abstract class DomainAbstract<I> implements Domain<I> {
 	 */
 	public void setUpdatedById(Long updatedById) {
 		this.updatedBy = updatedById != null ? new UserAccount(updatedById) : null;
-		this.updatedById = updatedById;
 	}
 
 	/**

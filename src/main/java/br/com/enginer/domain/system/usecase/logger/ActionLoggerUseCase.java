@@ -30,9 +30,14 @@ public class ActionLoggerUseCase extends AbstractUseCase<ActionLogger> implement
 		
 		if(result != null) {
 			result.getContent().forEach(logger -> {
+				
 				UserAccount userAccount = (UserAccount) userAccountUseCase.buscarPorId(logger.getUserAccount());
-				UploadFile uploadFile = (UploadFile) uploadFileUseCase.buscarPorId(userAccount.getUploadFile());
-				userAccount.setUploadFile(uploadFile);
+				
+				if(userAccount.getUploadFile() != null && userAccount.getUploadFile().getId() != null) {
+					UploadFile uploadFile = (UploadFile) uploadFileUseCase.buscarPorId(userAccount.getUploadFile());
+					userAccount.setUploadFile(uploadFile);
+				}
+				
 				logger.setUserAccount(userAccount);
 			});
 		}

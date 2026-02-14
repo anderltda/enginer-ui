@@ -75,18 +75,17 @@ public class UserAccount extends DomainAbstract<Long> {
 	@UIIgnore
 	private UploadFile uploadFile;
 	
+	@UIHidden
 	private Instant lastLoginAt;
 
+	@UIIgnore
 	private String lastLoginIp;
 
+	@UIIgnore
 	private String lastLoginUserAgent;
 
 	@UIPosition(x = 2, y = 1)
 	private Boolean active;
-
-	private Instant createdAt;
-
-	private Instant updatedAt;
 
 	@UIPosition(x = 1, y = 1)
 	@UIFieldValidation(required = false)
@@ -211,6 +210,7 @@ public class UserAccount extends DomainAbstract<Long> {
 	 * @param idUploadFile the idUploadFile to set
 	 */
 	public void setIdUploadFile(Long idUploadFile) {
+		if(idUploadFile == null) return;
 		if(this.files == null) {
 			this.files = new ArrayList<>();
 		}
@@ -231,34 +231,6 @@ public class UserAccount extends DomainAbstract<Long> {
 	 */
 	public void setActive(Boolean active) {
 		this.active = active;
-	}
-
-	/**
-	 * @return the createdAt
-	 */
-	public Instant getCreatedAt() {
-		return createdAt;
-	}
-
-	/**
-	 * @param createdAt the createdAt to set
-	 */
-	public void setCreatedAt(Instant createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	/**
-	 * @return the updatedAt
-	 */
-	public Instant getUpdatedAt() {
-		return updatedAt;
-	}
-
-	/**
-	 * @param updatedAt the updatedAt to set
-	 */
-	public void setUpdatedAt(Instant updatedAt) {
-		this.updatedAt = updatedAt;
 	}
 
 	/**
@@ -346,14 +318,5 @@ public class UserAccount extends DomainAbstract<Long> {
 			return false;
 		UserAccount other = (UserAccount) obj;
 		return Objects.equals(id, other.id);
-	}
-
-	@Override
-	public String toString() {
-		return "UserAccount [id=" + id + ", publicId=" + publicId + ", username=" + username + ", displayName="
-				+ displayName + ", email=" + email + ", emailNormalized=" + emailNormalized + ", uploadFile="
-				+ uploadFile + ", lastLoginAt=" + lastLoginAt + ", lastLoginIp=" + lastLoginIp + ", lastLoginUserAgent="
-				+ lastLoginUserAgent + ", active=" + active + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt
-				+ "]";
 	}
 }

@@ -1,5 +1,6 @@
 package br.com.enginer.domain.system.usecase.user;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -84,7 +85,9 @@ public class UserAccountUseCase extends AbstractUseCase<UserAccount> implements 
 		filters.put("id", identity.getUserAccount().getId());
 
 		UserAccount userAccount = (UserAccount) buscarPorRegistroUnico(new UserAccount(), filters);
-
+		
+		Instant lastLoginAt = userAccount.getLastLoginAt();
+		
 		if (StringsUtils.isBlank(userAccount.getDisplayName()) && !StringsUtils.isBlank(jwtVo.name())) {
 			userAccount.setDisplayName(jwtVo.name());
 		}
@@ -97,12 +100,21 @@ public class UserAccountUseCase extends AbstractUseCase<UserAccount> implements 
 			userAccount.setEmail(jwtVo.email());
 			userAccount.setEmailNormalized(jwtVo.email().trim().toLowerCase(Locale.ROOT));
 		}
-		
+
+		if(userAccount.getUploadFile() != null && userAccount.getUploadFile().getId() != null) {
+			UploadFile uploadFile = uploadFileUseCase.buscarFormPorId(userAccount.getUploadFile());
+			userAccount.setUploadFile(uploadFile);
+		} else {
+			userAccount.setIdUploadFile(null);
+		}
+
 		userAccount.setLastLoginAt(jwtVo.lastLoginAt());
 		userAccount.setLastLoginIp(jwtVo.lastLoginIp());
 		userAccount.setLastLoginUserAgent(jwtVo.lastLoginUserAgent());
 
 		super.salvar(userAccount);
+		
+		userAccount.setLastLoginAt(lastLoginAt);
 
 		// se estiver inativo
 		if (Boolean.FALSE.equals(userAccount.getActive())) {

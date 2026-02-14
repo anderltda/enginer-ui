@@ -102,19 +102,9 @@ public interface Domain<I> {
 	void setUpdatedBy(UserAccount updatedBy);
 
 	/**
-	 * @return the createdById
-	 */
-	Long getCreatedById();
-
-	/**
 	 * @param createdById the createdById to set
 	 */
 	void setCreatedById(Long createdById);
-
-	/**
-	 * @return the updatedById
-	 */
-	Long getUpdatedById();
 
 	/**
 	 * @param updatedById the updatedById to set

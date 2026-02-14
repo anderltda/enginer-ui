@@ -912,7 +912,7 @@ public class FormTemplate {
 			
 			UploadFile uploadFile = (UploadFile) ReflectionUtils.execute(domain, StringsUtils.getMethod(StringsUtils.firstLower(UploadFile.class.getSimpleName())));
 			
-			if (uploadFile.getId() != null) {
+			if (uploadFile != null && uploadFile.getId() != null) {
 
 				Map<String, Object> filter = Map.of("id", uploadFile.getId(), "domain", domain.getClass().getSimpleName());
 
@@ -1148,11 +1148,10 @@ public class FormTemplate {
 				
 				createdBy = (UserAccount) ReflectionUtils.execute(this.useCase, UIUseCase.buscarFormPorId, createdBy);
 
-				UploadFile uploadFile = (UploadFile) ReflectionUtils.execute(this.useCase, UIUseCase.buscarFormPorId, createdBy.getUploadFile());
-				
-				createdBy.setUploadFile(uploadFile);
+				extractedAvatar(createdBy);
 				
 				domain.setCreatedBy(createdBy);
+				
 				hidden.setValue(createdBy);
 			}
 			
@@ -1164,11 +1163,10 @@ public class FormTemplate {
 
 				updatedBy = (UserAccount) ReflectionUtils.execute(this.useCase, UIUseCase.buscarFormPorId, updatedBy);
 				
-				UploadFile uploadFile = (UploadFile) ReflectionUtils.execute(this.useCase, UIUseCase.buscarFormPorId, updatedBy.getUploadFile());
-
-				updatedBy.setUploadFile(uploadFile);
+				extractedAvatar(updatedBy);
 				
 				domain.setUpdatedBy(updatedBy);
+				
 				hidden.setValue(updatedBy);
 			}
 		}
@@ -1176,6 +1174,17 @@ public class FormTemplate {
 		addBehaviorAnnotation(hidden, f, annotations);
 		
 		return hidden;
+	}
+
+	/**
+	 * @param userAccount
+	 * @throws Exception
+	 */
+	private void extractedAvatar(UserAccount userAccount) throws Exception {
+		if(userAccount.getUploadFile() != null && userAccount.getUploadFile().getId() != null) {
+			UploadFile uploadFile = (UploadFile) ReflectionUtils.execute(this.useCase, UIUseCase.buscarFormPorId, userAccount.getUploadFile());
+			userAccount.setUploadFile(uploadFile);
+		}
 	}
 
 	/**

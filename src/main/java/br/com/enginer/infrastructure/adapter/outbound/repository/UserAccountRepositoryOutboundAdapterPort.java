@@ -6,6 +6,7 @@ import br.com.enginer.domain.system.dto.entity.user.UserAccount;
 import br.com.enginer.domain.system.usecase.core.fn.SerializableConsumer;
 import br.com.enginer.domain.system.usecase.core.fn.SerializableLambda;
 import br.com.enginer.domain.system.usecase.core.schema.instance.Domain;
+import br.com.enginer.domain.system.usecase.core.schema.instance.DomainId;
 import br.com.enginer.domain.system.usecase.core.utils.ReflectionUtils;
 import br.com.enginer.domain.system.usecase.port.outbound.logger.LoggerOutboundPort;
 import br.com.enginer.domain.system.usecase.port.outbound.repository.RepositoryOutboundPort;
@@ -58,7 +59,7 @@ public class UserAccountRepositoryOutboundAdapterPort extends DelegatingReposito
 			String setCreatedById = SerializableLambda.extractMethodName((SerializableConsumer<Long>) domain.getActionLogger()::setCreatedById);
 			String setUpdatedById = SerializableLambda.extractMethodName((SerializableConsumer<Long>) domain.getActionLogger()::setUpdatedById);
 
-			if(domain.isIdNull()) {
+			if(domain.isIdNull() || domain.getId() instanceof DomainId) {
 				ReflectionUtils.execute(domain, setCreatedById, domain.getActionLogger().getUserAccount().getId());
 				ReflectionUtils.setNullViaSetter(setUpdatedById, domain);
 			} else {
