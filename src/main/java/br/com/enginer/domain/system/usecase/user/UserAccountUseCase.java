@@ -2,7 +2,6 @@ package br.com.enginer.domain.system.usecase.user;
 
 import java.time.Instant;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -88,17 +87,20 @@ public class UserAccountUseCase extends AbstractUseCase<UserAccount> implements 
 		
 		Instant lastLoginAt = userAccount.getLastLoginAt();
 		
-		if (StringsUtils.isBlank(userAccount.getDisplayName()) && !StringsUtils.isBlank(jwtVo.name())) {
-			userAccount.setDisplayName(jwtVo.name());
-		}
-		
 		if (!StringsUtils.isBlank(jwtVo.username()) && (StringsUtils.isBlank(userAccount.getUsername()) || !userAccount.getUsername().equals(jwtVo.username()))) {
 			userAccount.setUsername(jwtVo.username());
+		}
+
+		if (StringsUtils.isBlank(userAccount.getLastName()) && !StringsUtils.isBlank(jwtVo.lastName())) {
+			userAccount.setLastName(jwtVo.lastName());
+		}
+		
+		if (StringsUtils.isBlank(userAccount.getFirstName()) && !StringsUtils.isBlank(jwtVo.firstName())) {
+			userAccount.setFirstName(jwtVo.firstName());
 		}
 		
 		if (!StringsUtils.isBlank(jwtVo.email()) && (StringsUtils.isBlank(userAccount.getEmail()) || !userAccount.getEmail().equals(jwtVo.email()))) {
 			userAccount.setEmail(jwtVo.email());
-			userAccount.setEmailNormalized(jwtVo.email().trim().toLowerCase(Locale.ROOT));
 		}
 
 		if(userAccount.getUploadFile() != null && userAccount.getUploadFile().getId() != null) {
@@ -132,17 +134,14 @@ public class UserAccountUseCase extends AbstractUseCase<UserAccount> implements 
 
 		UserAccount userAccount = new UserAccount();
 		userAccount.setPublicId(UUID.randomUUID());
-		userAccount.setDisplayName(jwtVo.name());
 		userAccount.setUsername(jwtVo.username());
+		userAccount.setFirstName(jwtVo.firstName());
+		userAccount.setLastName(jwtVo.lastName());
 		userAccount.setEmail(jwtVo.email());
 		userAccount.setLastLoginAt(jwtVo.lastLoginAt());
 		userAccount.setLastLoginIp(jwtVo.lastLoginIp());
 		userAccount.setLastLoginUserAgent(jwtVo.lastLoginUserAgent());
 		userAccount.setActive(true);
-
-		if (!StringsUtils.isBlank(jwtVo.email())) {
-			userAccount.setEmailNormalized(jwtVo.email().trim().toLowerCase(Locale.ROOT));
-		}
 
 		UserAccount userAccountNew = super.salvar(userAccount);
 

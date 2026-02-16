@@ -64,9 +64,12 @@ public class UserAccount extends DomainAbstract<Long> {
 	private String username;
 
 	@UIPosition(x = 1, y = 3)
-	private String displayName;
+	private String firstName;
 
 	@UIPosition(x = 2, y = 3)
+	private String lastName;
+
+	@UIPosition(x = 1, y = 4)
 	private String email;
 
 	@UIHidden
@@ -86,11 +89,14 @@ public class UserAccount extends DomainAbstract<Long> {
 
 	@UIPosition(x = 2, y = 1)
 	private Boolean active;
-
+	
 	@UIPosition(x = 1, y = 1)
 	@UIFieldValidation(required = false)
 	@UIFile(label = "", mode = TypeFileUpload.WALL_PICKER, listType = "picture-card", limit = 1)
 	private transient List<UploadFile> files;
+
+	@UIIgnore
+	private transient String displayName;
 
 	/**
 	 * 
@@ -154,14 +160,8 @@ public class UserAccount extends DomainAbstract<Long> {
 	 * @return the displayName
 	 */
 	public String getDisplayName() {
+		displayName = firstName +" "+ lastName;
 		return displayName;
-	}
-
-	/**
-	 * @param displayName the displayName to set
-	 */
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
 	}
 
 	/**
@@ -197,13 +197,6 @@ public class UserAccount extends DomainAbstract<Long> {
 	 */
 	public String getEmailNormalized() {
 		return emailNormalized;
-	}
-
-	/**
-	 * @param emailNormalized the emailNormalized to set
-	 */
-	public void setEmailNormalized(String emailNormalized) {
-		this.emailNormalized = emailNormalized;
 	}
 
 	/**
@@ -302,6 +295,34 @@ public class UserAccount extends DomainAbstract<Long> {
 	public void setLastLoginUserAgent(String lastLoginUserAgent) {
 		this.lastLoginUserAgent = lastLoginUserAgent;
 	}
+	
+	/**
+	 * @return the firstName
+	 */
+	public String getFirstName() {
+		return firstName;
+	}
+
+	/**
+	 * @param firstName the firstName to set
+	 */
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	/**
+	 * @return the lastName
+	 */
+	public String getLastName() {
+		return lastName;
+	}
+
+	/**
+	 * @param lastName the lastName to set
+	 */
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
 	@Override
 	public int hashCode() {
@@ -319,4 +340,13 @@ public class UserAccount extends DomainAbstract<Long> {
 		UserAccount other = (UserAccount) obj;
 		return Objects.equals(id, other.id);
 	}
+
+	@Override
+	public String toString() {
+		return "UserAccount [id=" + id + ", publicId=" + publicId + ", username=" + username + ", firstName="
+				+ firstName + ", lastName=" + lastName + ", email=" + email + ", emailNormalized=" + emailNormalized
+				+ ", uploadFile=" + uploadFile + ", lastLoginAt=" + lastLoginAt + ", lastLoginIp=" + lastLoginIp
+				+ ", lastLoginUserAgent=" + lastLoginUserAgent + ", active=" + active + "]";
+	}
+	
 }

@@ -7,7 +7,7 @@ import br.com.enginer.domain.system.usecase.core.utils.StringsUtils;
 /**
  * 
  */
-public record ProviderIdentity(String provider, String providerTenant, String providerSubject, String email, String username, String name) {
+public record ProviderIdentity(String provider, String providerTenant, String providerSubject, String email, String username, String firstName, String lastName) {
 
 	/**
 	 * Cria identidade a partir de um JWT (OAuth2 / OIDC).
@@ -33,9 +33,10 @@ public record ProviderIdentity(String provider, String providerTenant, String pr
 		String providerTenant = extractTenant(jwt);
 		String email = jwt.getClaimAsString("email");
 		String username = StringsUtils.firstNonBlank(jwt.getClaimAsString("preferred_username"), jwt.getClaimAsString("username"));
-		String name = StringsUtils.firstNonBlank(jwt.getClaimAsString("name"), jwt.getClaimAsString("given_name"), username, providerSubject);
+		String firstName = jwt.getClaimAsString("given_name");
+		String lastName = jwt.getClaimAsString("family_name");
 
-		return new ProviderIdentity(provider, providerTenant, providerSubject, email, username, name);
+		return new ProviderIdentity(provider, providerTenant, providerSubject, email, username, firstName, lastName);
 	}
 
 	/**

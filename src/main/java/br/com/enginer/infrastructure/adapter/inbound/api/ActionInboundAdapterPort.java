@@ -144,7 +144,8 @@ public class ActionInboundAdapterPort {
 					identity.providerTenant(),
 					identity.email(),
 					identity.username(),
-					identity.name(),
+					identity.firstName(),
+					identity.lastName(),
 					lastLoginAt,
 					ip,
 					userAgent
