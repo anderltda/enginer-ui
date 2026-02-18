@@ -20,8 +20,12 @@ enginer: # Caminho para os arquivos de configuração do Enginer
 security: # CORS usado pelo SecurityCorsProperties (prefix = security.cors)
   cors:
     allowed-origins:
-      - "http://localhost:4200"
-      - "http://192.168.68.101:4200"
+      - "http://localhost:*"
+      - "http://127.0.0.1:*"
+      - "http://127.0.0.1:*"
+      - "http://192.168.68.101:*"
+      # se você usa outro IP na rede às vezes, pode abrir padrão:
+      #- "http://192.168.68.*:*"
 
 spring: # Configurações do Spring Security para validação de tokens JWT emitidos pelo Keycloak
   security:

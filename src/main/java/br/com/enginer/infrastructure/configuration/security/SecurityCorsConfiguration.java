@@ -10,14 +10,25 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
+ * SecurityCorsConfiguration
+ * -----------------------------------------------------------------------------
  * Configuração global de CORS da aplicação.
  *
- * Essa classe define quais origens (frontends), métodos HTTP e headers podem
- * acessar a API.
+ * Objetivo:
+ * - Definir quais origens (frontends), métodos e headers podem acessar a API.
+ * - Ser utilizada pelo Spring Security via http.cors(Customizer.withDefaults()).
  *
- * ✔ Usada em conjunto com Spring Security (http.cors()). ✔ Centraliza regras de
- * CORS fora dos controllers. ✔ Lê configurações do application.yml de forma
- * tipada.
+ * Importante:
+ * - Para evitar problemas em DEV (porta/host variando, WebView, emulador, etc.),
+ *   usamos allowedOriginPatterns() ao invés de allowedOrigins().
+ *
+ * Por que?
+ * - allowedOrigins exige match EXATO (protocolo + host + porta).
+ * - allowedOriginPatterns permite padrões tipo: "http://localhost:*".
+ *
+ * Segurança:
+ * - NÃO use "*" em produção.
+ * - Em produção, liste as origens reais (ex.: https://app.seudominio.com).
  */
 @Configuration
 @EnableConfigurationProperties(SecurityCorsProperties.class)
@@ -28,81 +39,88 @@ public class SecurityCorsConfiguration {
 	 *
 	 * Exemplo:
 	 *
-	 * security: cors: allowed-origins: - http://localhost:4200 -
-	 * http://192.168.68.101:4200
+	 * security:
+	 *   cors:
+	 *     allowed-origins:
+	 *       - "http://localhost:*"
+	 *       - "http://192.168.68.101:*"
 	 */
 	private final SecurityCorsProperties props;
 
-	/**
-	 * Injeção via construtor (boa prática).
-	 *
-	 * Garante que a aplicação só sobe se as propriedades de CORS estiverem
-	 * corretamente configuradas.
-	 */
 	public SecurityCorsConfiguration(SecurityCorsProperties props) {
 		this.props = props;
 	}
 
 	/**
-	 * Bean responsável por fornecer a configuração de CORS para toda a aplicação.
+	 * Bean responsável por fornecer a configuração CORS para toda a aplicação.
 	 *
-	 * Esse bean é automaticamente utilizado pelo Spring Security quando você
-	 * habilita:
-	 *
-	 * http.cors(cors -> {})
+	 * Esse bean é automaticamente utilizado pelo Spring Security quando você habilita:
+	 *   http.cors(Customizer.withDefaults())
 	 */
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 
-		// Cria a configuração base de CORS
+		// Configuração base de CORS
 		CorsConfiguration cors = new CorsConfiguration();
 
 		/**
-		 * Define explicitamente quais ORIGENS (frontends) podem acessar a API.
+		 * Origem (Origin) permitida.
 		 *
-		 * ⚠ Nunca use "*" em produção quando há autenticação. ✔ Aqui usamos lista vinda
-		 * do application.yml.
+		 * Usamos allowedOriginPatterns para suportar padrões (DEV / WebView / porta variável).
+		 * Exemplos válidos:
+		 * - http://localhost:*
+		 * - http://127.0.0.1:*
+		 * - http://192.168.68.101:*
+		 *
+		 * ⚠ Em produção, prefira origens explícitas e sem wildcard.
 		 */
-		cors.setAllowedOrigins(props.getAllowedOrigins());
+		cors.setAllowedOriginPatterns(props.getAllowedOrigins());
 
 		/**
-		 * Define os métodos HTTP permitidos.
+		 * Métodos HTTP permitidos.
 		 *
 		 * OPTIONS é obrigatório para o preflight do browser.
 		 */
 		cors.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 
 		/**
-		 * Define quais headers o frontend pode enviar.
+		 * Headers que o frontend pode ENVIAR.
 		 *
-		 * "*" é aceitável aqui porque: ✔ a autenticação é feita por Bearer Token ✔ o
-		 * backend valida tudo
+		 * "*" é aceitável aqui porque:
+		 * - autenticação é Bearer token
+		 * - o backend valida tudo (JWT + regras)
 		 */
 		cors.setAllowedHeaders(List.of("*"));
 
 		/**
-		 * Define quais headers da RESPOSTA podem ser lidos pelo JavaScript no frontend.
+		 * Headers da RESPOSTA que o JavaScript pode LER.
 		 *
-		 * Por padrão, o browser bloqueia o acesso a headers.
+		 * Por padrão, o browser restringe acesso a alguns headers.
 		 */
 		cors.setExposedHeaders(List.of("Authorization", "X-Request-Id"));
 
 		/**
-		 * Indica se cookies / credenciais devem ser enviados.
+		 * Envio de cookies/credenciais (Authorization via cookie / withCredentials).
 		 *
-		 * ✔ false porque: - você usa Authorization: Bearer <token> - não usa cookies de
-		 * sessão - não usa withCredentials no Angular
+		 * false porque:
+		 * - você usa "Authorization: Bearer <token>"
+		 * - não usa cookies de sessão
+		 * - não precisa de withCredentials no Angular
 		 */
 		cors.setAllowCredentials(false);
 
 		/**
-		 * Registra a configuração de CORS para TODAS as rotas (/**).
+		 * Cache do preflight (em segundos).
 		 *
-		 * Isso garante comportamento consistente em toda a API, inclusive endpoints
-		 * protegidos pelo Spring Security.
+		 * Ajuda performance: o browser não precisa refazer OPTIONS toda hora.
+		 * (1 hora = 3600s)
+		 */
+		cors.setMaxAge(3600L);
+
+		/**
+		 * Registra essa configuração para todas as rotas (/**).
 		 */
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
 		source.registerCorsConfiguration("/**", cors);
 
 		return source;

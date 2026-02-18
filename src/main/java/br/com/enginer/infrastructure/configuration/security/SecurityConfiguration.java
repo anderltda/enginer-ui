@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
@@ -46,6 +47,11 @@ public class SecurityConfiguration {
 			 * SecurityCorsConfiguration) para responder preflight e liberar origens.
 			 */
 			.cors(Customizer.withDefaults())
+			
+			/**
+			 * Garante API realmente stateless
+			 */
+			.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
 			/**
 			 * Regras de autorização (quem pode acessar o quê).
