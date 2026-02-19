@@ -17,22 +17,24 @@ enginer: # Caminho para os arquivos de configuração do Enginer
     user-account:
       ttl-ms: 180000 # 3 minutos
 
-security: # CORS usado pelo SecurityCorsProperties (prefix = security.cors)
+security: # Configurações customizadas (CORS + issuers aceitos)
   cors:
     allowed-origins:
       - "http://localhost:*"
       - "http://127.0.0.1:*"
-      - "http://127.0.0.1:*"
+      - "http://10.0.2.2:*"
       - "http://192.168.68.101:*"
       # se você usa outro IP na rede às vezes, pode abrir padrão:
       #- "http://192.168.68.*:*"
+  oauth2:
+    accepted-issuers: "http://localhost:9090/realms/enginer,http://10.0.2.2:9090/realms/enginer" # aceita browser local e Android emulator
 
 spring: # Configurações do Spring Security para validação de tokens JWT emitidos pelo Keycloak
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: "http://localhost:9090/realms/enginer" # backend valida o token emitido pelo Keycloak
+          jwk-set-uri: "http://localhost:9090/realms/enginer/protocol/openid-connect/certs" # chaves do Keycloak para validar assinatura do JWT
 
   profiles: # Define o perfil ativo para a aplicação. Pode ser 'local', 'dev', 'prod', etc. O perfil 'local' é usado para desenvolvimento local.
     default: local
